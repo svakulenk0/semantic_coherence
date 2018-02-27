@@ -10,7 +10,7 @@ from hdt_topk import get_topk_paths
 
 SAMPLE_COHERENT_DIALOGUE = ["Have you seen Lady Bird", "Greta Gerwig is a talented director",
                             "David Fincher is my absolute favourite"]
-SAMPLE_UNCOHERENT_DIALOGUE = ["Have you seen Lady Bird", "David Fincher is my absolute favourite"]
+SAMPLE_INCOHERENT_DIALOGUE = ["Have you seen Lady Bird", "David Fincher is my absolute favourite"]
 
 
 def trace_dialogue_semantics(dialogue):
@@ -19,17 +19,19 @@ def trace_dialogue_semantics(dialogue):
         response_entities = annotate_entities(response)
         print uttered_entities, response_entities
         print get_topk_paths(uttered_entities, response_entities)
+        print '\n'
+
         uttered_entities = response_entities
 
 
 def test_trace_dialogue_semantics():
-    print("\nCoherent dialogue:")
+    print("Coherent dialogue:\n")
     trace_dialogue_semantics(SAMPLE_COHERENT_DIALOGUE)
 
 
 def show_uncoherent_dialogue_relations():
-    print("\nUncoherent dialogue:")
-    trace_dialogue_semantics(SAMPLE_UNCOHERENT_DIALOGUE)
+    print("Incoherent dialogue:\n")
+    trace_dialogue_semantics(SAMPLE_INCOHERENT_DIALOGUE)
 
 
 if __name__ == '__main__':
