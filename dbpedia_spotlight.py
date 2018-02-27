@@ -13,9 +13,16 @@ SAMPLE_TEXT = "President Obama on Monday will call for a new minimum tax rate fo
 LOCAL_SERVICE = 'http://localhost/rest/annotate'
 DEMO_SERVICE = 'http://model.dbpedia-spotlight.org/en/annotate'
 
-text = SAMPLE_TEXT
-service_address = DEMO_SERVICE
-annotations = spotlight.annotate(service_address,
-                                 text,
-                                 confidence=0.4, support=20)
-print annotations
+
+def annotate(text, service_address=DEMO_SERVICE):
+    return spotlight.annotate(service_address,
+                              text,
+                              confidence=0.4, support=20)
+
+
+def test_annotate():
+    print annotate(SAMPLE_TEXT)
+
+
+if __name__ == '__main__':
+    test_annotate()
