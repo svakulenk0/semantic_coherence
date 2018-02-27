@@ -14,15 +14,15 @@ LOCAL_SERVICE = 'http://localhost/rest/annotate'
 DEMO_SERVICE = 'http://model.dbpedia-spotlight.org/en/annotate'
 
 
-def annotate(text, service_address=DEMO_SERVICE):
-    return spotlight.annotate(service_address,
-                              text,
-                              confidence=0.4, support=20)
+def annotate_entities(text, service_address=DEMO_SERVICE):
+    entities = spotlight.annotate(service_address, text,
+                                  confidence=0.4, support=20)
+    return [entity['URI'].split('/')[-1] for entity in entities]
 
 
-def test_annotate():
-    print annotate(SAMPLE_TEXT)
+def test_annotate_entities():
+    print annotate_entities(SAMPLE_TEXT)
 
 
 if __name__ == '__main__':
-    test_annotate()
+    test_annotate_entities()
