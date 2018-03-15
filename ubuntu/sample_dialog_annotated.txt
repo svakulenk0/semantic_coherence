@@ -1,0 +1,295 @@
+hi, this might be offtopic to some extent, but I can surely use good opinions/ideas, HP Pavilion dv6 with colorful vertical lines, from what I've seen it seems to be caused by heat ! did any of you guys experience something similar?
+[u'Heat', u'SAP_Center']
+what is dv6? my aunt has a similar problem with a dell laptop
+[u'Laptop']
+
+
+what is dv6? my aunt has a similar problem with a dell laptop
+[u'Laptop']
+I was stupid enough to not check and then double check for problems with those models of HP notebooks/laptops
+[u'Hewlett-Packard']
+
+
+I was stupid enough to not check and then double check for problems with those models of HP notebooks/laptops
+[u'Hewlett-Packard']
+if you know this is caused by heat the only easy solution is to just make sure you keep it as cool as possible
+[u'Heat']
+
+
+if you know this is caused by heat the only easy solution is to just make sure you keep it as cool as possible
+[u'Heat']
+the problem is I can't live with it, simply cause I move alot which means heat for short well, you didn't help her getting it fixed?
+[u'Alot']
+
+
+the problem is I can't live with it, simply cause I move alot which means heat for short well, you didn't help her getting it fixed?
+[u'Alot']
+the only QUICK solution I can think of is to get one of those cooling pads they make for laptops with the extra fans in them. yes she had to buy a new screen
+[u'Evaporative_cooler']
+
+
+the only QUICK solution I can think of is to get one of those cooling pads they make for laptops with the extra fans in them. yes she had to buy a new screen
+[u'Evaporative_cooler']
+yeah I thought of that already, the problem is that it's not fixed yet the problem seems to exist in the screen inverter
+[u'Power_inverter']
+
+
+yeah I thought of that already, the problem is that it's not fixed yet the problem seems to exist in the screen inverter
+[u'Power_inverter']
+due to a very stupid heatsink design I think I should get rid of it
+[u'Heat_sink']
+
+
+due to a very stupid heatsink design I think I should get rid of it
+[u'Heat_sink']
+yes even if you buy a new screen it will either only be a temporary fix or not stop completely the only other option is to send it into HP unless you know someone with spare parts yes I think so too, you will always have problems with it at least you will know not to make the same mistake haha
+[u'Haha_(entertainer)', u'Hewlett-Packard']
+
+
+yes even if you buy a new screen it will either only be a temporary fix or not stop completely the only other option is to send it into HP unless you know someone with spare parts yes I think so too, you will always have problems with it at least you will know not to make the same mistake haha
+[u'Haha_(entertainer)', u'Hewlett-Packard']
+even if I sent it to HP care, it's a temporary fix, they'd replace the inverter same problem exists I think yeah no one learns for free
+[u'Power_inverter']
+
+
+even if I sent it to HP care, it's a temporary fix, they'd replace the inverter same problem exists I think yeah no one learns for free
+[u'Power_inverter']
+yeah I'm hoping for that, the problem is that the only solution would be in the inverter itself cause they wouldn't be able to modify my frigin notebook's casing design half the heat goes up to the inverter yes I'm hoping
+[u'Heat', u'Notebook']
+
+
+yeah I'm hoping for that, the problem is that the only solution would be in the inverter itself cause they wouldn't be able to modify my frigin notebook's casing design half the heat goes up to the inverter yes I'm hoping
+[u'Heat', u'Notebook']
+honestly if you send it in and have it fixed then the battle would be keeping it cool so it doesnt happen again. I would just invest in a better laptop
+[u'Battle', u'Laptop']
+
+
+honestly if you send it in and have it fixed then the battle would be keeping it cool so it doesnt happen again. I would just invest in a better laptop
+[u'Battle', u'Laptop']
+it's just the 3MB L2 cache and 4MB RAM with ATI Radeon
+[u'CPU_cache', u'ATI_Technologies', u'Radeon']
+
+
+it's just the 3MB L2 cache and 4MB RAM with ATI Radeon
+[u'CPU_cache', u'ATI_Technologies', u'Radeon']
+I guess I'll have to contact HP support and try to convince them to tell me if they've developed a solution for such problem heh
+[u'Hewlett-Packard']
+
+
+I guess I'll have to contact HP support and try to convince them to tell me if they've developed a solution for such problem heh
+[u'Hewlett-Packard']
+do you know a better Laptop with similar hardware?
+[u'Laptop']
+
+
+do you know a better Laptop with similar hardware?
+[u'Laptop']
+I like it, it works great for multimedia
+[u'Multimedia']
+
+
+I like it, it works great for multimedia
+[u'Multimedia']
+never heard of it heh sounds an Acer?
+[u'Maple']
+
+
+never heard of it heh sounds an Acer?
+[u'Maple']
+yeah they are a division of acer they are only 350 dollars it has 1mb L2 cache 3gb ram 250gb hdd
+[u'CPU_cache']
+
+
+yeah they are a division of acer they are only 350 dollars it has 1mb L2 cache 3gb ram 250gb hdd
+[u'CPU_cache']
+I am big on multimedia and it works great for that. but I am also a hobbyist and like to fix up and use old computer
+[u'Multimedia', u'Computer']
+
+
+I am big on multimedia and it works great for that. but I am also a hobbyist and like to fix up and use old computer
+[u'Multimedia', u'Computer']
+well I guess I know what I have to do, and I should've waited to get a Dell Altitude or something
+[u'Dell']
+
+
+well I guess I know what I have to do, and I should've waited to get a Dell Altitude or something
+[u'Dell']
+I'm investing money in laptop/notebook cause I don't have a Desktop PC well a wide varity of uses actually
+[u'Personal_computer', u'Laptop', u'Varity']
+
+
+I'm investing money in laptop/notebook cause I don't have a Desktop PC well a wide varity of uses actually
+[u'Personal_computer', u'Laptop', u'Varity']
+I do alot of video like movies and all that
+[u'Alot']
+
+
+I do alot of video like movies and all that
+[u'Alot']
+3D Modeling sometimes as well
+[u'3D_modeling']
+
+
+3D Modeling sometimes as well
+[u'3D_modeling']
+yeah and of course heavy Video editing
+[u'Video_editing']
+
+
+yeah and of course heavy Video editing
+[u'Video_editing']
+I am using RIGHT NOW a IBM Thinkpad 600X w/ Pentium III 500mhz and I am able to stream my movies to the PS3 just fine
+[u'IBM', u'Pentium', u'ThinkPad', u'National_Organization_for_Women', u'PlayStation_3', u'Streaming_media']
+
+
+I am using RIGHT NOW a IBM Thinkpad 600X w/ Pentium III 500mhz and I am able to stream my movies to the PS3 just fine
+[u'IBM', u'Pentium', u'ThinkPad', u'National_Organization_for_Women', u'PlayStation_3', u'Streaming_media']
+yes I know what you mean that is what I got the Emachines laptop for, if I need any power processing to be done
+[u'Laptop', u'EMachines']
+
+
+yes I know what you mean that is what I got the Emachines laptop for, if I need any power processing to be done
+[u'Laptop', u'EMachines']
+High Definition videos or 3D animations sometimes
+[u'3D_computer_graphics', u'High-definition_television']
+
+
+High Definition videos or 3D animations sometimes
+[u'3D_computer_graphics', u'High-definition_television']
+yeah I don't do much of that with this old laptop just streaming movies to the PS3 it was mostly a project just to see if it could do it
+[u'Laptop', u'PlayStation_3']
+
+
+yeah I don't do much of that with this old laptop just streaming movies to the PS3 it was mostly a project just to see if it could do it
+[u'Laptop', u'PlayStation_3']
+do you know of any clean up utility for ubuntu and xubuntu? like glary or ccleaner?
+[u'CCleaner', u'Ubuntu_(philosophy)', u'Xubuntu', u'List_of_utility_software']
+
+
+do you know of any clean up utility for ubuntu and xubuntu? like glary or ccleaner?
+[u'CCleaner', u'Ubuntu_(philosophy)', u'Xubuntu', u'List_of_utility_software']
+I think I came across something like ccleaner although I never needed such things with Linux in general
+[u'Linux']
+
+
+I think I came across something like ccleaner although I never needed such things with Linux in general
+[u'Linux']
+Linux doesn't need those types of programs? I am wondering because it seems like this laptop has been slowing down lately
+[u'Laptop']
+
+
+Linux doesn't need those types of programs? I am wondering because it seems like this laptop has been slowing down lately
+[u'Laptop']
+I'm sure you can find out more on Ubuntu Forums, cause I can't recall at the moment I'll try to remember though :-) slowing down, could be caused by a number of reasons, did you try a tool like htop? to monitor CPU/Mem usage
+[u'Central_processing_unit']
+
+
+I'm sure you can find out more on Ubuntu Forums, cause I can't recall at the moment I'll try to remember though :-) slowing down, could be caused by a number of reasons, did you try a tool like htop? to monitor CPU/Mem usage
+[u'Central_processing_unit']
+cool yeah I am still new to Linux and really feel pretty lost most the time yes my cpu has been running very high lately just to perform basic tasks
+[u'Linux']
+
+
+cool yeah I am still new to Linux and really feel pretty lost most the time yes my cpu has been running very high lately just to perform basic tasks
+[u'Linux']
+well htop is a CLI utility that would tell you what's the process using your CPU/Mem the most can you get it?
+[u'Command-line_interface', u'Central_processing_unit', u'Utility']
+
+
+first you need to know what's using your CPU yes it's a very useful tool
+[]
+as far as I recall ccleaner was mostly for Windows Registery, you don't have such thing in a Linux environment great :-)
+[u'Linux', u'Microsoft_Windows', u'CCleaner']
+
+
+yes ccleaner and glary is what I use for my windows op systems
+[]
+well you don't need that with Ubuntu, so let's see what's eating your system's resources got it installed?
+[u'Ubuntu_(philosophy)']
+
+
+first of all, do you do any production work on this Ubuntu?
+[]
+video editing?
+[u'Video_editing']
+
+
+video editing?
+[u'Video_editing']
+what tool are you using? OK back to your problem, was making sure of the tools you need most see if there updates available, then try to install htop again you had this problem earlier before I told you about htop?
+[u'Oklahoma']
+
+
+what tool are you using? OK back to your problem, was making sure of the tools you need most see if there updates available, then try to install htop again you had this problem earlier before I told you about htop?
+[u'Oklahoma']
+yeah I already made sure everything was up to date before I got on this chat no I think I know what is running my cpu up as far as processes I think its my torrent client
+[u'BitTorrent']
+
+
+yeah I already made sure everything was up to date before I got on this chat no I think I know what is running my cpu up as far as processes I think its my torrent client
+[u'BitTorrent']
+actually I am being swamped with some problems at the moment haha I am going to have to get off here and start takin care of some of this
+[u'Haha_(entertainer)']
+
+
+actually I am being swamped with some problems at the moment haha I am going to have to get off here and start takin care of some of this
+[u'Haha_(entertainer)']
+what torrent client is eating up your CPU?
+[u'Torrent_file', u'Central_processing_unit']
+
+
+what torrent client is eating up your CPU?
+[u'Torrent_file', u'Central_processing_unit']
+I am trying to do to much at one time transmission but it never has before so I am wondering why it is now
+[u'Electric_power_transmission']
+
+
+I am trying to do to much at one time transmission but it never has before so I am wondering why it is now
+[u'Electric_power_transmission']
+unfortunately I can't do that heh, I get nervous multitasking
+[u'Computer_multitasking']
+
+
+unfortunately I can't do that heh, I get nervous multitasking
+[u'Computer_multitasking']
+yeah I multitask alot hahah and I got ahead of myself at the moment
+[u'Alot']
+
+
+yeah I multitask alot hahah and I got ahead of myself at the moment
+[u'Alot']
+restarting your transmission is the shorter faster solution I wonder how you could find out it's Transmission though ;-)
+[u'Electric_power_transmission']
+
+
+restarting your transmission is the shorter faster solution I wonder how you could find out it's Transmission though ;-)
+[u'Electric_power_transmission']
+hahaha I pay close attention to how my computer acts at all times
+[u'Computer']
+
+
+hahaha I pay close attention to how my computer acts at all times
+[u'Computer']
+it's not an engine mek ;-)
+[u"People's_Mujahedin_of_Iran"]
+
+
+it's not an engine mek ;-)
+[u"People's_Mujahedin_of_Iran"]
+I am computer whisperer haha
+[u'Haha_(entertainer)', u'Computer']
+
+
+I am computer whisperer haha
+[u'Haha_(entertainer)', u'Computer']
+you use voice recognition to use your computer?
+[u'Speech_recognition']
+
+
+you use voice recognition to use your computer?
+[u'Speech_recognition']
+uh your last trasmission was jumbled so anyways hows the weather over there in idaho just messin around my pain meds are kickin in and feel kinda retarded
+[u'Meds', u'Pain', u'Idaho']
+
+
+[Finished in 31.5s]
