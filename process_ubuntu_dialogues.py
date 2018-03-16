@@ -87,8 +87,7 @@ def trace_all_dialogues(dir=PATH1):
             trace_relations(dialogue, True)
 
 
-def annotate_ubuntu_dialogs(dir=PATH, nlimit=3, offset=0):
-    n_files = 1
+def annotate_ubuntu_dialogs(dir=PATH):
     for root, dirs, files in os.walk(dir):
         # iterate over dialogues 
         for name in files:
@@ -105,11 +104,6 @@ def annotate_ubuntu_dialogs(dir=PATH, nlimit=3, offset=0):
                     dialog_line.append(entities)
                     print dialog_line
                     annotation_file.writerow(dialog_line)
-
-            # maintain file counter
-            n_files += 1
-            if n_files > nlimit:
-                return
 
 
 def count_ubuntu_dialogs(dir=PATH):
