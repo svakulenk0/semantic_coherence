@@ -15,9 +15,13 @@ DEMO_SERVICE = 'http://model.dbpedia-spotlight.org/en/annotate'
 
 
 def annotate_entities(text, service_address=DEMO_SERVICE):
-    entities = spotlight.annotate(service_address, text,
-                                  confidence=0.4, support=20)
-    return [entity['URI'].split('/')[-1] for entity in entities]
+    # .split('/')[-1]
+    try:
+        entities = spotlight.annotate(service_address, text,
+                                      confidence=0.4, support=20)
+        return list(set([entity['URI'] for entity in entities]))
+    except:
+        return None
 
 
 def test_annotate_entities():
