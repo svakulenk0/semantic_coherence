@@ -12,10 +12,10 @@ from collections import Counter
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
 
-PATH = './ubuntu/ubuntu-ranking-dataset-creator/src/dialogs'
+PATH = '../ubuntu-ranking-dataset-creator/src/dialogs'
 PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
-PATH1 = './ubuntu/ubuntu-ranking-dataset-creator/src/dialogs/555'
-SAMPLE_DIALOG = './ubuntu/ubuntu-ranking-dataset-creator/src/dialogs/135/9.tsv'
+PATH1 = '../ubuntu-ranking-dataset-creator/src/dialogs/555'
+SAMPLE_DIALOG = '../ubuntu-ranking-dataset-creator/src/dialogs/135/9.tsv'
 
 dialog_end_symbol = "__dialog_end__"
 
