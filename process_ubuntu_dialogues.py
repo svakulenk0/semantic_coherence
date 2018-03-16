@@ -12,10 +12,10 @@ from collections import Counter
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
 
-PATH = '../ubuntu-ranking-dataset-creator/src/dialogs'
+PATH = './ubuntu/dialogs'
 PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
-PATH1 = '../ubuntu-ranking-dataset-creator/src/dialogs/555'
-SAMPLE_DIALOG = '../ubuntu-ranking-dataset-creator/src/dialogs/135/9.tsv'
+PATH1 = './ubuntu/dialogs/555'
+SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 
 dialog_end_symbol = "__dialog_end__"
 
@@ -26,7 +26,6 @@ def create_negative_sample():
     take part of one dialogue and append it to another
     '''
     pass
-
 
 
 def translate_dialog_to_lists(dialog_filename):
