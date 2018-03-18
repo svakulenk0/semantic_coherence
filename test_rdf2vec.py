@@ -3,6 +3,8 @@ Created on Mar 18, 2016
 
 @author: svakulenko
 '''
+from numpy import asarray
+
 # 'DB2Vec_sg_500_5_5_15_2_500'
 DBPEDIA_EMBS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
 
