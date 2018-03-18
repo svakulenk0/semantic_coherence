@@ -6,10 +6,12 @@ Created on Mar 18, 2016
 from numpy import asarray
 
 # 'DB2Vec_sg_500_5_5_15_2_500'
-DBPEDIA_EMBS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
+# ./embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/12_inversePageRankSplit/DBpediaVecotrs200_20Shuffle.txt
+DBPEDIA_RDF2VEC_GENSIM = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
+DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
 
 
-def load_iteratively(emb_path=DBPEDIA_EMBS):
+def load_iteratively(emb_path=DBPEDIA_GLOBAL_PR):
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     embeddings_index = dict()
     f = open(emb_path)
@@ -25,7 +27,7 @@ def load_iteratively(emb_path=DBPEDIA_EMBS):
     print('Loaded %s word vectors.' % len(embeddings_index))
 
 
-def load_with_gensim(emb_path=DBPEDIA_EMBS):
+def load_with_gensim(emb_path=DBPEDIA_RDF2VEC_GENSIM):
     # loads the whole embeddings model into memory
     import gensim
     model = gensim.models.Word2Vec.load(emb_path)
