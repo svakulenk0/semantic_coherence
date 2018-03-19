@@ -117,11 +117,14 @@ def annotate_ubuntu_dialogs(dir=PATH):
                     annotation_file.writerow(dialog_line)
 
 
-def load_annotated_dialogues(vocabulary, path=PATH_ANNOTATIONS, vocab_path=VOCAB_PATH):
+def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS, vocab_path=VOCAB_PATH):
     # generate incorrect examples along the way
     encoded_docs = []
     labels = []
-    for file_name in os.listdir(path):
+    dialogues = os.listdir(path)
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+    for file_name in dialogues:
         print file_name
         encoded_doc = []
         with open(os.path.join(path, file_name),"rb") as dialog_file:
