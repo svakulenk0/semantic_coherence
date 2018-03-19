@@ -34,12 +34,12 @@ vocabulary = {u'<http://dbpedia.org/resource/Arch>': 1,
 # vocab_size =  len(vocabulary.keys())
 vocab_size =  6
 # test preprocessing input docs
-print preprocess(dialogues, vocabulary, input_length)
+X = preprocess(dialogues, vocabulary, input_length)
 
 # 3. Embeddings: load pre-trained entity embeddings reflecting the KG structure for each entity in the vocabulary
 # e.g. from global vectors pre-trained embeddings /DBpedia/2016-04/9_pageRank from:
 # http://data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt
-embeddings_dim = 200
-print populate_emb_matrix_from_file(vocabulary, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR)
+# embeddings_dim = 200
+# print populate_emb_matrix_from_file(vocabulary, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR)
 
-train(dialogues, labels, dialogues, labels, vocabulary, input_length)
+train(X, labels, X, labels, vocabulary, input_length)
