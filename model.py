@@ -14,7 +14,8 @@ https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras
 import gensim
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Embedding
+# from keras.layers import Flatten
+from keras.layers import Dense, Dropout, Embedding, Activation
 from keras.layers import Conv1D, GlobalMaxPooling1D
 
 from preprocess import populate_emb_matrix_from_file
