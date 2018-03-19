@@ -47,10 +47,10 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
     for line in embeddings:
         values = line.split()
-        word = values[0]
+        # strip <> to match the entity labels in global vectors 
+        word = values[0][1:-1]
         # print word
-        # strip <> for global vectors embeddings labels
-        if word[1:-1] in vocabulary.keys():
+        if word in vocabulary.keys():
             embedding_vector = asarray(values[1:], dtype='float32')
             # print word
             # print embedding_vector
