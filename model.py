@@ -20,7 +20,7 @@ from keras.layers import Conv1D, GlobalMaxPooling1D
 
 from preprocess import populate_emb_matrix_from_file
 
-PATH_EMBEDDINGS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
+# PATH_EMBEDDINGS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
 
 # define the model params
 # vocab_size = len(vocabulary)
@@ -43,18 +43,23 @@ def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
     return embedding_matrix
 
 
-def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
+def train(X_train, y_train, X_text, y_test, vocabulary_size, input_length, embeddings):
     '''
-    
+    Train CNN for classification of dialogues as entity sets
     '''
-    embedding_matrix = populate_emb_matrix_from_file(vocabulary)
-    print embedding_matrix
-    embeddings_dim = 200
+    # embedding_matrix = populate_emb_matrix_from_file(vocabulary)
+    # load saved embeddings matrix for the input layer
+    embedding_matrix = np.load(embeddings['path'])
+    embeddings_dim = embeddings['dims']
+
+    # number of non-zero rows, i.e. entities with embeddings
+    print len(np.where(a.any(axis=1))[0])
+    # print embedding_matrix
 
     # define the model architecture
     # simple
     model = Sequential()
-    model.add(Embedding(len(vocabulary)+1, embeddings_dim, weights=[embedding_matrix],
+    model.add(Embedding(vocabulary_size, embeddings_dim, weights=[embedding_matrix],
                         input_length=input_length, trainable=False))
 
     # simple Feedforward NN architecture without a hidden layer from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
