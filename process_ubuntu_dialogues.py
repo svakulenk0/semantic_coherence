@@ -106,6 +106,19 @@ def annotate_ubuntu_dialogs(dir=PATH):
                     annotation_file.writerow(dialog_line)
 
 
+def load_annotated_dialogues(path=PATH_ANNOTATIONS):
+    for file_name in os.listdir(path):
+        print file_name
+        with open(os.path.join(path, file_name),"rb") as dialog_file:
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
+            for dialog_line in dialog_reader:
+                # print dialog_line
+                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                entities = dialog_line[4]
+                if entities:
+                    print entities
+
+
 def count_ubuntu_dialogs(dir=PATH):
     n_files = 0
     for root, dirs, files in os.walk(dir):
@@ -189,4 +202,7 @@ def produce_dialog_stats(dir=PATH):
 
 
 if __name__ == '__main__':
-    annotate_ubuntu_dialogs()
+    # 1. annotate dialogues with DBpedia entities and save
+    # annotate_ubuntu_dialogs()
+    # 2. load annotated dialogues
+    load_annotated_dialogues()
