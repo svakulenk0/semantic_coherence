@@ -29,18 +29,18 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
-def populate_emb_matrix_from_file(n_dialogues=2, embeddings_dim=200, emb_path=DBPEDIA_GLOBAL_PR):
-    create_vocabulary(n_dialogues)
+def populate_emb_matrix_from_file(limit_n=None, embeddings_dim=200, emb_path=DBPEDIA_GLOBAL_PR):
+    create_vocabulary(limit_n)
     vocabulary = load_vocabulary()
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
     embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
     with open(emb_path) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
-    # TODO save embedding_matrix for entities in the training dataset
-    # 
+        # TODO save embedding_matrix for entities in the training dataset
+        np.save('embeddings_layer.npy', embedding_matrix)
     print embedding_matrix
-    return embedding_matrix
+    # return embedding_matrix
 
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):

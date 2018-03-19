@@ -95,6 +95,10 @@ def trace_all_dialogues(dir=PATH1):
 
 
 def annotate_ubuntu_dialogs(dir=PATH):
+    '''
+    the dialogues are annotated with the lists of the corresponding DBpedia entities of the format:
+    'http://dbpedia.org/resource/Sudo'
+    '''
     for root, dirs, files in os.walk(dir):
         # iterate over dialogues 
         for name in files:
@@ -156,11 +160,13 @@ def load_vocabulary(path=VOCAB_PATH):
         return vocabulary
 
 
-def create_vocabulary(n_dialogues, path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
+def create_vocabulary(n_dialogues=None, path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
-
-    for file_name in os.listdir(path)[:n_dialogues]:
+    dialogues = os.listdir(path)
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+    for file_name in dialogues:
         print file_name
         with open(os.path.join(path, file_name),"rb") as dialog_file:
             dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
@@ -274,7 +280,7 @@ if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save
     # annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
-    create_vocabulary()
-    # test_load_vocabulary()
+    # create_vocabulary()
+    test_load_vocabulary()
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
