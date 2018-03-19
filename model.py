@@ -59,8 +59,8 @@ def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     # summarize the model
     print(model.summary())
 
-    # begin training
-    model.fit(X_train, y_train, validation_split=0.2, epochs=50, verbose=0)
+    # begin training validation_split=0.2, 
+    model.fit(X_train, y_train, epochs=50, verbose=0)
     # evaluate the model
     loss, accuracy = model.evaluate(X_text, y_test, verbose=0)
     print('Accuracy: %f' % (accuracy * 100))
