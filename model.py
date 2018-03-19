@@ -44,7 +44,11 @@ def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
 
 
 def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
+    '''
+    
+    '''
     embedding_matrix = populate_emb_matrix_from_file(vocabulary)
+    print embedding_matrix
     embeddings_dim = 200
 
     # define the model architecture
@@ -52,15 +56,37 @@ def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     model = Sequential()
     model.add(Embedding(len(vocabulary)+1, embeddings_dim, weights=[embedding_matrix],
                         input_length=input_length, trainable=False))
-    model.add(Flatten())
-    model.add(Dense(1, activation='sigmoid'))
-    # compile the model
+    model.add(Dropout(0.2))
+    
+    # simple Feedforward NN architecture without a hidden layer from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+    # model.add(Flatten())
+    # model.add(Dense(1, activation='sigmoid'))
+
+    # CNN architecture adopted from https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
+    # we add a Convolution1D, which will learn filters
+    # word group filters of size filter_length:
+    model.add(Conv1D(filters,
+                     kernel_size,
+                     padding='valid',
+                     activation='relu',
+                     strides=1))
+    # we use max pooling:
+    model.add(GlobalMaxPooling1D())
+    # We add a vanilla hidden layer:
+    model.add(Dense(hidden_dims))
+    model.add(Dropout(0.2))
+    model.add(Activation('relu'))
+    # We project onto a single unit output layer, and squash it with a sigmoid:
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
+
+    # # compile the model
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
-    # summarize the model
+    # # summarize the model
     print(model.summary())
 
-    # begin training validation_split=0.2, 
-    model.fit(X_train, y_train, epochs=50, verbose=0)
+    # begin training
+    model.fit(X_train, y_train, validation_split=0.2, epochs=50, verbose=0)
     # evaluate the model
     loss, accuracy = model.evaluate(X_text, y_test, verbose=0)
     print('Accuracy: %f' % (accuracy * 100))
