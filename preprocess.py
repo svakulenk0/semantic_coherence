@@ -42,7 +42,7 @@ def populate_emb_matrix_from_file(n_dialogues=2, embeddings_dim=200, emb_path=DB
     return embedding_matrix
 
 
-def load_embeddings(vocabulary, embeddings, embedding_matrix):
+def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
     for line in embeddings:
         values = line.split()
