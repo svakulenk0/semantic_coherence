@@ -11,6 +11,7 @@ for classification of dialogues given DBpedia concept annotations as input:
 
 https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
 '''
+import numpy as np
 import gensim
 
 from keras.models import Sequential
