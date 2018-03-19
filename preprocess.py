@@ -8,13 +8,15 @@ Preprocess input data
 from numpy import zeros
 from numpy import asarray
 
+import gensim
 from keras.preprocessing.sequence import pad_sequences
 
 from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
+from train_model import X_path, y_path
 
 # entity label of the format: <http://dbpedia.org/resource/Albedo>
 DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
-
+# RDF2VEC = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
 # go over the dataset and create vocabulary of concepts mentioned in the dataset, save it
 
 # load the vocabulary word2id
@@ -29,22 +31,59 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
+def prepare_dataset(n_dialogues=10):
+    # create_vocabulary()
+
+    vocabulary = load_vocabulary()
+
+    # load correct and incorrect examples
+    X, labels = load_annotated_dialogues(vocabulary, n_dialogues)
+    print X
+    print labels
+    # save dataset
+    # save embedding_matrix for entities in the training dataset
+    np.save(X_path, X)
+    np.save(y_path, labels)
+
+
 def populate_emb_matrix_from_file(limit_n=None, embeddings_dim=200, emb_path=DBPEDIA_GLOBAL_PR):
-    create_vocabulary(limit_n)
+    # create_vocabulary(limit_n)
     vocabulary = load_vocabulary()
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
     embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
     with open(emb_path) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
-        # TODO save embedding_matrix for entities in the training dataset
-        np.save('embeddings_layer.npy', embedding_matrix)
+        # save embedding_matrix for entities in the training dataset
+        np.save('embedding_matrix.npy', embedding_matrix)
     print embedding_matrix
     # return embedding_matrix
 
 
+def load_embeddings_gensim(embeddings_dim=200):
+    vocabulary = load_vocabulary()
+    # create a weight matrix for entities in training docs
+    embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
+        
+    # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
+    model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
+    embedded_entities = model.wv.keys()
+    # test loaded model on a similarity example
+    # model.most_similar(positive=['dbr:Rocky'], topn=100)  # rdf2vec
+    # model.most_similar(positive=['rocky'], topn=100)  # word2vec
+    
+    for entity, entity_id in vocabulary.items():
+        if entity is in embedded_entities:
+            embedding_matrix[entity_id] = model.wv[entity]
+
+    # save embedding_matrix for entities in the training dataset
+    np.save('embedding_matrix.npy', embedding_matrix)
+    print embedding_matrix
+
+
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
+    # embeddings in a text file one per line for Global vectors and glove word embeddings
     for line in embeddings:
         values = line.split()
         # strip <> to match the entity labels in global vectors 
@@ -65,4 +104,5 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 
 if __name__ == '__main__':
-    populate_emb_matrix_from_file()
+    # populate_emb_matrix_from_file()
+    prepare_dataset()
