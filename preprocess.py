@@ -89,11 +89,10 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         values = line.split()
         # strip <> to match the entity labels in global vectors 
         word = values[0][1:-1]
-        # print word
+        print word
         if word in vocabulary.keys():
             embedding_vector = np.asarray(values[1:], dtype='float32')
-            # print word
-            # print embedding_vector
+            print word, embedding_vector
             # return
             embedding_matrix[vocabulary[word]] = embedding_vector
             
@@ -106,5 +105,5 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
-    prepare_dataset()
-    # populate_emb_matrix_from_file()
+    # prepare_dataset()
+    populate_emb_matrix_from_file()
