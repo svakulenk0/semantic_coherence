@@ -10,6 +10,7 @@ https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras
 from numpy import array
 
 from preprocess import preprocess, populate_emb_matrix_from_file
+from model import train
 
 DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
 
@@ -39,4 +40,6 @@ print preprocess(dialogues, vocabulary, input_length)
 # e.g. from global vectors pre-trained embeddings /DBpedia/2016-04/9_pageRank from:
 # http://data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt
 embeddings_dim = 200
-print populate_emb_matrix_from_file(vocabulary, vocab_size, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR)
+print populate_emb_matrix_from_file(vocabulary, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR)
+
+train(dialogues, labels, dialogues, labels, vocabulary, input_length)

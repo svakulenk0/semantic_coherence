@@ -26,10 +26,10 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
-def populate_emb_matrix_from_file(vocabulary, vocab_size, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR):
+def populate_emb_matrix_from_file(vocabulary, embeddings_dim=200, emb_path=DBPEDIA_GLOBAL_PR):
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
-    embedding_matrix = zeros((vocab_size, embeddings_dim))
+    embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
     with open(emb_path) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
     # save embedding_matrix for entities in the training dataset
@@ -37,6 +37,7 @@ def populate_emb_matrix_from_file(vocabulary, vocab_size, embeddings_dim, emb_pa
 
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
+    words = 0
     for line in embeddings:
         values = line.split()
         word = values[0]
@@ -46,5 +47,9 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
             # print embedding_vector
             # return
             embedding_matrix[vocabulary[word]] = embedding_vector
+            
+            words += 1
+            if words >= len(vocabulary):
+                return embedding_matrix
     # save embedding_matrix for entities in the training dataset
     return embedding_matrix
