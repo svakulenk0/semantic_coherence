@@ -17,7 +17,7 @@ input_length = 254
 
 # load dataset
 X = np.load(X_path)
-y = np.load(labels_path)
+y = np.load(y_path)
 
 # labels = np.full((X.shape[0]), 1)
 # input_length = X.shape[1]
