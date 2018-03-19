@@ -26,21 +26,21 @@ from preprocess import populate_emb_matrix_from_file
 # vocab_size = len(vocabulary)
 
 
-def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
-    # load pre-trained KG entity embeddings
-    vector_model = gensim.models.Word2Vec.load(emb_path)
-    print('Loaded %s entity vectors.' % len(vector_model.wv))
+# def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
+#     # load pre-trained KG entity embeddings
+#     vector_model = gensim.models.Word2Vec.load(emb_path)
+#     print('Loaded %s entity vectors.' % len(vector_model.wv))
 
-    # create a weight matrix for entities in training docs
-    embedding_matrix = zeros((vocab_size, embeddings_dim))
-    for entity, i in vocabulary.items():
-        embedding_vector = vector_model.wv.get(entity)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
+#     # create a weight matrix for entities in training docs
+#     embedding_matrix = zeros((vocab_size, embeddings_dim))
+#     for entity, i in vocabulary.items():
+#         embedding_vector = vector_model.wv.get(entity)
+#         if embedding_vector is not None:
+#             embedding_matrix[i] = embedding_vector
 
-    del vector_model
-    # save embedding_matrix for entities in the training dataset
-    return embedding_matrix
+#     del vector_model
+#     # save embedding_matrix for entities in the training dataset
+#     return embedding_matrix
 
 
 def train(X_train, y_train, X_text, y_test, vocabulary_size, input_length, embeddings):
