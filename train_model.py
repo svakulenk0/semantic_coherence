@@ -7,14 +7,13 @@ Train CNN to classify dialogues using DBpedia entity annotations as input
 '''
 import numpy as np
 
-from process_ubuntu_dialogues import load_annotated_dialogues, load_vocabulary
-from model import 
+from model import train
+from preprocess import X_path, y_path
+
 
 # dataset params
 vocabulary_size = 19659
 input_length = 254
-X_path = 'ubuntu127932_X.npy'
-y_path = 'ubuntu127932_y.npy'
 
 # load dataset
 X = np.load(X_path)

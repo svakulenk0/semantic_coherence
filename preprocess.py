@@ -11,8 +11,10 @@ from numpy import asarray
 import gensim
 from keras.preprocessing.sequence import pad_sequences
 
-from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
-from train_model import X_path, y_path
+from process_ubuntu_dialogues import load_vocabulary, create_vocabulary, load_annotated_dialogues
+
+X_path = 'ubuntu127932_X.npy'
+y_path = 'ubuntu127932_y.npy'
 
 # entity label of the format: <http://dbpedia.org/resource/Albedo>
 DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
@@ -73,7 +75,7 @@ def load_embeddings_gensim(embeddings_dim=200):
     # model.most_similar(positive=['rocky'], topn=100)  # word2vec
     
     for entity, entity_id in vocabulary.items():
-        if entity is in embedded_entities:
+        if entity in embedded_entities:
             embedding_matrix[entity_id] = model.wv[entity]
 
     # save embedding_matrix for entities in the training dataset
