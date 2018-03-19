@@ -8,14 +8,20 @@ Iterate over the dialogues from the Ubuntu corpus
 import os
 import unicodecsv, csv
 from collections import Counter
+import pickle
+import ast
+from numpy import array
+import random
 
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
+from keras.preprocessing.sequence import pad_sequences
 
 PATH = './ubuntu/dialogs'
 PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
+VOCAB_PATH = './ubuntu/vocab.pkl'
 
 dialog_end_symbol = "__dialog_end__"
 
@@ -106,7 +112,53 @@ def annotate_ubuntu_dialogs(dir=PATH):
                     annotation_file.writerow(dialog_line)
 
 
-def load_annotated_dialogues(path=PATH_ANNOTATIONS):
+def load_annotated_dialogues(vocabulary, path=PATH_ANNOTATIONS, vocab_path=VOCAB_PATH):
+    # generate incorrect examples along the way
+    encoded_docs = []
+    labels = []
+    for file_name in os.listdir(path):
+        print file_name
+        encoded_doc = []
+        with open(os.path.join(path, file_name),"rb") as dialog_file:
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
+            for dialog_line in dialog_reader:
+                # print dialog_line
+                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                entities = dialog_line[4]
+                if entities:
+                    # print entities
+                    for entity in ast.literal_eval(entities):
+                        # incode entities with ids
+                        if entity in vocabulary.keys():
+                            # print len(vocabulary.keys())
+                            encoded_doc.append(vocabulary[entity])
+                        else:
+                            encoded_doc.append(vocabulary['<UNK>'])
+        encoded_docs.append(encoded_doc)
+        labels.append(1)
+        # generate counter example by picking as many entities at random from the vocabulary
+        # to generate a document of the same # entities as a positive example
+        encoded_docs.append(random.sample(xrange(1, len(vocabulary.keys())), len(encoded_doc)))
+        labels.append(0)
+
+    # 3 correct + 3 incorrect = 6 docs
+    print len(encoded_docs), 'documents encoded'
+    padded_docs = pad_sequences(encoded_docs, padding='post')
+    print padded_docs
+    return padded_docs, array(labels)
+
+
+def load_vocabulary(path=VOCAB_PATH):
+    with open(VOCAB_PATH, 'rb') as f:
+        vocabulary = pickle.load(f)
+        print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
+        return vocabulary
+
+
+def create_vocabulary(path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
+    # entities -> int ids
+    vocabulary = {'<UNK>': 0}
+
     for file_name in os.listdir(path):
         print file_name
         with open(os.path.join(path, file_name),"rb") as dialog_file:
@@ -115,8 +167,17 @@ def load_annotated_dialogues(path=PATH_ANNOTATIONS):
                 # print dialog_line
                 # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
                 entities = dialog_line[4]
+                # print entities
                 if entities:
-                    print entities
+                    for entity in ast.literal_eval(entities):
+                        if entity not in vocabulary.keys():
+                            # print len(vocabulary.keys())
+                            vocabulary[entity] = len(vocabulary.keys())
+
+    # save vocabulary on disk
+    with open(save_to, 'wb') as f:
+        pickle.dump(vocabulary, f)
+    print 'Saved vocabulary with', len(vocabulary.keys()), 'entities'
 
 
 def count_ubuntu_dialogs(dir=PATH):
@@ -201,8 +262,18 @@ def produce_dialog_stats(dir=PATH):
     print '#Unique entities per dialogue:', n_unique_entities_dist
 
 
+def test_load_vocabulary():
+    vocabulary = load_vocabulary()
+    # sort by id
+    for entity, entity_id in sorted(vocabulary.iteritems(), key=lambda (k,v): (v,k)):
+        print  entity, entity_id
+
+
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save
     # annotate_ubuntu_dialogs()
-    # 2. load annotated dialogues
-    load_annotated_dialogues()
+    # 2. load all entities and save into a vocabulary dictionary
+    create_vocabulary()
+    # test_load_vocabulary()
+    # 3. load annotated dialogues convert entities to ids using vocabulary
+    # load_annotated_dialogues()
