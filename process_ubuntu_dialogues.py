@@ -156,11 +156,11 @@ def load_vocabulary(path=VOCAB_PATH):
         return vocabulary
 
 
-def create_vocabulary(path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
+def create_vocabulary(n_dialogues, path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
 
-    for file_name in os.listdir(path):
+    for file_name in os.listdir(path)[:n_dialogues]:
         print file_name
         with open(os.path.join(path, file_name),"rb") as dialog_file:
             dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
