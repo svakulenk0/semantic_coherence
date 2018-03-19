@@ -5,8 +5,7 @@ svakulenko
 
 Preprocess input data
 '''
-from numpy import zeros
-from numpy import asarray
+import numpy as np
 
 import gensim
 from keras.preprocessing.sequence import pad_sequences
@@ -53,7 +52,7 @@ def populate_emb_matrix_from_file(limit_n=None, embeddings_dim=200, emb_path=DBP
     vocabulary = load_vocabulary()
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
-    embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
+    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_dim))
     with open(emb_path) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
@@ -65,7 +64,7 @@ def populate_emb_matrix_from_file(limit_n=None, embeddings_dim=200, emb_path=DBP
 def load_embeddings_gensim(embeddings_dim=200):
     vocabulary = load_vocabulary()
     # create a weight matrix for entities in training docs
-    embedding_matrix = zeros((len(vocabulary)+1, embeddings_dim))
+    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_dim))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
     model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
@@ -92,7 +91,7 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         word = values[0][1:-1]
         # print word
         if word in vocabulary.keys():
-            embedding_vector = asarray(values[1:], dtype='float32')
+            embedding_vector = np.asarray(values[1:], dtype='float32')
             # print word
             # print embedding_vector
             # return
@@ -106,5 +105,6 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 
 if __name__ == '__main__':
-    # populate_emb_matrix_from_file()
+    # encode the whole datase and save it into 2 matrices X, y
     prepare_dataset()
+    # populate_emb_matrix_from_file()
