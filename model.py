@@ -95,8 +95,8 @@ def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     batch_size = 32
     epochs = 50
 
-    # begin training
-    model.fit(X_train, y_train, validation_split=0.2, epochs=epochs, verbose=0,
+    # begin training validation_split=0.2, 
+    model.fit(X_train, y_train, epochs=epochs, verbose=0,
               batch_size=batch_size)
     # evaluate the model
     loss, accuracy = model.evaluate(X_text, y_test, verbose=0)
