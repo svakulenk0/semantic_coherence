@@ -12,6 +12,7 @@ from keras.preprocessing.sequence import pad_sequences
 
 from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
 
+# entity label of the format: <http://dbpedia.org/resource/Albedo>
 DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
 
 # go over the dataset and create vocabulary of concepts mentioned in the dataset, save it
@@ -47,7 +48,9 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
     for line in embeddings:
         values = line.split()
         word = values[0]
-        if word in vocabulary.keys():
+        # print word
+        # strip <> for global vectors embeddings labels
+        if word[1:-1] in vocabulary.keys():
             embedding_vector = asarray(values[1:], dtype='float32')
             # print word
             # print embedding_vector
