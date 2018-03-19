@@ -14,9 +14,8 @@ https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras
 import gensim
 
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Flatten
-from keras.layers import Embedding
+from keras.layers import Dense, Dropout, Flatten, Embedding
+from keras.layers import Conv1D, GlobalMaxPooling1D
 
 from preprocess import populate_emb_matrix_from_file
 
@@ -56,13 +55,18 @@ def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     model = Sequential()
     model.add(Embedding(len(vocabulary)+1, embeddings_dim, weights=[embedding_matrix],
                         input_length=input_length, trainable=False))
-    model.add(Dropout(0.2))
-    
+
     # simple Feedforward NN architecture without a hidden layer from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # model.add(Flatten())
     # model.add(Dense(1, activation='sigmoid'))
 
     # CNN architecture adopted from https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
+    # model parameters:
+    filters = 250
+    kernel_size = 3
+    hidden_dims = 250
+
+    model.add(Dropout(0.2))
     # we add a Convolution1D, which will learn filters
     # word group filters of size filter_length:
     model.add(Conv1D(filters,
@@ -85,8 +89,14 @@ def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     # # summarize the model
     print(model.summary())
 
+
+    # training parameters:
+    batch_size = 32
+    epochs = 50
+
     # begin training
-    model.fit(X_train, y_train, validation_split=0.2, epochs=50, verbose=0)
+    model.fit(X_train, y_train, validation_split=0.2, epochs=epochs, verbose=0,
+              batch_size=batch_size)
     # evaluate the model
     loss, accuracy = model.evaluate(X_text, y_test, verbose=0)
     print('Accuracy: %f' % (accuracy * 100))
