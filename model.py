@@ -24,7 +24,6 @@ PATH_EMBEDDINGS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/mode
 
 # define the model params
 # vocab_size = len(vocabulary)
-# embeddings_dim = 200
 
 
 def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
@@ -46,6 +45,7 @@ def load_embeddings(vocabulary, emb_path=PATH_EMBEDDINGS):
 
 def train(X_train, y_train, X_text, y_test, vocabulary, input_length):
     embedding_matrix = populate_emb_matrix_from_file(vocabulary)
+    embeddings_dim = 200
 
     # define the model architecture
     # simple
