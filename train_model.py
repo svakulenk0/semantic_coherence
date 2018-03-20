@@ -53,8 +53,13 @@ y_train = y[:-num_validation_samples]
 x_val = x[-num_validation_samples:]
 y_val = y[-num_validation_samples:]
 
-train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings['DBpedia_GlobalVectors']['9_pageRank'])
+embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
+
+model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings[embeddings_name])
 # train(X, y, X, y, vocabulary_size, input_length, embeddings['GloVe'])
+
+# Save the model weights.
+model.save_weights('./models/%s_saved_wt.h5' % embeddings_name)
 
 # evaluate the model
 loss, accuracy = model.evaluate(X_text, y_test, verbose=1)

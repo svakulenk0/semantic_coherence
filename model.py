@@ -92,14 +92,14 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
     model.add(Activation('sigmoid'))
 
     # # compile the model
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     # # summarize the model
     print(model.summary())
 
 
     # training parameters:
     batch_size = 128
-    epochs = 10
+    epochs = 5
 
     # begin training validation_split=0.2, 
     model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=batch_size, validation_data=(X_val, y_val))
