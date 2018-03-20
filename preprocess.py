@@ -44,7 +44,7 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
-def prepare_dataset(n_dialogues=10):
+def prepare_dataset(n_dialogues=None):
     # create_vocabulary()
 
     vocabulary = load_vocabulary()
@@ -118,7 +118,7 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
-    # prepare_dataset()
+    prepare_dataset()
     # populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
-    populate_emb_matrix_from_file(embeddings['GloVe'])
+    # populate_emb_matrix_from_file(embeddings['GloVe'])
     # populate_emb_matrix_from_file(embeddings['word2vec'])
