@@ -121,11 +121,16 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS
     # generate incorrect examples along the way
     encoded_docs = []
     labels = []
+    vocabulary_entities = vocabulary.keys()
+
     dialogues = os.listdir(path)
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
+    
     for file_name in dialogues:
+        # extract entities from dialogue and encode them with ids from the vocabulary
         print file_name
+        doc_entities = []
         encoded_doc = []
         with open(os.path.join(path, file_name),"rb") as dialog_file:
             dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
@@ -136,12 +141,14 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS
                 if entities:
                     # print entities
                     for entity in ast.literal_eval(entities):
-                        # incode entities with ids
-                        if entity in vocabulary.keys():
-                            # print len(vocabulary.keys())
-                            encoded_doc.append(vocabulary[entity])
-                        else:
-                            encoded_doc.append(vocabulary['<UNK>'])
+                        # skip duplicate entities within the same document
+                        if entity not in doc_entities:
+                            # incode entities with ids
+                            if entity in vocabulary_entities:
+                                # print len(vocabulary.keys())
+                                encoded_doc.append(vocabulary[entity])
+                            else:
+                                encoded_doc.append(vocabulary['<UNK>'])
         encoded_docs.append(encoded_doc)
         labels.append(1)
         # generate counter example by picking as many entities at random from the vocabulary
