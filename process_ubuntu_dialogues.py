@@ -18,8 +18,8 @@ from dbpedia_spotlight import annotate_entities
 from keras.preprocessing.sequence import pad_sequences
 
 PATH = './ubuntu/dialogs'
-# PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
-PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_sample'
+PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
+# PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_sample'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 VOCAB_PATH = './ubuntu/vocab.pkl'
@@ -288,9 +288,9 @@ def test_load_vocabulary():
 
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save
-    # annotate_ubuntu_dialogs()
+    annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
     # create_vocabulary()
-    test_load_vocabulary()
+    # test_load_vocabulary()
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
