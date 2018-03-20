@@ -15,8 +15,20 @@ from process_ubuntu_dialogues import load_vocabulary, create_vocabulary, load_an
 X_path = 'ubuntu127932_X.npy'
 y_path = 'ubuntu127932_y.npy'
 
+# embeddings params
+embeddings = {
+                'DBpedia_GlobalVectors': {'9_pageRank': {'matrix_path': 'embedding_matrix_DBpedia_GloVe_9PR.npy', 'dims' : 200,
+                'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'}},
+                
+                'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
+                'all_path': './embeddings/GoogleNews-vectors-negative300.bin'},
+                
+                'GloVe': {'matrix_path': 'embedding_matrix_GloVe.npy', 'dims' : 300,
+                'all_path': './embeddings/glove.840B.300d.txt'}
+             }
+
 # entity label of the format: <http://dbpedia.org/resource/Albedo>
-DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
+# DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
 # RDF2VEC = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
 # go over the dataset and create vocabulary of concepts mentioned in the dataset, save it
 
@@ -47,16 +59,16 @@ def prepare_dataset(n_dialogues=10):
     np.save(y_path, labels)
 
 
-def populate_emb_matrix_from_file(limit_n=None, embeddings_dim=200, emb_path=DBPEDIA_GLOBAL_PR):
+def populate_emb_matrix_from_file(embeddings, limit_n=None):
     # create_vocabulary(limit_n)
     vocabulary = load_vocabulary()
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
-    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_dim))
+    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings['dims']))
     with open(emb_path) as embs_file:
-        embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
+        embedding_matrix = load_embeddings(embeddings['all_path'], embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
-        np.save('embedding_matrix.npy', embedding_matrix)
+        np.save(embeddings['matrix_path'], embedding_matrix)
     print embedding_matrix
     # return embedding_matrix
 
@@ -89,10 +101,11 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         values = line.split()
         # strip <> to match the entity labels in global vectors 
         word = values[0][1:-1]
-        print word
+        # print word
         if word in vocabulary.keys():
             embedding_vector = np.asarray(values[1:], dtype='float32')
-            print word, embedding_vector
+            print word
+            print embedding_vector
             # return
             embedding_matrix[vocabulary[word]] = embedding_vector
             
@@ -106,4 +119,6 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
     # prepare_dataset()
-    populate_emb_matrix_from_file()
+    # populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
+    populate_emb_matrix_from_file(embeddings['GloVe'])
+    # populate_emb_matrix_from_file(embeddings['word2vec'])
