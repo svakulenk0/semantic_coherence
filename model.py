@@ -50,7 +50,7 @@ def train(X_train, y_train, X_text, y_test, vocabulary_size, input_length, embed
     '''
     # embedding_matrix = populate_emb_matrix_from_file(vocabulary)
     # load saved embeddings matrix for the input layer
-    embedding_matrix = np.load(embeddings['path'])
+    embedding_matrix = np.load(embeddings['matrix_path'])
     embeddings_dim = embeddings['dims']
 
     # number of non-zero rows, i.e. entities with embeddings
