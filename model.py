@@ -102,7 +102,7 @@ def train(X_train, y_train, X_text, y_test, vocabulary_size, input_length, embed
     epochs = 50
 
     # begin training validation_split=0.2, 
-    model.fit(X_train, y_train, epochs=epochs, verbose=0, batch_size=batch_size)
+    model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=batch_size)
     # evaluate the model
     loss, accuracy = model.evaluate(X_text, y_test, verbose=0)
     print('Accuracy: %f' % (accuracy * 100))
