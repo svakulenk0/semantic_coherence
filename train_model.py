@@ -19,7 +19,7 @@ input_length = 254
 X = np.load(X_path)
 print X.shape[0], X.shape[1]
 y = np.load(y_path)
-print y.shape[0], y.shape[1]
+print y.shape[0]
 
 # labels = np.full((X.shape[0]), 1)
 # input_length = X.shape[1]
