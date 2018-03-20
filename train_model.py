@@ -3,27 +3,59 @@
 svakulenko
 19 Mar 2018
 
-Train CNN to classify dialogues using DBpedia entity annotations as input
+Load and split the dataset to train the classification model
 '''
 import numpy as np
 
 from model import train
 from preprocess import X_path, y_path, embeddings
 
+TEST_SPLIT = 0.2
+VALIDATION_SPLIT = 0.2
 
 # dataset params
 vocabulary_size = 19660  # unique entities + extra token 0 for UNK
-input_length = 254
+# input_length = 254
 
 # load dataset
-X = np.load(X_path)
-print X.shape[0], X.shape[1]
-y = np.load(y_path)
-print y.shape[0]
+data = np.load(X_path)
+# print X.shape[0], X.shape[1]
+labels = np.load(y_path)
+# print y.shape[0]
 
 # labels = np.full((X.shape[0]), 1)
-# input_length = X.shape[1]
-# print 'max input length:', input_length
+input_length = data.shape[1]
+print 'max input length:', input_length
 
-train(X, y, X, y, vocabulary_size, input_length, embeddings['DBpedia_GlobalVectors']['9_pageRank'])
+
+# split the data into a test set and a training set
+# https://github.com/keras-team/keras/blob/master/examples/pretrained_word_embeddings.py
+indices = np.arange(data.shape[0])
+np.random.shuffle(indices)
+data = data[indices]
+labels = labels[indices]
+num_validation_samples = int(TEST_SPLIT * data.shape[0])
+
+x = data[:-num_validation_samples]
+y = labels[:-num_validation_samples]
+X_test = data[-num_validation_samples:]
+y_test = labels[-num_validation_samples:]
+
+# split the training set into a training set and a validation set
+indices = np.arange(x.shape[0])
+np.random.shuffle(indices)
+x = x[indices]
+y = y[indices]
+num_validation_samples = int(VALIDATION_SPLIT * x.shape[0])
+
+x_train = x[:-num_validation_samples]
+y_train = y[:-num_validation_samples]
+x_val = x[-num_validation_samples:]
+y_val = y[-num_validation_samples:]
+
+train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings['DBpedia_GlobalVectors']['9_pageRank'])
 # train(X, y, X, y, vocabulary_size, input_length, embeddings['GloVe'])
+
+# evaluate the model
+loss, accuracy = model.evaluate(X_text, y_test, verbose=1)
+print('Accuracy: %f' % (accuracy * 100))
