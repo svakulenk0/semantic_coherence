@@ -54,7 +54,7 @@ def train(X_train, y_train, X_text, y_test, vocabulary_size, input_length, embed
     embeddings_dim = embeddings['dims']
 
     # number of non-zero rows, i.e. entities with embeddings
-    print len(np.where(a.any(axis=1))[0])
+    print len(np.where(embedding_matrix.any(axis=1))[0])
     # print embedding_matrix
 
     # define the model architecture
