@@ -12,7 +12,7 @@ from preprocess import X_path, y_path, embeddings
 
 
 # dataset params
-vocabulary_size = 19659
+vocabulary_size = 19660  # unique entities + extra token 0 for UNK
 input_length = 254
 
 # load dataset
