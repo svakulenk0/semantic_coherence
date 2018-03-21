@@ -97,7 +97,7 @@ def trace_all_dialogues(dir=PATH1):
             trace_relations(dialogue, True)
 
 
-def annotate_ubuntu_dialogs(dir=PATH, offset=1000):
+def annotate_ubuntu_dialogs(dir=PATH, offset=3):
     '''
     the dialogues are annotated with the lists of the corresponding DBpedia entities of the format:
     'http://dbpedia.org/resource/Sudo'
