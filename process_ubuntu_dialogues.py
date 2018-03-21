@@ -19,7 +19,8 @@ from dbpedia_spotlight import annotate_entities
 from keras.preprocessing.sequence import pad_sequences
 
 PATH = './ubuntu/dialogs'
-PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
+# PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
+PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_only_URIs'
 # PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_sample'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
