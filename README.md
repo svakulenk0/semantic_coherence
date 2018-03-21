@@ -15,10 +15,10 @@ of a conversation or a natural language text in general. Mapping the sequence of
 
 preprocess.py:
 
+```python
 X_path = 'ubuntu127932_X.npy'
 y_path = 'ubuntu127932_y.npy'
 
-# embeddings params
 embeddings = {
                 'DBpedia_GlobalVectors_9_pageRank': {'matrix_path': 'embedding_matrix_DBpedia_GloVe_9PR.npy', 'dims' : 200,
                 'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'},
@@ -29,6 +29,7 @@ embeddings = {
                 'GloVe': {'matrix_path': 'embedding_matrix_GloVe.npy', 'dims' : 300,
                 'all_path': './embeddings/glove.840B.300d.txt'}
              }
+```
 
 * Load embeddings for the entities in the vocabulary:
 
