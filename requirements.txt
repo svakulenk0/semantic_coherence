@@ -15,6 +15,7 @@ futures==3.2.0
 gast==0.2.0
 gensim==3.4.0
 grpcio==1.10.0
+h5py==2.7.1
 html5lib==0.9999999
 idna==2.6
 jmespath==0.9.3
