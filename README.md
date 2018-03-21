@@ -4,8 +4,12 @@ of a conversation or a natural language text in general. Mapping the sequence of
 
 # Requirements
 
+pip install -r requirements.txt
+
+
 * unicodecsv
 * spotlight (pip install pyspotlight)
+* ...
 
 
 
