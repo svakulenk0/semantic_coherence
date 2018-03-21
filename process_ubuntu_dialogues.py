@@ -323,10 +323,10 @@ def test_load_vocabulary():
 
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save
-    # annotate_ubuntu_dialogs()
+    annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
     # create_vocabulary()
-    create_vocabulary_words()
+    # create_vocabulary_words()
     # test_load_vocabulary()
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
