@@ -10,7 +10,9 @@ import numpy as np
 import gensim
 from keras.preprocessing.sequence import pad_sequences
 
-from process_ubuntu_dialogues import load_vocabulary, create_vocabulary, load_annotated_dialogues
+from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
+from process_ubuntu_dialogues import load_annotated_dialogues, VOCAB_ENTITIES_PATH
+from process_ubuntu_dialogues import load_dialogues_words, VOCAB_WORDS_PATH
 
 X_path = 'ubuntu127932_X.npy'
 y_path = 'ubuntu127932_y.npy'
@@ -44,19 +46,43 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
-def prepare_dataset(n_dialogues=None):
+def prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH, n_dialogues=None):
+    '''
+    encode_dialogue is a function: load_annotated_dialogues for the dialogue
+    as a sequence of entities for entity embeddings representation
+    or load_dialogues_words for the dialogue as a sequence of words
+    for word embeddings representation
+    '''
     # create_vocabulary()
 
-    vocabulary = load_vocabulary()
+    vocabulary = load_vocabulary(vocab_path)
 
     # load correct and incorrect examples
-    X, labels = load_annotated_dialogues(vocabulary, n_dialogues)
+    # dialogue as a sequence of entities for entity embeddings
+        # X, labels = load_annotated_dialogues(vocabulary, n_dialogues)
+    # dialogue as a sequence of words for word embeddings
+    X, labels = encode_dialogue(vocabulary, n_dialogues)
     print X
+    print X.shape[0], 'dialogues', X.shape[1], 'max entities/words per dialogue'
     print labels
     # save dataset
     # save embedding_matrix for entities in the training dataset
     np.save(X_path, X)
     np.save(y_path, labels)
+
+
+def load_text_gloves(embeddings=embeddings['GloVe']):
+    vocabulary = load_vocabulary()
+    # strip vocabulary to surface form
+
+    # create a weight matrix for entities in training docs
+
+    # embedding_matrix = np.zeros((len(vocabulary)+1, embeddings['dims']))
+    # with open(emb_path) as embs_file:
+    #     embedding_matrix = load_embeddings(embeddings['all_path'], embedding_matrix, vocabulary)
+    #     # save embedding_matrix for entities in the training dataset
+    #     np.save(embeddings['matrix_path'], embedding_matrix)
+    # print embedding_matrix
 
 
 def populate_emb_matrix_from_file(embeddings, limit_n=None):
@@ -99,9 +125,10 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
     # embeddings in a text file one per line for Global vectors and glove word embeddings
     for line in embeddings:
         values = line.split()
-        # strip <> to match the entity labels in global vectors 
-        word = values[0][1:-1]
-        # print word
+        # match the entity labels in vector embeddings
+        word = values[0]
+        # word = word[1:-1]  # Dbpedia global vectors strip <> to match the entity labels 
+        print word
         if word in vocabulary.keys():
             embedding_vector = np.asarray(values[1:], dtype='float32')
             print word
@@ -118,7 +145,8 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
-    prepare_dataset()
+    prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
+    # prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
     # populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
-    # populate_emb_matrix_from_file(embeddings['GloVe'])
+    # load_text_gloves()
     # populate_emb_matrix_from_file(embeddings['word2vec'])

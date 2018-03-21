@@ -211,12 +211,15 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS
                             else:
                                 encoded_doc.append(vocabulary['<UNK>'])
                             doc_entities.append(entity)
-        encoded_docs.append(encoded_doc)
-        labels.append(1)
-        # generate counter example by picking as many entities at random from the vocabulary
-        # to generate a document of the same # entities as a positive example
-        encoded_docs.append(random.sample(xrange(1, len(vocabulary.keys())), len(encoded_doc)))
-        labels.append(0)
+
+        # skip docs with 1 entity
+        if len(encoded_doc) > 1:
+            encoded_docs.append(encoded_doc)
+            labels.append(1)
+            # generate counter example by picking as many entities at random from the vocabulary
+            # to generate a document of the same # entities as a positive example
+            encoded_docs.append(random.sample(xrange(1, len(vocabulary.keys())), len(encoded_doc)))
+            labels.append(0)
 
     # 3 correct + 3 incorrect = 6 docs
     print len(encoded_docs), 'documents encoded'
