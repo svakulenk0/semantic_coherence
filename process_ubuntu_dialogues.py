@@ -12,6 +12,7 @@ import pickle
 import ast
 from numpy import array
 import random
+import json
 
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
@@ -22,7 +23,8 @@ PATH_ANNOTATIONS = './ubuntu/annotated_dialogues'
 # PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_sample'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
-VOCAB_PATH = './ubuntu/vocab.pkl'
+VOCAB_ENTITIES_PATH = './ubuntu/vocab_entities.pkl'
+VOCAB_WORDS_PATH = './ubuntu/vocab_words.pkl'
 
 dialog_end_symbol = "__dialog_end__"
 
@@ -107,17 +109,17 @@ def annotate_ubuntu_dialogs(dir=PATH):
             print annotation_path
             with open(file_path,"rb") as dialog_file:
                 dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t', quoting=csv.QUOTE_NONE)
-                annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8')
+                annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8', delimiter='\t')
                 for dialog_line in dialog_reader:
                     # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
                     utterance = dialog_line[3]
                     entities = annotate_entities(utterance)
-                    dialog_line.append(entities)
+                    dialog_line.append(json.dumps(entities))
                     print dialog_line
                     annotation_file.writerow(dialog_line)
 
 
-def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS, vocab_path=VOCAB_PATH):
+def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS, vocab_path=VOCAB_ENTITIES_PATH):
     # generate incorrect examples along the way
     encoded_docs = []
     labels = []
@@ -163,14 +165,47 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS
     return padded_docs, array(labels)
 
 
-def load_vocabulary(path=VOCAB_PATH):
-    with open(VOCAB_PATH, 'rb') as f:
+def load_vocabulary(path):
+    with open(path, 'rb') as f:
         vocabulary = pickle.load(f)
         print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
         return vocabulary
 
 
-def create_vocabulary(n_dialogues=None, path=PATH_ANNOTATIONS, save_to=VOCAB_PATH):
+def create_vocabulary_words(n_dialogues=None, path=PATH_ANNOTATIONS, save_to=VOCAB_WORDS_PATH):
+    # entities -> int ids
+    vocabulary = {'<UNK>': 0}
+    dialogues = os.listdir(path)
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+    for file_name in dialogues:
+        print file_name
+        with open(os.path.join(path, file_name),"rb") as dialog_file:
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
+            for dialog_line in dialog_reader:
+                # print dialog_line
+                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                entities = dialog_line[4]
+                # print entities
+                # if entities != null:
+                entities = json.loads(entities)
+                # print entities
+                if entities:
+                    for entity in entities:
+                        # print entity
+                        print entity['surfaceForm']
+
+                #         if entity not in vocabulary.keys():
+                #             # print len(vocabulary.keys())
+                #             vocabulary[entity] = len(vocabulary.keys())
+
+    # save vocabulary on disk
+    with open(save_to, 'wb') as f:
+        pickle.dump(vocabulary, f)
+    print 'Saved vocabulary with', len(vocabulary.keys()), 'words'
+
+
+def create_vocabulary(n_dialogues=None, path=PATH_ANNOTATIONS, save_to=VOCAB_ENTITIES_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
     dialogues = os.listdir(path)
@@ -288,9 +323,10 @@ def test_load_vocabulary():
 
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save
-    annotate_ubuntu_dialogs()
+    # annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
     # create_vocabulary()
+    create_vocabulary_words()
     # test_load_vocabulary()
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
