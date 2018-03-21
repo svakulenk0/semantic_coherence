@@ -11,6 +11,8 @@ of a conversation or a natural language text in general. Mapping the sequence of
 
 # Run
 
+Summary: paths to the input matrices and embeddings are specified in preprocess.py. 1) Generate embeddings matrix preprocess.py: populate_emb_matrix_from_file; 2) train_model.py
+
 * Specify path to the input matrices X y and the embeddings matrix:
 
 preprocess.py:
@@ -31,11 +33,11 @@ embeddings = {
              }
 ```
 
-* Load embeddings for the entities in the vocabulary:
+1. Load embeddings for the entities in the vocabulary:
 
 preprocess.py: populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
 
-* Train CNN model:
+2. Train CNN model:
 
 Point 'embeddings_name' to the embeddings configuration in the 'embeddings' dictionary, e.g. 'DBpedia_GlobalVectors_9_pageRank'
 
