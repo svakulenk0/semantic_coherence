@@ -243,18 +243,21 @@ def create_vocabulary_words(n_dialogues=None, path=PATH_ANNOTATIONS, save_to=VOC
         with open(os.path.join(path, file_name),"rb") as dialog_file:
             dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
             for dialog_line in dialog_reader:
-                print dialog_line
+                # print dialog_line
                 # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
-                entities = json.loads(dialog_line[4])
-                # print entities
-                if entities:
-                    for entity in entities:
-                        # print entity
-                        entitiy_words = entity['surfaceForm']
-                        for word in entitiy_words.split():
-                            if word not in vocabulary.keys():
-                                # print len(vocabulary.keys())
-                                vocabulary[word] = len(vocabulary.keys())
+                try:
+                    entities = json.loads(dialog_line[4])
+                    # print entities
+                    if entities:
+                        for entity in entities:
+                            # print entity
+                            entitiy_words = entity['surfaceForm']
+                            for word in entitiy_words.split():
+                                if word not in vocabulary.keys():
+                                    # print len(vocabulary.keys())
+                                    vocabulary[word] = len(vocabulary.keys())
+                except:
+                    print dialog_line
 
     # save vocabulary on disk
     with open(save_to, 'wb') as f:
