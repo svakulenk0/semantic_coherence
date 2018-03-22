@@ -122,6 +122,7 @@ def load_embeddings_gensim(embeddings_dim=200):
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
+    vocabulary_entities = vocabulary.keys()
     # embeddings in a text file one per line for Global vectors and glove word embeddings
     for line in embeddings:
         values = line.split()
@@ -129,10 +130,10 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         word = values[0]
         # word = word[1:-1]  # Dbpedia global vectors strip <> to match the entity labels 
         print word
-        if word in vocabulary.keys():
+        if word in vocabulary_entities:
             embedding_vector = np.asarray(values[1:], dtype='float32')
-            print word
-            print embedding_vector
+            # print word
+            # print embedding_vector
             # return
             embedding_matrix[vocabulary[word]] = embedding_vector
             
