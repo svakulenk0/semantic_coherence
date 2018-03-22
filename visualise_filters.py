@@ -65,8 +65,12 @@ sample = data[i:i+1]
 y = labels[i:i+1]
 print sample, y
 
+print(model.predict(sample))
+
+
 # embed entities
 X = [[embedding_matrix[entity_id] for entity_id in dialogue] for dialogue in sample ]
+print X
 
 
 def nice_imshow(ax, data, vmin=None, vmax=None, cmap=None):
