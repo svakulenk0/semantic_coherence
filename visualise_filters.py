@@ -17,7 +17,7 @@ import matplotlib.cm as cm
 # utility functions
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from preprocess import X_path, y_path
+from preprocess import X_path, y_path, embeddings
 
 
 embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
@@ -54,7 +54,7 @@ layer_dict = dict([(layer.name, layer) for layer in model.layers[1:]])
 data = np.load(X_path)
 labels = np.load(y_path)
 
-embedding_matrix = np.load(embeddings['matrix_path'])
+embedding_matrix = np.load(embeddings[embeddings_name]['matrix_path'])
 
 # pick a random dialogue sample
 i = 4600
