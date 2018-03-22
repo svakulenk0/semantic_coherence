@@ -91,8 +91,8 @@ def populate_emb_matrix_from_file(embeddings_name, limit_n=None):
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings[embeddings_name]['dims']))
-    with open(emb_path) as embs_file:
-        embedding_matrix = load_embeddings(embeddings[embeddings_name]['all_path'], embedding_matrix, vocabulary)
+    with open(embeddings[embeddings_name]['all_path']) as embs_file:
+        embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
         np.save(embeddings[embeddings_name]['matrix_path'], embedding_matrix)
     print embedding_matrix
