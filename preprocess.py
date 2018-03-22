@@ -14,8 +14,8 @@ from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
 from process_ubuntu_dialogues import load_annotated_dialogues, VOCAB_ENTITIES_PATH
 from process_ubuntu_dialogues import load_dialogues_words, VOCAB_WORDS_PATH
 
-X_path = 'ubuntu127932_X.npy'
-y_path = 'ubuntu127932_y.npy'
+X_path = './sample127932/ubuntu127932_X.npy'
+y_path = './sample127932/ubuntu127932_y.npy'
 
 # embeddings params
 embeddings = {
@@ -85,16 +85,16 @@ def load_text_gloves(embeddings=embeddings['GloVe']):
     # print embedding_matrix
 
 
-def populate_emb_matrix_from_file(embeddings, limit_n=None):
+def populate_emb_matrix_from_file(embeddings_name, limit_n=None):
     # create_vocabulary(limit_n)
     vocabulary = load_vocabulary()
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
-    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings['dims']))
+    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings[embeddings_name]['dims']))
     with open(emb_path) as embs_file:
-        embedding_matrix = load_embeddings(embeddings['all_path'], embedding_matrix, vocabulary)
+        embedding_matrix = load_embeddings(embeddings[embeddings_name]['all_path'], embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
-        np.save(embeddings['matrix_path'], embedding_matrix)
+        np.save(embeddings[embeddings_name]['matrix_path'], embedding_matrix)
     print embedding_matrix
     # return embedding_matrix
 
@@ -145,8 +145,9 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
-    prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
+    # prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
     # prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
-    # populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
+    embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
+    populate_emb_matrix_from_file(embeddings_name)
     # load_text_gloves()
     # populate_emb_matrix_from_file(embeddings['word2vec'])
