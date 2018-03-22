@@ -4,8 +4,15 @@ of a conversation or a natural language text in general. Mapping the sequence of
 
 # Requirements
 
-pip install -r requirements.txt
+Python 2
 
+```
+virtualenv myvenv
+
+source myvenv/bin/activate
+
+pip install -r requirements.txt
+```
 
 * unicodecsv
 * spotlight (pip install pyspotlight)
@@ -39,7 +46,7 @@ embeddings = {
 
 1. Load embeddings for the entities in the vocabulary:
 
-preprocess.py: populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors']['9_pageRank'])
+preprocess.py: populate_emb_matrix_from_file(embeddings['DBpedia_GlobalVectors_9_pageRank'])
 
 2. Train CNN model:
 
