@@ -12,6 +12,8 @@ import numpy as np
 import keras
 from keras import backend as K
 
+import matplotlib
+matplotlib.use('Agg')
 import pylab as pl
 import matplotlib.cm as cm
 # utility functions
