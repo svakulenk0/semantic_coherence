@@ -26,7 +26,7 @@ PATH_ANNOTATIONS = './ubuntu/annotated_dialogues_sample'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 # VOCAB_ENTITIES_PATH = './ubuntu/vocab_entities.pkl'
-VOCAB_ENTITIES_PATH = './ubuntu/vocab.pkl'
+VOCAB_ENTITIES_PATH = './sample127932/vocab.pkl'
 VOCAB_WORDS_PATH = './ubuntu/vocab_words.pkl'
 
 dialog_end_symbol = "__dialog_end__"
@@ -230,7 +230,7 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ANNOTATIONS
     return padded_docs, array(labels)
 
 
-def load_vocabulary(path):
+def load_vocabulary(path=VOCAB_ENTITIES_PATH):
     with open(path, 'rb') as f:
         vocabulary = pickle.load(f)
         print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
@@ -389,11 +389,11 @@ def test_load_vocabulary(path):
 
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save (create dir ./ubuntu/annotated_dialogues)
-    # annotate_ubuntu_dialogs()
+    annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
     # create_vocabulary()
         # map words to ids for word vectors
-    create_vocabulary_words()
-    test_load_vocabulary(VOCAB_WORDS_PATH)
+    # create_vocabulary_words()
+    # test_load_vocabulary(VOCAB_WORDS_PATH)
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
