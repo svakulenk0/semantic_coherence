@@ -62,5 +62,11 @@ model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, emb
 loss, accuracy = model.evaluate(X_test, y_test, verbose=1)
 print('Accuracy: %f' % (accuracy * 100))
 
-# Save the model weights.
-model.save_weights('./models/%s_saved_wt.h5' % embeddings_name)
+# Save the trained model
+# serialize model to JSON
+model_json = model.to_json()
+with open("./models/%s_model_127932.json" % embeddings_name, "w") as json_file:
+    json_file.write(model_json)
+# serialize weights to HDF5
+model.save_weights('./models/%s_weights_127932.h5' % embeddings_name)
+print("Saved model to disk")
