@@ -44,7 +44,7 @@ from preprocess import populate_emb_matrix_from_file
 #     return embedding_matrix
 
 
-def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length):
+def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embeddings_dim):
     # define the CNN model architecture
     # adopted from https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
     
@@ -52,7 +52,6 @@ def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length):
     filters = 250
     kernel_size = 3
     hidden_dims = 250
-    embeddings_dim = embeddings['dims']
 
     model = Sequential()
     model.add(Embedding(vocabulary_size, embeddings_dim, weights=[embedding_matrix],
@@ -93,7 +92,7 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
     print len(np.where(embedding_matrix.any(axis=1))[0])
     # print embedding_matrix
 
-    model = get_cnn_architecture(vocabulary_size, embedding_matrix, input_length)
+    model = get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embeddings['dims'])
     # # summarize the model
     print(model.summary())
 
