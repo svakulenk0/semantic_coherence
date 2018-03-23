@@ -23,7 +23,7 @@ embeddings = {
                 'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'},
                 
                 
-                'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : 200,
+                'rdf2vec': {'matrix_path': 'embedding_matrix.npy', 'dims' : 200,
                 'all_path': '/home/cochez/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},                
 
                 'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
@@ -135,7 +135,7 @@ def load_embeddings_gensim(embeddings_name):
             print "missing entity" + rdf2vec_entity_label
 
     # save embedding_matrix for entities in the training dataset
-    np.save('embedding_matrix.npy', embedding_matrix)
+    np.save(embeddings[embeddings_name]['matrix_path'], embedding_matrix)
     print embedding_matrix
 
 
