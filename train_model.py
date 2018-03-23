@@ -10,7 +10,7 @@ import numpy as np
 from model import train
 from preprocess import X_path, y_path, embeddings
 
-embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
+embeddings_name = 'rdf2vec'
 # training parameters:
 batch_size = 128
 epochs = 5
