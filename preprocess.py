@@ -109,8 +109,11 @@ def load_embeddings_gensim(embeddings_name):
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings[embeddings_name]['dims']))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
-    model = gensim.models.KeyedVectors.load_word2vec_format(embeddings[embeddings_name]['all_path'], binary=True)
+    #model = gensim.models.KeyedVectors.load_word2vec_format(embeddings[embeddings_name]['all_path'], binary=True)
+    #embedded_entities = model.wv
+    model = gensim.models.Word2Vec.load(embeddings[embeddings_name]['all_path'])
     embedded_entities = model.wv
+
 
     # test loaded model on a similarity example
     # model.most_similar(positive=['dbr:Rocky'], topn=100)  # rdf2vec
@@ -119,9 +122,11 @@ def load_embeddings_gensim(embeddings_name):
     for entity, entity_id in vocabulary.items():
         # strip entity label format to rdf2vec label format
         rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
-        print rdf2vec_entity_label
+        #print rdf2vec_entity_label
         if rdf2vec_entity_label in embedded_entities:
             embedding_matrix[entity_id] = model.wv[entity]
+        else:
+			print "missing entity" + rdf2vec_entity_label
 
     # save embedding_matrix for entities in the training dataset
     np.save('embedding_matrix.npy', embedding_matrix)
