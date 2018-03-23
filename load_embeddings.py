@@ -15,10 +15,7 @@ from process_ubuntu_dialogues import load_annotated_dialogues, VOCAB_ENTITIES_PA
 from process_ubuntu_dialogues import load_dialogues_words, VOCAB_WORDS_PATH
 from embeddings import *
 
-# input matrix
-X_path = './sample127932/ubuntu127932_X.npy'
-y_path = './sample127932/ubuntu127932_y.npy'
-
+PATH = './embeddings_npy/'
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
@@ -48,7 +45,7 @@ def load_embeddings_lines(embeddings_config, label):
     with open(embeddings_config['path']) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
-        np.save(label+'.npy', embedding_matrix)
+        np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
 
 
@@ -69,7 +66,7 @@ def load_embeddings_gensim(embeddings_config, label):
             embedding_matrix[entity_id] = model.wv[entity]
 
     # save embedding_matrix for entities in the training dataset
-    np.save(label+'.npy', embedding_matrix)
+    np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
 
 
