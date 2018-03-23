@@ -36,11 +36,14 @@ def annotate_shortest_paths(source=PATH_ENTITIES, target=PATH_SHORTEST_PATHS):
                             entity = entity.split('/')[-1].replace(')', '\)').replace('(', '\(').replace(',', '\,')
                             if entity not in previous_entities:
                                 # print entity
-                                if previous_entities:
-                                    # add links to the new entity from all entities mentioned previously through KG relations
-                                    paths.extend(get_topk_paths(previous_entities, [entity], k=5, max_length=250000))
-                                    print paths
-                                previous_entities.append(entity)
+                                try:
+                                    if previous_entities:
+                                        # add links to the new entity from all entities mentioned previously through KG relations
+                                        paths.extend(get_topk_paths(previous_entities, [entity], k=5, max_length=250000))
+                                        print paths
+                                    previous_entities.append(entity)
+                                except:
+                                    pass
             if paths:
                 paths_file.write((file + '\t' + '\t'.join(paths)).encode('utf-8') + '\n')
 
