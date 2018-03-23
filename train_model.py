@@ -10,6 +10,10 @@ import numpy as np
 from model import train
 from preprocess import X_path, y_path, embeddings
 
+embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
+# training parameters:
+batch_size = 128
+epochs = 5
 TEST_SPLIT = 0.2
 VALIDATION_SPLIT = 0.2
 
@@ -53,9 +57,7 @@ y_train = y[:-num_validation_samples]
 x_val = x[-num_validation_samples:]
 y_val = y[-num_validation_samples:]
 
-embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
-
-model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings[embeddings_name])
+model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings[embeddings_name], batch_size, epochs)
 # train(X, y, X, y, vocabulary_size, input_length, embeddings['GloVe'])
 
 # evaluate the model

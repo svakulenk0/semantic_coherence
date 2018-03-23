@@ -44,35 +44,19 @@ from preprocess import populate_emb_matrix_from_file
 #     return embedding_matrix
 
 
-def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddings):
-    '''
-    Train CNN for classification of dialogues as entity sets
-    '''
-    # embedding_matrix = populate_emb_matrix_from_file(vocabulary)
-    # load saved embeddings matrix for the input layer
-    embedding_matrix = np.load(embeddings['matrix_path'])
-    embeddings_dim = embeddings['dims']
-
-    # number of non-zero rows, i.e. entities with embeddings
-    print len(np.where(embedding_matrix.any(axis=1))[0])
-    # print embedding_matrix
-
-    # define the model architecture
-    # simple
-    model = Sequential()
-    model.add(Embedding(vocabulary_size, embeddings_dim, weights=[embedding_matrix],
-                        input_length=input_length, trainable=False))
-
-    # simple Feedforward NN architecture without a hidden layer from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
-    # model.add(Flatten())
-    # model.add(Dense(1, activation='sigmoid'))
-
-    # CNN architecture adopted from https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
+def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length):
+    # define the CNN model architecture
+    # adopted from https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
+    
     # model parameters:
     filters = 250
     kernel_size = 3
     hidden_dims = 250
+    embeddings_dim = embeddings['dims']
 
+    model = Sequential()
+    model.add(Embedding(vocabulary_size, embeddings_dim, weights=[embedding_matrix],
+                        input_length=input_length, trainable=False))
     model.add(Dropout(0.2))
     # we add a Convolution1D, which will learn filters
     # word group filters of size filter_length:
@@ -93,13 +77,25 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
 
     # # compile the model
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    
+    return model
+
+
+def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddings, batch_size=128, epochs=5):
+    '''
+    Train CNN for classification of dialogues as entity sets
+    '''
+    # embedding_matrix = populate_emb_matrix_from_file(vocabulary)
+    # load saved embeddings matrix for the input layer
+    embedding_matrix = np.load(embeddings['matrix_path'])
+
+    # number of non-zero rows, i.e. entities with embeddings
+    print len(np.where(embedding_matrix.any(axis=1))[0])
+    # print embedding_matrix
+
+    model = get_cnn_architecture(vocabulary_size, embedding_matrix, input_length)
     # # summarize the model
     print(model.summary())
-
-
-    # training parameters:
-    batch_size = 128
-    epochs = 5
 
     # begin training validation_split=0.2, 
     model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=batch_size, validation_data=(X_val, y_val))
