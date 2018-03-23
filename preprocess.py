@@ -22,6 +22,10 @@ embeddings = {
                 'DBpedia_GlobalVectors_9_pageRank': {'matrix_path': 'embedding_matrix_DBpedia_GloVe_9PR.npy', 'dims' : 200,
                 'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'},
                 
+                'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : TODO,
+                'all_path': 'TODO'},
+                
+
                 'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
                 'all_path': './embeddings/GoogleNews-vectors-negative300.bin'},
                 
@@ -99,20 +103,24 @@ def populate_emb_matrix_from_file(embeddings_name, limit_n=None):
     # return embedding_matrix
 
 
-def load_embeddings_gensim(embeddings_dim=200):
+def load_embeddings_gensim(embeddings_name):
     vocabulary = load_vocabulary()
     # create a weight matrix for entities in training docs
-    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_dim))
+    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings[embeddings_name]['dims']))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
-    model = gensim.models.KeyedVectors.load_word2vec_format('./GoogleNews-vectors-negative300.bin', binary=True)
-    embedded_entities = model.wv.keys()
+    model = gensim.models.KeyedVectors.load_word2vec_format(embeddings[embeddings_name]['all_path'], binary=True)
+    embedded_entities = model.wv
+
     # test loaded model on a similarity example
     # model.most_similar(positive=['dbr:Rocky'], topn=100)  # rdf2vec
     # model.most_similar(positive=['rocky'], topn=100)  # word2vec
     
     for entity, entity_id in vocabulary.items():
-        if entity in embedded_entities:
+        # strip entity label format to rdf2vec label format
+        rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
+        print rdf2vec_entity_label
+        if rdf2vec_entity_label in embedded_entities:
             embedding_matrix[entity_id] = model.wv[entity]
 
     # save embedding_matrix for entities in the training dataset
@@ -148,7 +156,9 @@ if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
     # prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
     # prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
-    embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
-    populate_emb_matrix_from_file(embeddings_name)
+    # embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
+    # populate_emb_matrix_from_file(embeddings_name)
+    embeddings_name = 'rdf2vec'
+    load_embeddings_gensim(embeddings_name)
     # load_text_gloves()
     # populate_emb_matrix_from_file(embeddings['word2vec'])
