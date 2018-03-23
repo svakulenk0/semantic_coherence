@@ -22,9 +22,9 @@ embeddings = {
                 'DBpedia_GlobalVectors_9_pageRank': {'matrix_path': 'embedding_matrix_DBpedia_GloVe_9PR.npy', 'dims' : 200,
                 'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'},
                 
-                'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : TODO,
-                'all_path': 'TODO'},
                 
+                'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : 200,
+                'all_path': '~/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},                
 
                 'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
                 'all_path': './embeddings/GoogleNews-vectors-negative300.bin'},
