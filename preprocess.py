@@ -24,7 +24,7 @@ embeddings = {
                 
                 
                 'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : 200,
-                'all_path': '~/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},                
+                'all_path': '/home/cochez/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},                
 
                 'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
                 'all_path': './embeddings/GoogleNews-vectors-negative300.bin'},
@@ -119,14 +119,20 @@ def load_embeddings_gensim(embeddings_name):
     # model.most_similar(positive=['dbr:Rocky'], topn=100)  # rdf2vec
     # model.most_similar(positive=['rocky'], topn=100)  # word2vec
     
+    count = 0
     for entity, entity_id in vocabulary.items():
+        count += 1
+        if count % 100 == 0:
+            print str(count) + " done"
+        print entity, entity_id
         # strip entity label format to rdf2vec label format
-        rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
+        #rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
         #print rdf2vec_entity_label
+        rdf2vec_entity_label = '<' + entity + '>'
         if rdf2vec_entity_label in embedded_entities:
-            embedding_matrix[entity_id] = model.wv[entity]
+            embedding_matrix[entity_id] = embedded_entities[entity]
         else:
-			print "missing entity" + rdf2vec_entity_label
+            print "missing entity" + rdf2vec_entity_label
 
     # save embedding_matrix for entities in the training dataset
     np.save('embedding_matrix.npy', embedding_matrix)
