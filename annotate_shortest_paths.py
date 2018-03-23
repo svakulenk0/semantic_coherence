@@ -15,16 +15,17 @@ from hdt_topk import get_topk_paths
 PATH_SHORTEST_PATHS = './ubuntu/paths.txt'
 
 
-def annotate_shortest_paths(source=PATH_ENTITIES, target=PATH_SHORTEST_PATHS):
+def annotate_shortest_paths(offset=748, source=PATH_ENTITIES, target=PATH_SHORTEST_PATHS):
     '''
     the dialogues are annotated with shortest paths from DBpedia KG
     '''
-    with open(target, 'w') as paths_file:
+    with open(target, 'a') as paths_file:
         # iterate over dialogues
-        for file in os.listdir(source):
+        for file in os.listdir(source)[offset:]:
             previous_entities = []
             paths = []
             with open(os.path.join(source, file),"rb") as dialog_file:
+                print file
                 dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
                 for dialog_line in dialog_reader:
                     # print dialog_line
