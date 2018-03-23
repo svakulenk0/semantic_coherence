@@ -124,13 +124,13 @@ def load_embeddings_gensim(embeddings_name):
         count += 1
         if count % 100 == 0:
             print str(count) + " done"
-        print entity, entity_id
+        #print entity, entity_id
         # strip entity label format to rdf2vec label format
         #rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
         #print rdf2vec_entity_label
         rdf2vec_entity_label = '<' + entity + '>'
         if rdf2vec_entity_label in embedded_entities:
-            embedding_matrix[entity_id] = embedded_entities[entity]
+            embedding_matrix[entity_id] = embedded_entities[rdf2vec_entity_label]
         else:
             print "missing entity" + rdf2vec_entity_label
 
