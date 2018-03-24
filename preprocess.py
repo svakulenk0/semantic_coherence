@@ -22,9 +22,9 @@ embeddings = {
                 'DBpedia_GlobalVectors_9_pageRank': {'matrix_path': 'embedding_matrix_DBpedia_GloVe_9PR.npy', 'dims' : 200,
                 'all_path': './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'},
                 
-                'rdf2vec': {'matrix_path': 'embedding_matrix_rdf2vec.npy', 'dims' : TODO,
-                'all_path': 'TODO'},
                 
+                'rdf2vec': {'matrix_path': 'embedding_matrix.npy', 'dims' : 200,
+                'all_path': '/home/cochez/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},                
 
                 'word2vec': {'matrix_path': 'embedding_matrix_word2vec.npy', 'dims' : 300,
                 'all_path': './embeddings/GoogleNews-vectors-negative300.bin'},
@@ -109,22 +109,33 @@ def load_embeddings_gensim(embeddings_name):
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings[embeddings_name]['dims']))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
-    model = gensim.models.KeyedVectors.load_word2vec_format(embeddings[embeddings_name]['all_path'], binary=True)
+    #model = gensim.models.KeyedVectors.load_word2vec_format(embeddings[embeddings_name]['all_path'], binary=True)
+    #embedded_entities = model.wv
+    model = gensim.models.Word2Vec.load(embeddings[embeddings_name]['all_path'])
     embedded_entities = model.wv
+
 
     # test loaded model on a similarity example
     # model.most_similar(positive=['dbr:Rocky'], topn=100)  # rdf2vec
     # model.most_similar(positive=['rocky'], topn=100)  # word2vec
     
+    count = 0
     for entity, entity_id in vocabulary.items():
+        count += 1
+        if count % 100 == 0:
+            print str(count) + " done"
+        #print entity, entity_id
         # strip entity label format to rdf2vec label format
-        rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
-        print rdf2vec_entity_label
+        #rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
+        #print rdf2vec_entity_label
+        rdf2vec_entity_label = '<' + entity + '>'
         if rdf2vec_entity_label in embedded_entities:
-            embedding_matrix[entity_id] = model.wv[entity]
+            embedding_matrix[entity_id] = embedded_entities[rdf2vec_entity_label]
+        else:
+            print "missing entity" + rdf2vec_entity_label
 
     # save embedding_matrix for entities in the training dataset
-    np.save('embedding_matrix.npy', embedding_matrix)
+    np.save(embeddings[embeddings_name]['matrix_path'], embedding_matrix)
     print embedding_matrix
 
 
