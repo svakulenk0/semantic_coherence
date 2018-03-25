@@ -19,9 +19,8 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         values = line.split()
         # match the entity labels in vector embeddings
         word = values[0]
-        # print word
         if word in vocabulary:
-            print word
+            # print word
             embedding_vector = np.asarray(values[1:], dtype='float32')
             embedding_matrix[vocabulary[word]] = embedding_vector
             words += 1
@@ -36,6 +35,8 @@ def load_embeddings_lines(embeddings_config, label, vocabulary):
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_config['dims']))
     with open(embeddings_config['path']) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
+        # number of non-zero rows, i.e. entities with embeddings
+        len(np.where(embedding_matrix.any(axis=1))[0])
         # save embedding_matrix for entities in the training dataset
         np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
@@ -54,7 +55,8 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
         print word
         if word in embedded_entities:
             embedding_matrix[word_id] = model.wv[word]
-
+    # number of non-zero rows, i.e. entities with embeddings
+    len(np.where(embedding_matrix.any(axis=1))[0])
     # save embedding_matrix for entities in the training dataset
     np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
@@ -66,12 +68,8 @@ if __name__ == '__main__':
 
     label = 'GloVe'
     print label
-    embedding_matrix = load_embeddings_lines(word_embeddings[label], label, vocabulary)
-    # number of non-zero rows, i.e. entities with embeddings
-    print len(np.where(embedding_matrix.any(axis=1))[0])
+    load_embeddings_lines(word_embeddings[label], label, vocabulary)
 
     label = 'word2vec'
     print label
-    embedding_matrix = load_embeddings_gensim(word_embeddings[label], label, vocabulary)
-    # number of non-zero rows, i.e. entities with embeddings
-    print len(np.where(embedding_matrix.any(axis=1))[0])
+    load_embeddings_gensim(word_embeddings[label], label, vocabulary)
