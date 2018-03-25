@@ -65,8 +65,12 @@ if __name__ == '__main__':
 
     label = 'GloVe'
     print label
-    load_embeddings_lines(word_embeddings[label], label, vocabulary)
+    embedding_matrix = load_embeddings_lines(word_embeddings[label], label, vocabulary)
+    # number of non-zero rows, i.e. entities with embeddings
+    print len(np.where(embedding_matrix.any(axis=1))[0])
 
     label = 'word2vec'
     print label
-    load_embeddings_gensim(word_embeddings[label], label, vocabulary)
+    embedding_matrix = load_embeddings_gensim(word_embeddings[label], label, vocabulary)
+    # number of non-zero rows, i.e. entities with embeddings
+    print len(np.where(embedding_matrix.any(axis=1))[0])
