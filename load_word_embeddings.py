@@ -9,6 +9,7 @@ import numpy as np
 
 from embeddings import word_embeddings
 from process_ubuntu_dialogues import load_vocabulary, VOCAB_WORDS_PATH
+from load_embeddings import PATH
 
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
@@ -18,11 +19,11 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         values = line.split()
         # match the entity labels in vector embeddings
         word = values[0]
-        print word
+        # print word
         if word in vocabulary:
+            print word
             embedding_vector = np.asarray(values[1:], dtype='float32')
             embedding_matrix[vocabulary[word]] = embedding_vector
-            
             words += 1
             if words >= len(vocabulary):
                 return embedding_matrix
