@@ -18,6 +18,7 @@ from keras.models import Sequential
 # from keras.layers import Flatten
 from keras.layers import Dense, Dropout, Embedding, Activation
 from keras.layers import Conv1D, GlobalMaxPooling1D
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from preprocess import populate_emb_matrix_from_file
 
@@ -80,7 +81,7 @@ def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embedd
     return model
 
 
-def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddings, batch_size=128, epochs=5):
+def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddings, label, batch_size=128, epochs=5):
     '''
     Train CNN for classification of dialogues as entity sets
     '''
@@ -96,6 +97,13 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
     # # summarize the model
     print(model.summary())
 
+    early_stopping = EarlyStopping(monitor='val_loss', patience=42)
+    best_weights_filepath = 'models/%s_model_{epoch:02d}-{val_loss:.2f}.h5' % label
+    model_checkpoint = ModelCheckpoint(best_weights_filepath, monitor='val_loss', verbose=0, save_best_only=True, save_weights_only=False, mode='auto')
+
     # begin training validation_split=0.2, 
-    model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=batch_size, validation_data=(X_val, y_val))
+    model.fit(X_train, y_train, epochs=epochs, verbose=1, batch_size=batch_size, validation_data=(X_val, y_val), callbacks=[early_stopping, model_checkpoint])
+    
+    #reload best weights
+    model.load_weights(best_weights_filepath)
     return model
