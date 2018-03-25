@@ -7,6 +7,8 @@ Load word embeddings: glove and word2vec
 '''
 import numpy as np
 
+import gensim
+
 from embeddings import word_embeddings
 from process_ubuntu_dialogues import load_vocabulary, VOCAB_WORDS_PATH
 from load_embeddings import PATH
@@ -36,7 +38,7 @@ def load_embeddings_lines(embeddings_config, label, vocabulary):
     with open(embeddings_config['path']) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
         # number of non-zero rows, i.e. entities with embeddings
-        len(np.where(embedding_matrix.any(axis=1))[0])
+        print len(np.where(embedding_matrix.any(axis=1))[0])
         # save embedding_matrix for entities in the training dataset
         np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
@@ -56,7 +58,7 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
         if word in embedded_entities:
             embedding_matrix[word_id] = model.wv[word]
     # number of non-zero rows, i.e. entities with embeddings
-    len(np.where(embedding_matrix.any(axis=1))[0])
+    print len(np.where(embedding_matrix.any(axis=1))[0])
     # save embedding_matrix for entities in the training dataset
     np.save(PATH+label+'.npy', embedding_matrix)
     return embedding_matrix
