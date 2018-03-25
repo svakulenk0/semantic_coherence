@@ -26,8 +26,7 @@ vocabulary_size = 30541  # unique entities + extra token 0 for UNK
 
 x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(test_split=0.2, validation_split=0.2)
 
-for embeddings_name, embeddings_config in word_embeddings.items():
-    label = '%s_%s' % (embedding_model, embeddings_name)
+for label, embeddings_config in word_embeddings.items():
     print label
     embeddings_config['matrix_path'] = PATH + label + '.npy'
     model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, batch_size, epochs)
