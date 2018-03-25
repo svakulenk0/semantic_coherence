@@ -12,14 +12,14 @@ from keras.preprocessing.sequence import pad_sequences
 
 from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
 from process_ubuntu_dialogues import load_annotated_dialogues, VOCAB_ENTITIES_PATH
-from process_ubuntu_dialogues import load_dialogues_words, VOCAB_WORDS_PATH
-from embeddings import *
+from process_ubuntu_dialogues import load_dialogues_words
+from embeddings import entity_embeddings
 
 PATH = './embeddings_npy/'
 
+
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
-    vocabulary_entities = vocabulary.keys()
     # embeddings in a text file one per line for Global vectors and glove word embeddings
     for line in embeddings:
         values = line.split()
@@ -27,7 +27,7 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
         word = values[0]
         word = word[1:-1]  # Dbpedia global vectors strip <> to match the entity labels 
         print word
-        if word in vocabulary_entities:
+        if word in vocabulary:
             embedding_vector = np.asarray(values[1:], dtype='float32')
             embedding_matrix[vocabulary[word]] = embedding_vector
             
@@ -37,8 +37,7 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
     return embedding_matrix
 
 
-def load_embeddings_lines(embeddings_config, label):
-    vocabulary = load_vocabulary()
+def load_embeddings_lines(embeddings_config, label, vocabulary):
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_config['dims']))
@@ -49,8 +48,7 @@ def load_embeddings_lines(embeddings_config, label):
     return embedding_matrix
 
 
-def load_embeddings_gensim(embeddings_config, label):
-    vocabulary = load_vocabulary()
+def load_embeddings_gensim(embeddings_config, label, vocabulary):
     # create a weight matrix for entities in training docs
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_config['dims']))
         
@@ -71,13 +69,14 @@ def load_embeddings_gensim(embeddings_config, label):
 
 
 if __name__ == '__main__':
+    vocabulary = load_vocabulary(path=VOCAB_ENTITIES_PATH)
 
-    for embeddings_name, config in embeddings['GlobalVectors'].items():
+    for embeddings_name, config in entity_embeddings['GlobalVectors'].items():
         label = 'GlobalVectors_' + embeddings_name
         print label
-        load_embeddings_lines(config, label)
+        load_embeddings_lines(config, label, vocabulary)
 
-    for embeddings_name, config in embeddings['rdf2vec'].items():
+    for embeddings_name, config in entity_embeddings['rdf2vec'].items():
         label = 'rdf2vec_' + embeddings_name
         print label
-        load_embeddings_gensim(config, label)
+        load_embeddings_gensim(config, label, vocabulary)
