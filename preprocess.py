@@ -166,10 +166,10 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
     # prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
-    # prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
+    prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
     # embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
     # populate_emb_matrix_from_file(embeddings_name)
-    embeddings_name = 'rdf2vec'
-    load_embeddings_gensim(embeddings_name)
+    # embeddings_name = 'rdf2vec'
+    # load_embeddings_gensim(embeddings_name)
     # load_text_gloves()
     # populate_emb_matrix_from_file(embeddings['word2vec'])
