@@ -95,7 +95,7 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
 
     model = get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embeddings['dims'])
     # # summarize the model
-    print(model.summary())
+    # print(model.summary())
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=42)
     best_weights_filepath = 'models/%s_model.h5' % label
