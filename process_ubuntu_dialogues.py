@@ -184,7 +184,7 @@ def load_dialogues_words(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, voca
     return padded_docs, array(labels)
 
 
-def sample_random_negatives(sample='sample172098', n_dialogues=None):
+def sample_negatives_random(sample='sample172098', n_dialogues=None):
     '''
     produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings
     '''
@@ -279,6 +279,162 @@ def sample_random_negatives(sample='sample172098', n_dialogues=None):
     # save embedding_matrix for entities in the dataset
     np.save(X_path_entities, X_entities)
      # save embedding_matrix for words in the dataset
+    np.save(X_path_words, X_words)
+    np.save(y_path, labels)
+
+
+def encode_turns(dialogue_file_name, entity_vocabulary, word_vocabulary):
+    turns = []
+    with open(os.path.join(DIALOGUES_PATH, dialogue_file_name),"rb") as dialog_file:
+        dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
+        # collect utterances into turns [0] entity ids [1] word ids
+        turn = [[], []]
+        author = None
+        for dialog_line in dialog_reader:
+            # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+            entities = json.loads(dialog_line[4])
+            if entities:
+                # detect turn switch
+                if author and turn and author != dialog_line[1]:
+                    turns.append((author, turn))
+                    # start tracking new turn
+                    turn = [[], []]
+                author = dialog_line[1]
+                for entity in entities:
+                    entity_URI = entity['URI']
+                    if entity_URI in entity_vocabulary:
+                        turn[0].append(entity_vocabulary[entity_URI])
+                    else:
+                        turn[0].append(entity_vocabulary['<UNK>'])
+
+                    entity_words = entity['surfaceForm']
+                    for word in entity_words.split():
+                        # encode words with ids
+                        if word in word_vocabulary:
+                            # print len(vocabulary.keys())
+                            turn[1].append(word_vocabulary[word])
+                        else:
+                            turn[1].append(word_vocabulary['<UNK>'])
+    # for author, utterance in turns:
+    #     print author, utterance
+    return turns
+
+
+def pop_random(lst):
+    idx = random.randrange(0, len(lst))
+    return lst.pop(idx)
+
+# def sample_negatives_horizontal(sample='sample172098', n_dialogues=None):
+
+def add_dialogue_turns(dialog):
+    # roll out turns and create word and entity encoded documents
+    encoded_doc_entities = []
+    for turn in dialog:
+        for entity in turn[1][0]:
+            if entity not in encoded_doc_entities:
+                encoded_doc_entities.append(entity)
+    # print encoded_doc_entities
+    
+    encoded_doc_words = []
+    for turn in dialog:
+        for entity in turn[1][1]:
+            if entity not in encoded_doc_words:
+                encoded_doc_words.append(entity)
+    # print encoded_doc_words
+    
+    return encoded_doc_entities, encoded_doc_words
+
+
+def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
+    '''
+    produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings
+    '''
+    
+    # vocabulary encodings for entities
+    X_path_entities = './%s/entities_X_vertical.npy' % sample
+    # vocabulary encodings for words
+    X_path_words = './%s/words_X_vertical.npy' % sample
+    y_path = './%s/y_vertical.npy' % sample
+
+    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
+    word_vocabulary = load_vocabulary('./%s/vocab_words.pkl' % sample)
+
+    encoded_docs_entities = []
+    encoded_docs_words = []
+    labels = []
+
+    dialogues = os.listdir(DIALOGUES_PATH)
+
+    # limit the number of dialogues to process
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+
+    # create dialogue pairs
+    pairs = []
+    while len(dialogues) > 1:
+        # pair dialogues randomly
+        pairs.append((pop_random(dialogues), pop_random(dialogues)))
+
+    for dialogue_file1, dialogue_file2 in pairs:
+        turns1 = encode_turns(dialogue_file1, entity_vocabulary, word_vocabulary)
+        turns2 = encode_turns(dialogue_file2, entity_vocabulary, word_vocabulary)
+        # generate 4 dialogues: 2 positive, 2 negative by trancating and mixing utterances
+        dialogue1, dialogue2, dialogue12, dialogue21 = [], [], [], []
+        dialogue_length = min([len(turns1), len(turns2)])
+        
+        for i, turn1 in enumerate(turns1[:dialogue_length]):
+            # generate positive example: original structure
+            dialogue1.append(turn1)
+            dialogue2.append(turns2[i])
+
+            # generate negative example
+            if i % 2:
+                # every 2nd turn mix in utterance from another dialogue
+                dialogue21.append(turn1)
+                dialogue12.append(turns2[i])
+            else:
+                dialogue12.append(turn1)
+                dialogue21.append(turns2[i])
+
+        print dialogue1, '\n'
+        # print dialogue2, '\n'
+        # print dialogue12, '\n'
+        # print dialogue21, '\n'
+
+        assert len(dialogue1) == len(dialogue2) == len(dialogue12) == len(dialogue21)
+
+        for dialogue in [dialogue1, dialogue12, dialogue2, dialogue21]:
+            encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue)
+            # include only dialogues with more than 1 entity
+            if len(encoded_doc_entities) > 1:
+                encoded_docs_entities.append(encoded_doc_entities)
+                encoded_docs_words.append(encoded_doc_words)
+
+        labels.extend([1, 0, 1, 0])
+
+        # print encoded_docs_entities
+        # print encoded_docs_words
+        # print labels
+
+    assert len(encoded_docs_entities) == len(encoded_docs_words) == len(labels)
+    print len(encoded_docs_entities), 'documents encoded'
+    
+    X_entities = pad_sequences(encoded_docs_entities, padding='post')
+    X_words = pad_sequences(encoded_docs_words, padding='post')
+    labels = array(labels)
+
+    print X_entities
+    print X_entities.shape[0], 'dialogues', X_entities.shape[1], 'max entities per dialogue'
+
+    print X_words
+    print X_words.shape[0], 'dialogues', X_words.shape[1], 'max words per dialogue'
+
+    print labels
+
+    # save datasets
+    # save embedding_matrix for entities in the dataset
+    np.save(X_path_entities, X_entities)
+    # save embedding_matrix for words in the dataset
     np.save(X_path_words, X_words)
     np.save(y_path, labels)
 
@@ -503,7 +659,12 @@ if __name__ == '__main__':
 
     # create_vocabulary_words()
     # test_load_vocabulary(VOCAB_WORDS_PATH)
-    # 3. load annotated dialogues convert entities to ids using vocabulary
-    sample_random_negatives(sample='sample172098')
+    
+    # generate datasets 
+    sample = 'sample172098'
+    # sample_negatives_random(sample)
+    # sample_negatives_horizontal(sample)
+    sample_negatives_vertical(sample)
+
     # load_annotated_dialogues()
     # load_dialogues_words()
