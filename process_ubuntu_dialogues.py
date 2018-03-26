@@ -321,7 +321,7 @@ def encode_turns(dialogue_file_name, entity_vocabulary, word_vocabulary):
 
 
 def pop_random(lst):
-    print lst
+    # print lst
     idx = random.randrange(0, len(lst))
     return lst.pop(idx)
 
