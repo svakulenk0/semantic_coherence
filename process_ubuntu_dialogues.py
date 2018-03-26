@@ -20,7 +20,7 @@ from keras.preprocessing.sequence import pad_sequences
 
 PATH = './ubuntu/dialogs'
 # PATH_ENTITIES = './ubuntu/annotated_dialogues'
-PATH_ENTITIES = './ubuntu/annotated_dialogues_sample'
+PATH_ENTITIES = './ubuntu/annotated_dialogues_sample2'  # 172,098
 # PATH_ENTITIES = './ubuntu/annotated_dialogues_only_URIs'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
@@ -112,16 +112,16 @@ def annotate_ubuntu_dialogs(dir=PATH, offset=3):
             with open(file_path,"rb") as dialog_file:
                 # dialog_reader = unicodecsv.reader(dialog_file)
                 dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t', quoting=csv.QUOTE_NONE)
-                annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8')
-                # annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8', delimiter='\t')
+                # annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8')
+                annotation_file = unicodecsv.writer(open(annotation_path, 'w'), encoding='utf-8', delimiter='\t')
                 for dialog_line in dialog_reader:
                     # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
                     utterance = dialog_line[3]
                     entities = annotate_entities(utterance)
-                    if entities:
-                        entities = list(set([entity['URI'] for entity in entities]))
-                    dialog_line.append(entities)
-                    # dialog_line.append(json.dumps(entities))
+                    # if entities:
+                    #     entities = list(set([entity['URI'] for entity in entities]))
+                    # dialog_line.append(entities)
+                    dialog_line.append(json.dumps(entities))
                     print dialog_line
                     annotation_file.writerow(dialog_line)
 
@@ -139,7 +139,7 @@ def load_dialogues_words(vocabulary, n_dialogues=None, path=PATH_ENTITIES, vocab
     for file_name in dialogues:
         # extract entities from dialogue and encode them with ids from the vocabulary
         print file_name
-        doc_entities = []
+        doc_words = []
         encoded_doc = []
         with open(os.path.join(path, file_name),"rb") as dialog_file:
             dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
@@ -154,19 +154,19 @@ def load_dialogues_words(vocabulary, n_dialogues=None, path=PATH_ENTITIES, vocab
                         for entity in entities:
                             # print entity
                             entity_words = entity['surfaceForm']
+                            # skip duplicate entities within the same document
                             for word in entity_words.split():
-                                # skip duplicate entities within the same document
-                                if word not in doc_entities:
+                                if word not in doc_words:
                                     # encode words with ids
                                     if word in vocabulary_words:
                                         # print len(vocabulary.keys())
                                         encoded_doc.append(vocabulary[word])
                                     else:
                                         encoded_doc.append(vocabulary['<UNK>'])
-                            doc_entities.append(entity_words)
+                                    doc_words.append(word)
         # skip docs with 1 entity
         if len(encoded_doc) > 1:
-            print doc_entities
+            print doc_words
             encoded_docs.append(encoded_doc)
             print encoded_doc
             
@@ -199,23 +199,24 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ENTITIES, v
         doc_entities = []
         encoded_doc = []
         with open(os.path.join(path, file_name),"rb") as dialog_file:
-            dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
             for dialog_line in dialog_reader:
                 # print dialog_line
                 # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
-                entities = dialog_line[4]
+                entities = json.loads(dialog_line[4])
                 if entities:
                     # print entities
-                    for entity in ast.literal_eval(entities):
+                    for entity in entities:
+                        entitiy_URI = entity['URI']
                         # skip duplicate entities within the same document
-                        if entity not in doc_entities:
+                        if entitiy_URI not in doc_entities:
                             # incode entities with ids
-                            if entity in vocabulary_entities:
+                            if entitiy_URI in vocabulary_entities:
                                 # print len(vocabulary.keys())
-                                encoded_doc.append(vocabulary[entity])
+                                encoded_doc.append(vocabulary[entitiy_URI])
                             else:
                                 encoded_doc.append(vocabulary['<UNK>'])
-                            doc_entities.append(entity)
+                            doc_entities.append(entitiy_URI)
 
         # skip docs with 1 entity
         if len(encoded_doc) > 1:
@@ -285,15 +286,18 @@ def create_vocabulary(n_dialogues=None, path=PATH_ENTITIES, save_to=VOCAB_ENTITI
             # dialog_reader = unicodecsv.reader(dialog_file, delimiter=',')
             dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
             for dialog_line in dialog_reader:
-                print dialog_line
-                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
-                entities = dialog_line[4]
-                # print entities
-                if entities:
-                    for entity in ast.literal_eval(entities):
-                        if entity not in vocabulary.keys():
-                            # print len(vocabulary.keys())
-                            vocabulary[entity] = len(vocabulary.keys())
+                try:
+                    entities = json.loads(dialog_line[4])
+                    # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                    # print entities
+                    if entities:
+                        for entity in entities:
+                            entitiy_URI = entity['URI']
+                            if entitiy_URI not in vocabulary:
+                                # print len(vocabulary.keys())
+                                vocabulary[entitiy_URI] = len(vocabulary.keys())
+                except:
+                    print dialog_line
 
     # save vocabulary on disk
     with open(save_to, 'wb') as f:
@@ -394,9 +398,11 @@ if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save (create dir ./ubuntu/annotated_dialogues)
     # annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
-    # create_vocabulary()
-        # map words to ids for word vectors
+    create_vocabulary()
+    test_load_vocabulary(VOCAB_ENTITIES_PATH)
+
     # create_vocabulary_words()
-    test_load_vocabulary(VOCAB_WORDS_PATH)
+    # test_load_vocabulary(VOCAB_WORDS_PATH)
     # 3. load annotated dialogues convert entities to ids using vocabulary
     # load_annotated_dialogues()
+    # load_dialogues_words()

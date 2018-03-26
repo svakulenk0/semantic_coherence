@@ -6,6 +6,7 @@ svakulenko
 Preprocess input data
 '''
 import numpy as np
+import os
 
 import gensim
 from keras.preprocessing.sequence import pad_sequences
@@ -50,7 +51,7 @@ def preprocess(docs, vocabulary, max_length):
     return padded_docs
 
 
-def prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH, n_dialogues=None):
+def prepare_dataset(X_path, y_path, encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH, n_dialogues=None):
     '''
     encode_dialogue is a function: load_annotated_dialogues for the dialogue
     as a sequence of entities for entity embeddings representation
@@ -165,11 +166,12 @@ def load_embeddings(embeddings, embedding_matrix, vocabulary):
 
 if __name__ == '__main__':
     # encode the whole datase and save it into 2 matrices X, y
-    # prepare_dataset(encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
+    sample_folder = 'sample172098'
+    os.mkdir(sample_folder)
+    
+    # for entities
+    X_path = './%s/entities_X.npy' % sample_folder
+    y_path = './%s/entities_y.npy' % sample_folder
+    prepare_dataset(X_path, y_path, encode_dialogue=load_annotated_dialogues, vocab_path=VOCAB_ENTITIES_PATH)
+    # for words
     # prepare_dataset(encode_dialogue=load_dialogues_words, vocab_path=VOCAB_WORDS_PATH)
-    # embeddings_name = 'DBpedia_GlobalVectors_9_pageRank'
-    # populate_emb_matrix_from_file(embeddings_name)
-    embeddings_name = 'rdf2vec'
-    load_embeddings_gensim(embeddings_name)
-    # load_text_gloves()
-    # populate_emb_matrix_from_file(embeddings['word2vec'])
