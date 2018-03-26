@@ -348,22 +348,19 @@ def add_dialogue_turns(dialog):
     return encoded_doc_entities, encoded_doc_words
 
 
-def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
+def create_datasets(sample='sample172098', n_dialogues=None):
     '''
     produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings
     '''
-    
-    # vocabulary encodings for entities
-    X_path_entities = './%s/entities_X_vertical.npy' % sample
-    # vocabulary encodings for words
-    X_path_words = './%s/words_X_vertical.npy' % sample
-    y_path = './%s/y_vertical.npy' % sample
-
     entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
     word_vocabulary = load_vocabulary('./%s/vocab_words.pkl' % sample)
 
-    encoded_docs_entities = []
-    encoded_docs_words = []
+    encoded_docs_entities_vertical = []
+    encoded_docs_entities_random = []
+    encoded_docs_entities_horizontal = []
+    encoded_docs_words_vertical = []
+    encoded_docs_words_random = []
+    encoded_docs_words_horizontal = []
     labels = []
 
     dialogues = os.listdir(DIALOGUES_PATH)
@@ -394,7 +391,10 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
         n_turns2, turns2 = heappop(turns)
 
         # generate 4 dialogues: 2 positive, 2 negative by trancating and mixing utterances
-        dialogue1, dialogue2, dialogue12, dialogue21 = [], [], [], []
+        dialogue1, dialogue2 = [], []
+        dialogue12_v, dialogue21_v = [], []
+        dialogue12_h, dialogue21_h = [], []
+
         dialogue_length = min([-n_turns1, -n_turns2])
         
         for i, turn1 in enumerate(turns1[:dialogue_length]):
@@ -402,46 +402,89 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
             dialogue1.append(turn1)
             dialogue2.append(turns2[i])
 
-            # generate negative example
+            # generate vertical negative example
             if i % 2:
                 # every 2nd turn mix in utterance from another dialogue
-                dialogue21.append(turn1)
-                dialogue12.append(turns2[i])
+                dialogue21_v.append(turn1)
+                dialogue12_v.append(turns2[i])
             else:
-                dialogue12.append(turn1)
-                dialogue21.append(turns2[i])
+                dialogue12_v.append(turn1)
+                dialogue21_v.append(turns2[i])
+
+            # generate horizontal negative example by mixing the two dialogues in halves
+            if i > dialogue_length / 2:
+                # after half of the dialogue mix in utterance from another dialogue
+                dialogue21_h.append(turn1)
+                dialogue12_h.append(turns2[i])
+            else:
+                dialogue12_h.append(turn1)
+                dialogue21_h.append(turns2[i])
 
         # print dialogue1, '\n'
         # print dialogue2, '\n'
         # print dialogue12, '\n'
         # print dialogue21, '\n'
 
-        assert len(dialogue1) == len(dialogue2) == len(dialogue12) == len(dialogue21)
+        assert len(dialogue1) == len(dialogue2) == len(dialogue12_v) == len(dialogue21_v) == len(dialogue12_h) == len(dialogue21_h)
 
         # encode the first positive-negative pair
-        encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue1)
+        encoded_doc_entities1, encoded_doc_words1 = add_dialogue_turns(dialogue1)
         # include only dialogues with more than 1 entity
-        len_doc = len(encoded_doc_entities)
-        if len_doc > 1:
-            encoded_docs_entities.append(encoded_doc_entities)
-            encoded_docs_words.append(encoded_doc_words)
-            # add negative example
-            encoded_doc_entities12, encoded_doc_words12 = add_dialogue_turns(dialogue12)
-            encoded_docs_entities.append(encoded_doc_entities12[:len_doc])
-            encoded_docs_words.append(encoded_doc_words12[:len(encoded_doc_words)])
+        len_doc1 = len(encoded_doc_entities1)
+
+        if len_doc1 > 1:
+            # add positive example
+            encoded_docs_entities_vertical.append(encoded_doc_entities1)
+            encoded_docs_entities_random.append(encoded_doc_entities1)
+            encoded_docs_entities_horizontal.append(encoded_doc_entities1)
+            encoded_docs_words_vertical.append(encoded_doc_words1)
+            encoded_docs_words_random.append(encoded_doc_words1)
+            encoded_docs_words_horizontal.append(encoded_doc_words1)
+
+            # add negative examples
+            # vertical
+            encoded_doc_entities12_v, encoded_doc_words12_v = add_dialogue_turns(dialogue12_v)
+            encoded_docs_entities_vertical.append(encoded_doc_entities12_v[:len_doc1])
+            encoded_docs_words_vertical.append(encoded_doc_words12_v[:len(encoded_doc_words1)])
+            # generate incorrect examples along the way by picking as many entities at random from the vocabulary
+            # to generate a document of the same # entities as a positive example
+            encoded_docs_entities_random.append(random.sample(xrange(1, len(entity_vocabulary.keys())), len_doc1))
+            encoded_docs_words_random.append(random.sample(xrange(1, len(word_vocabulary.keys())), len(encoded_doc_words1)))
+            
+            # horizontal
+            encoded_doc_entities12_h, encoded_doc_words12_h = add_dialogue_turns(dialogue12_h)
+            encoded_docs_entities_horizontal.append(encoded_doc_entities12_h[:len_doc1])
+            encoded_docs_words_horizontal.append(encoded_doc_words12_h[:len(encoded_doc_words1)])
+
             labels.extend([1, 0])
 
         # encode the second positive-negative pair
-        encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue2)
+        encoded_doc_entities2, encoded_doc_words2 = add_dialogue_turns(dialogue2)
         # include only dialogues with more than 1 entity
-        len_doc = len(encoded_doc_entities)
-        if len_doc > 1:
-            encoded_docs_entities.append(encoded_doc_entities)
-            encoded_docs_words.append(encoded_doc_words)
-            # add negative example
-            encoded_doc_entities21, encoded_doc_words21 = add_dialogue_turns(dialogue21)
-            encoded_docs_entities.append(encoded_doc_entities21[:len_doc])
-            encoded_docs_words.append(encoded_doc_words21[:len(encoded_doc_words)])
+        len_doc2 = len(encoded_doc_entities2)
+        
+        if len_doc2 > 1:
+            encoded_docs_entities_vertical.append(encoded_doc_entities2)
+            encoded_docs_entities_random.append(encoded_doc_entities2)
+            encoded_docs_entities_horizontal.append(encoded_doc_entities2)
+            encoded_docs_words_vertical.append(encoded_doc_words2)
+            encoded_docs_words_random.append(encoded_doc_words2)
+            encoded_docs_words_horizontal.append(encoded_doc_entities2)
+
+            # add negative examples
+            encoded_doc_entities21_v, encoded_doc_words21_v = add_dialogue_turns(dialogue21_v)
+            encoded_docs_entities_vertical.append(encoded_doc_entities21_v[:len_doc2])
+            encoded_docs_words_vertical.append(encoded_doc_words21_v[:len(encoded_doc_words2)])
+            # generate incorrect examples along the way by picking as many entities at random from the vocabulary
+            # to generate a document of the same # entities as a positive example
+            encoded_docs_entities_random.append(random.sample(xrange(1, len(entity_vocabulary.keys())), len_doc2))
+            encoded_docs_words_random.append(random.sample(xrange(1, len(word_vocabulary.keys())), len(encoded_doc_words2)))
+
+            # horizontal
+            encoded_doc_entities21_h, encoded_doc_words21_h = add_dialogue_turns(dialogue21_h)
+            encoded_docs_entities_horizontal.append(encoded_doc_entities21_h[:len_doc1])
+            encoded_docs_words_horizontal.append(encoded_doc_words21_h[:len(encoded_doc_words1)])
+
             labels.extend([1, 0])
 
         # for dialogue, label in [[dialogue1, 1], [dialogue12, 0], [dialogue2, 1], [dialogue21, 0]]:
@@ -456,27 +499,45 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
         # print encoded_docs_words
         # print labels
 
-    assert len(encoded_docs_entities) == len(encoded_docs_words) == len(labels)
-    print len(encoded_docs_entities), 'documents encoded'
+    assert len(encoded_docs_entities_vertical) == len(encoded_docs_words_vertical) == len(encoded_docs_entities_random) == len(encoded_docs_entities_random) == len(encoded_docs_entities_horizontal) == len(encoded_docs_words_horizontal) == len(labels)
+    print len(encoded_docs_entities_vertical), 'documents encoded'
     
-    X_entities = pad_sequences(encoded_docs_entities, padding='post')
-    X_words = pad_sequences(encoded_docs_words, padding='post')
+    X_entities_vertical = pad_sequences(encoded_docs_entities_vertical, padding='post')
+    X_words_vertical = pad_sequences(encoded_docs_words_vertical, padding='post')
+    X_entities_horizontal = pad_sequences(encoded_docs_entities_horizontal, padding='post')
+    X_words_horizontal = pad_sequences(encoded_docs_words_horizontal, padding='post')
+    X_entities_random = pad_sequences(encoded_docs_entities_random, padding='post')
+    X_words_random = pad_sequences(encoded_docs_words_random, padding='post')
     labels = array(labels)
 
-    print X_entities
-    print X_entities.shape[0], 'dialogues', X_entities.shape[1], 'max entities per dialogue'
+    print 'vertical'
+    print X_entities_vertical
+    print X_entities_vertical.shape[0], 'dialogues', X_entities_vertical.shape[1], 'max entities per dialogue'
+    print X_words_vertical
+    print X_words_vertical.shape[0], 'dialogues', X_words_vertical.shape[1], 'max words per dialogue'
 
-    print X_words
-    print X_words.shape[0], 'dialogues', X_words.shape[1], 'max words per dialogue'
+    print 'horizontal'
+    print X_entities_horizontal
+    print X_entities_horizontal.shape[0], 'dialogues', X_entities_horizontal.shape[1], 'max entities per dialogue'
+    print X_words_horizontal
+    print X_words_horizontal.shape[0], 'dialogues', X_words_horizontal.shape[1], 'max words per dialogue'
+
+    print 'random'
+    print X_entities_random
+    print X_entities_random.shape[0], 'dialogues', X_entities_random.shape[1], 'max entities per dialogue'
+    print X_words_random
+    print X_words_random.shape[0], 'dialogues', X_words_random.shape[1], 'max words per dialogue'
 
     print labels
 
     # save datasets
-    # save embedding_matrix for entities in the dataset
-    # np.save(X_path_entities, X_entities)
-    # # save embedding_matrix for words in the dataset
-    # np.save(X_path_words, X_words)
-    # np.save(y_path, labels)
+    np.save('./%s/entities_vertical_X.npy' % sample, X_entities_vertical)
+    np.save('./%s/words_vertical_X.npy' % sample, X_words_vertical)
+    np.save('./%s/entities_horizontal_X.npy' % sample, X_entities_horizontal)
+    np.save('./%s/words_horizontal_X.npy' % sample, X_words_horizontal)
+    np.save('./%s/entities_random_X.npy' % sample, X_entities_random)
+    np.save('./%s/words_random_X.npy' % sample, X_words_random)
+    np.save('./%s/y.npy' % sample, labels)
 
 
 def load_annotated_dialogues(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, vocab_path=VOCAB_ENTITIES_PATH):
@@ -704,7 +765,7 @@ if __name__ == '__main__':
     sample = 'sample172098'
     # sample_negatives_random(sample)
     # sample_negatives_horizontal(sample)
-    sample_negatives_vertical(sample)
+    create_datasets(sample)
 
     # load_annotated_dialogues()
     # load_dialogues_words()
