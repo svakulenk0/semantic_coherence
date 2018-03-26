@@ -11,7 +11,7 @@ import gensim
 from keras.preprocessing.sequence import pad_sequences
 
 from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
-from process_ubuntu_dialogues import load_annotated_dialogues, VOCAB_ENTITIES_PATH
+from process_ubuntu_dialogues import load_annotated_dialogues
 from process_ubuntu_dialogues import load_dialogues_words
 from embeddings import entity_embeddings
 
@@ -69,14 +69,15 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
 
 
 if __name__ == '__main__':
-    vocabulary = load_vocabulary(path=VOCAB_ENTITIES_PATH)
+    sample = 'sample172098'
+    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
 
     for embeddings_name, config in entity_embeddings['GlobalVectors'].items():
         label = 'GlobalVectors_' + embeddings_name
         print label
-        load_embeddings_lines(config, label, vocabulary)
+        load_embeddings_lines(config, label, entity_vocabulary)
 
     for embeddings_name, config in entity_embeddings['rdf2vec'].items():
         label = 'rdf2vec_' + embeddings_name
         print label
-        load_embeddings_gensim(config, label, vocabulary)
+        load_embeddings_gensim(config, label, entity_vocabulary)
