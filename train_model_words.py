@@ -37,7 +37,7 @@ y_path = './%s/y_%s.npy' % (sample, negative_sampling)
 x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_words, y_path, test_split=0.2, validation_split=0.2)
 
 for embeddings_name, embeddings_config in word_embeddings.items():
-    label = "%s_%s" % (negative_sampling, label)
+    label = "%s_%s" % (negative_sampling, embeddings_name)
     print label
     embeddings_config['matrix_path'] = PATH + label + '.npy'
     model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
