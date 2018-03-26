@@ -24,8 +24,14 @@ epochs = 5
 # dataset params
 sample = 'sample172098'
 vocabulary_size = 30541  # unique entities + extra token 0 for UNK
-X_path_words = './%s/words_X.npy' % sample
-y_path = './%s/y.npy' % sample
+
+# random negative sampling
+# X_path_words = './%s/words_X.npy' % sample
+# y_path = './%s/y.npy' % sample
+
+# vertical negative sampling
+X_path_words = './%s/words_X_vertical.npy' % sample
+y_path = './%s/y_vertical.npy' % sample
 
 x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_words, y_path, test_split=0.2, validation_split=0.2)
 
@@ -39,10 +45,10 @@ for label, embeddings_config in word_embeddings.items():
     print('Accuracy: %f' % (accuracy * 100))
 
     # serialize the trained model to JSON
-    model_json = model.to_json()
-    with open("./models/%s_model_172098.json" % label, "w") as json_file:
-        json_file.write(model_json)
+    # model_json = model.to_json()
+    # with open("./models/%s_model_172098.json" % label, "w") as json_file:
+    #     json_file.write(model_json)
     
-    # serialize weights to HDF5
-    model.save_weights('./models/%s_weights_172098.h5' % label)
-    print("Saved model to disk")
+    # # serialize weights to HDF5
+    # model.save_weights('./models/%s_weights_172098.h5' % label)
+    # print("Saved model to disk")
