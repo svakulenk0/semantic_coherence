@@ -370,17 +370,19 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
 
-    # create dialogue pairs
-    pairs = []
     while len(dialogues) > 1:
-        # pick non-empty dialogues at random
+        # create dialogue pairs by picking non-empty dialogues at random
         turns1 = []
         while not turns1:
+            if len(dialogues) < 2:
+                break
             dialogue = pop_random(dialogues)
             turns1 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
         
         turns2 = []
         while not turns2:
+            if len(dialogues) < 1:
+                break
             dialogue = pop_random(dialogues)
             turns2 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
 
