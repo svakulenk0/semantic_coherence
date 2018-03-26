@@ -317,7 +317,8 @@ def encode_turns(dialogue_file_name, entity_vocabulary, word_vocabulary):
                             turn[1].append(word_vocabulary['<UNK>'])
     # for author, utterance in turns:
     #     print author, utterance
-    return turns
+    if len(turns) > 1:
+        return turns
 
 
 def pop_random(lst):
