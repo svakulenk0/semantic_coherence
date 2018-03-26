@@ -13,27 +13,30 @@ from keras.preprocessing.sequence import pad_sequences
 from process_ubuntu_dialogues import load_vocabulary, create_vocabulary
 from process_ubuntu_dialogues import load_annotated_dialogues
 from process_ubuntu_dialogues import load_dialogues_words
-from embeddings import entity_embeddings
+from embeddings import entity_embeddings as embeddings
 
 PATH = './embeddings_npy/'
-
 
 def load_embeddings(embeddings, embedding_matrix, vocabulary):
     words = 0
     # embeddings in a text file one per line for Global vectors and glove word embeddings
     for line in embeddings:
-        values = line.split()
+        wordAndVector = line.split(None, 1)
         # match the entity labels in vector embeddings
-        word = values[0]
+        word = wordAndVector[0]
         word = word[1:-1]  # Dbpedia global vectors strip <> to match the entity labels 
-        print word
+        #print word
         if word in vocabulary:
-            embedding_vector = np.asarray(values[1:], dtype='float32')
+            vector = wordAndVector[1]
+            vector = vector.split()
+            embedding_vector = np.asarray(vector, dtype='float32')
             embedding_matrix[vocabulary[word]] = embedding_vector
             
             words += 1
             if words >= len(vocabulary):
-                return embedding_matrix
+                break
+    missing = len(vocabulary)-words
+    print "done loading line based embedding. %d missing" % missing
     return embedding_matrix
 
 
@@ -45,6 +48,7 @@ def load_embeddings_lines(embeddings_config, label, vocabulary):
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary)
         # save embedding_matrix for entities in the training dataset
         np.save(PATH+label+'.npy', embedding_matrix)
+    #print embedding_matrix
     return embedding_matrix
 
 
@@ -53,18 +57,23 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
     embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_config['dims']))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
-    model = gensim.models.KeyedVectors.load_word2vec_format(embeddings_config['path'], binary=True)
+    model = gensim.models.Word2Vec.load(embeddings_config['path'])
+    #model = gensim.models.KeyedVectors.load_word2vec_format(embeddings_config['path'], binary=True)
     embedded_entities = model.wv
-    
+    missing = 0
     for entity, entity_id in vocabulary.items():
         # strip entity label format to rdf2vec label format
-        rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
-        print rdf2vec_entity_label
+        #rdf2vec_entity_label = 'dbr:%s' % entity.split('/')[-1]
+        #print rdf2vec_entity_label
+        rdf2vec_entity_label = '<' + entity + '>'
         if rdf2vec_entity_label in embedded_entities:
-            embedding_matrix[entity_id] = model.wv[entity]
-
+            embedding_matrix[entity_id] = embedded_entities[rdf2vec_entity_label]
+        else:
+            missing += 1
+    print "done loading gensim entities. %d missing" % missing
     # save embedding_matrix for entities in the training dataset
     np.save(PATH+label+'.npy', embedding_matrix)
+    # print embedding_matrix
     return embedding_matrix
 
 
@@ -72,12 +81,18 @@ if __name__ == '__main__':
     sample = 'sample172098'
     entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
 
-    for embeddings_name, config in entity_embeddings['GlobalVectors'].items():
-        label = 'GlobalVectors_' + embeddings_name
-        print label
-        load_embeddings_lines(config, label, entity_vocabulary)
+    for embeddings_name, config in embeddings['GlobalVectors'].items():
+        try:
+            label = 'GlobalVectors_' + embeddings_name
+            print label
+            load_embeddings_lines(config, label, entity_vocabulary)
+        except Exception as e:
+            print e
 
-    for embeddings_name, config in entity_embeddings['rdf2vec'].items():
-        label = 'rdf2vec_' + embeddings_name
-        print label
-        load_embeddings_gensim(config, label, entity_vocabulary)
+    for embeddings_name, config in embeddings['rdf2vec'].items():
+        try:
+            label = 'rdf2vec_' + embeddings_name
+            print label
+            load_embeddings_gensim(config, label, entity_vocabulary)
+        except Exception as e:
+            print e
