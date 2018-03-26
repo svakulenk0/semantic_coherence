@@ -8,16 +8,19 @@ Load and split the dataset to train the classification model
 from model import train
 from prepare_dataset import load_dataset_splits
 from load_embeddings import PATH
-from embeddings import *
+from embeddings import entity_embeddings as embeddings
 
 # training parameters:
 batch_size = 128
 epochs = 5
 
 # dataset params
-vocabulary_size = 19660  # unique entities + extra token 0 for UNK
+sample = 'sample172098'
+vocabulary_size = 24081  # unique entities + extra token 0 for UNK
+X_path_entities = './%s/entities_X.npy' % sample
+y_path = './%s/y.npy' % sample
 
-x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(test_split=0.2, validation_split=0.2)
+x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_entities, y_path, test_split=0.2, validation_split=0.2)
 
 for embedding_model in embeddings:
     for embeddings_name, embeddings_config in embeddings[embedding_model].items():
