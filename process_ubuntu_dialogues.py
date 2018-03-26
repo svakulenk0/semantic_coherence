@@ -452,9 +452,9 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
         #         encoded_docs_words.append(encoded_doc_words)
         #         labels.append(label)
 
-        print encoded_docs_entities
-        print encoded_docs_words
-        print labels
+        # print encoded_docs_entities
+        # print encoded_docs_words
+        # print labels
 
     assert len(encoded_docs_entities) == len(encoded_docs_words) == len(labels)
     print len(encoded_docs_entities), 'documents encoded'
