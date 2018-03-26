@@ -25,26 +25,24 @@ epochs = 5
 sample = 'sample172098'
 vocabulary_size = 30541  # unique entities + extra token 0 for UNK
 
-negative_sampling = 'vertical'
-# random negative sampling
-# X_path_words = './%s/words_X.npy' % sample
-# y_path = './%s/y.npy' % sample
+negative_sampling_strategies = ['random', 'vertical', 'horizontal']
 
-# vertical negative sampling
-X_path_words = './%s/words_X_%s.npy' % (sample, negative_sampling)
-y_path = './%s/y_%s.npy' % (sample, negative_sampling)
+for strategy in negative_sampling_strategies:
+    # vertical negative sampling
+    X_path_words = './%s/words_X_%s.npy' % (sample, strategy)
+    y_path = './%s/y_%s.npy' % (sample, strategy)
 
-x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_words, y_path, test_split=0.2, validation_split=0.2)
+    x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_words, y_path, test_split=0.2, validation_split=0.2)
 
-for embeddings_name, embeddings_config in word_embeddings.items():
-    label = "%s_%s" % (negative_sampling, embeddings_name)
-    print label
-    embeddings_config['matrix_path'] = PATH + embeddings_name + '.npy'
-    model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
+    for embeddings_name, embeddings_config in word_embeddings.items():
+        label = "%s_%s" % (strategy, embeddings_name)
+        print label
+        embeddings_config['matrix_path'] = PATH + embeddings_name + '.npy'
+        model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
-    # evaluate the model
-    loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
-    print('Accuracy: %f' % (accuracy * 100))
+        # evaluate the model
+        loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
+        print('Accuracy: %f' % (accuracy * 100))
 
     # serialize the trained model to JSON
     # model_json = model.to_json()
