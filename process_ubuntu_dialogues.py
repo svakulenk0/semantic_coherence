@@ -321,6 +321,7 @@ def encode_turns(dialogue_file_name, entity_vocabulary, word_vocabulary):
 
 
 def pop_random(lst):
+    print lst
     idx = random.randrange(0, len(lst))
     return lst.pop(idx)
 
@@ -372,12 +373,17 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
     # create dialogue pairs
     pairs = []
     while len(dialogues) > 1:
-        # pair dialogues randomly
-        pairs.append((pop_random(dialogues), pop_random(dialogues)))
+        # pick non-empty dialogues at random
+        turns1 = []
+        while not turns1:
+            dialogue = pop_random(dialogues)
+            turns1 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
+        
+        turns2 = []
+        while not turns2:
+            dialogue = pop_random(dialogues)
+            turns2 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
 
-    for dialogue_file1, dialogue_file2 in pairs:
-        turns1 = encode_turns(dialogue_file1, entity_vocabulary, word_vocabulary)
-        turns2 = encode_turns(dialogue_file2, entity_vocabulary, word_vocabulary)
         # generate 4 dialogues: 2 positive, 2 negative by trancating and mixing utterances
         dialogue1, dialogue2, dialogue12, dialogue21 = [], [], [], []
         dialogue_length = min([len(turns1), len(turns2)])
@@ -396,7 +402,7 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
                 dialogue12.append(turn1)
                 dialogue21.append(turns2[i])
 
-        print dialogue1, '\n'
+        # print dialogue1, '\n'
         # print dialogue2, '\n'
         # print dialogue12, '\n'
         # print dialogue21, '\n'
