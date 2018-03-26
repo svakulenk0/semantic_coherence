@@ -384,9 +384,10 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
     #             break
     #         dialogue = pop_random(dialogues)
             dialogue_in_turns = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
-            n_turns = len(dialogue_in_turns)
-            if n_turns > 1:
-                heappush(turns, (-n_turns, dialogue_in_turns))
+            if dialogue_in_turns:
+                n_turns = len(dialogue_in_turns)
+                if n_turns > 1:
+                    heappush(turns, (-n_turns, dialogue_in_turns))
 
     while turns:
         n_turns1, turns1 = heappop(turns)
