@@ -14,6 +14,7 @@ from numpy import array
 import random
 import json
 import numpy as np
+from heapq import heappush, heappop
 
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
@@ -371,25 +372,29 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
 
-    while len(dialogues) > 1:
-        # create dialogue pairs by picking non-empty dialogues at random
-        turns1 = []
-        while not turns1:
-            if len(dialogues) < 2:
-                break
-            dialogue = pop_random(dialogues)
-            turns1 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
-        
-        turns2 = []
-        while not turns2:
-            if len(dialogues) < 1:
-                break
-            dialogue = pop_random(dialogues)
-            turns2 = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
+    turns = []
+
+    for dialogue in dialogues:
+
+    # while len(dialogues) > 1:
+    #     # create dialogue pairs by picking non-empty dialogues at random
+    #     turns1 = []
+    #     while not turns1:
+    #         if len(dialogues) < 2:
+    #             break
+    #         dialogue = pop_random(dialogues)
+            dialogue_in_turns = encode_turns(dialogue, entity_vocabulary, word_vocabulary)
+            n_turns = len(dialogue_in_turns)
+            if n_turns > 1:
+                heappush(turns, (-n_turns, dialogue_in_turns))
+
+    while turns:
+        n_turns1, turns1 = heappop(turns)
+        n_turns2, turns2 = heappop(turns)
 
         # generate 4 dialogues: 2 positive, 2 negative by trancating and mixing utterances
         dialogue1, dialogue2, dialogue12, dialogue21 = [], [], [], []
-        dialogue_length = min([len(turns1), len(turns2)])
+        dialogue_length = min([-n_turns1, -n_turns2])
         
         for i, turn1 in enumerate(turns1[:dialogue_length]):
             # generate positive example: original structure
@@ -405,24 +410,50 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
                 dialogue12.append(turn1)
                 dialogue21.append(turns2[i])
 
-        # print dialogue1, '\n'
-        # print dialogue2, '\n'
-        # print dialogue12, '\n'
-        # print dialogue21, '\n'
+        print dialogue1, '\n'
+        print dialogue2, '\n'
+        print dialogue12, '\n'
+        print dialogue21, '\n'
 
         assert len(dialogue1) == len(dialogue2) == len(dialogue12) == len(dialogue21)
 
-        for dialogue, label in [[dialogue1, 1], [dialogue12, 0], [dialogue2, 1], [dialogue21, 0]]:
-            encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue)
-            # include only dialogues with more than 1 entity
-            if len(encoded_doc_entities) > 1:
-                encoded_docs_entities.append(encoded_doc_entities)
-                encoded_docs_words.append(encoded_doc_words)
-                labels.append(label)
+        # encode the first positive-negative pair
+        encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue1)
+        # include only dialogues with more than 1 entity
+        len_doc = len(encoded_doc_entities)
+        if len_doc > 1:
+            encoded_docs_entities.append(encoded_doc_entities)
+            encoded_docs_words.append(encoded_doc_words)
+            # add negative example
+            encoded_doc_entities12, encoded_doc_words12 = add_dialogue_turns(dialogue12)
+            encoded_docs_entities.append(encoded_doc_entities12[:len_doc])
+            encoded_docs_words.append(encoded_doc_words12[:len(encoded_doc_words)])
+            labels.extend([1, 0])
 
-        # print encoded_docs_entities
-        # print encoded_docs_words
-        # print labels
+        # encode the second positive-negative pair
+        encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue2)
+        # include only dialogues with more than 1 entity
+        len_doc = len(encoded_doc_entities)
+        if len_doc > 1:
+            encoded_docs_entities.append(encoded_doc_entities)
+            encoded_docs_words.append(encoded_doc_words)
+            # add negative example
+            encoded_doc_entities21, encoded_doc_words21 = add_dialogue_turns(dialogue21)
+            encoded_docs_entities.append(encoded_doc_entities21[:len_doc])
+            encoded_docs_words.append(encoded_doc_words21[:len(encoded_doc_words)])
+            labels.extend([1, 0])
+
+        # for dialogue, label in [[dialogue1, 1], [dialogue12, 0], [dialogue2, 1], [dialogue21, 0]]:
+        #     encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue)
+        #     # include only dialogues with more than 1 entity
+        #     if len(encoded_doc_entities) > 1:
+        #         encoded_docs_entities.append(encoded_doc_entities)
+        #         encoded_docs_words.append(encoded_doc_words)
+        #         labels.append(label)
+
+        print encoded_docs_entities
+        print encoded_docs_words
+        print labels
 
     assert len(encoded_docs_entities) == len(encoded_docs_words) == len(labels)
     print len(encoded_docs_entities), 'documents encoded'
@@ -441,10 +472,10 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
 
     # save datasets
     # save embedding_matrix for entities in the dataset
-    np.save(X_path_entities, X_entities)
-    # save embedding_matrix for words in the dataset
-    np.save(X_path_words, X_words)
-    np.save(y_path, labels)
+    # np.save(X_path_entities, X_entities)
+    # # save embedding_matrix for words in the dataset
+    # np.save(X_path_words, X_words)
+    # np.save(y_path, labels)
 
 
 def load_annotated_dialogues(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, vocab_path=VOCAB_ENTITIES_PATH):
