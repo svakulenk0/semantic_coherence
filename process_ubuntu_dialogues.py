@@ -412,14 +412,13 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
 
         assert len(dialogue1) == len(dialogue2) == len(dialogue12) == len(dialogue21)
 
-        for dialogue in [dialogue1, dialogue12, dialogue2, dialogue21]:
+        for dialogue, label in [[dialogue1, 1], [dialogue12, 0], [dialogue2, 1], [dialogue21, 0]]:
             encoded_doc_entities, encoded_doc_words = add_dialogue_turns(dialogue)
             # include only dialogues with more than 1 entity
             if len(encoded_doc_entities) > 1:
                 encoded_docs_entities.append(encoded_doc_entities)
                 encoded_docs_words.append(encoded_doc_words)
-
-        labels.extend([1, 0, 1, 0])
+                labels.append(label)
 
         # print encoded_docs_entities
         # print encoded_docs_words
