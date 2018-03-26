@@ -411,10 +411,10 @@ def sample_negatives_vertical(sample='sample172098', n_dialogues=None):
                 dialogue12.append(turn1)
                 dialogue21.append(turns2[i])
 
-        print dialogue1, '\n'
-        print dialogue2, '\n'
-        print dialogue12, '\n'
-        print dialogue21, '\n'
+        # print dialogue1, '\n'
+        # print dialogue2, '\n'
+        # print dialogue12, '\n'
+        # print dialogue21, '\n'
 
         assert len(dialogue1) == len(dialogue2) == len(dialogue12) == len(dialogue21)
 
