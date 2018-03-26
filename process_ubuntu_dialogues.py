@@ -13,20 +13,21 @@ import ast
 from numpy import array
 import random
 import json
+import numpy as np
 
 # from trace_relations import trace_relations
 from dbpedia_spotlight import annotate_entities
 from keras.preprocessing.sequence import pad_sequences
 
 PATH = './ubuntu/dialogs'
-# PATH_ENTITIES = './ubuntu/annotated_dialogues'
-PATH_ENTITIES = './ubuntu/annotated_dialogues_sample2'  # 172,098
-# PATH_ENTITIES = './ubuntu/annotated_dialogues_only_URIs'
+# DIALOGUES_PATH = './ubuntu/annotated_dialogues'
+DIALOGUES_PATH = './ubuntu/annotated_dialogues_sample2'  # 172,098
+# DIALOGUES_PATH = './ubuntu/annotated_dialogues_only_URIs'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 # VOCAB_ENTITIES_PATH = './ubuntu/vocab_entities.pkl'
-VOCAB_ENTITIES_PATH = './sample127932/vocab.pkl'
-VOCAB_WORDS_PATH = './ubuntu/vocab_words.pkl'
+VOCAB_ENTITIES_PATH = './sample172098/vocab.pkl'
+VOCAB_WORDS_PATH = './sample172098/vocab_words.pkl'
 
 dialog_end_symbol = "__dialog_end__"
 
@@ -107,7 +108,7 @@ def annotate_ubuntu_dialogs(dir=PATH, offset=3):
         # iterate over dialogues 
         for name in files[offset:]:
             file_path = os.path.join(root, name)
-            annotation_path = os.path.join(PATH_ENTITIES, '_'.join([root.split('/')[-1], name]))
+            annotation_path = os.path.join(DIALOGUES_PATH, '_'.join([root.split('/')[-1], name]))
             print annotation_path
             with open(file_path,"rb") as dialog_file:
                 # dialog_reader = unicodecsv.reader(dialog_file)
@@ -126,7 +127,7 @@ def annotate_ubuntu_dialogs(dir=PATH, offset=3):
                     annotation_file.writerow(dialog_line)
 
 
-def load_dialogues_words(vocabulary, n_dialogues=None, path=PATH_ENTITIES, vocab_path=VOCAB_WORDS_PATH):
+def load_dialogues_words(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, vocab_path=VOCAB_WORDS_PATH):
     # generate incorrect examples along the way
     encoded_docs = []
     labels = []
@@ -183,7 +184,106 @@ def load_dialogues_words(vocabulary, n_dialogues=None, path=PATH_ENTITIES, vocab
     return padded_docs, array(labels)
 
 
-def load_annotated_dialogues(vocabulary, n_dialogues=None, path=PATH_ENTITIES, vocab_path=VOCAB_ENTITIES_PATH):
+def sample_random_negatives(sample='sample172098', n_dialogues=None):
+    '''
+    produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings
+    '''
+    
+    # vocabulary encodings for entities
+    X_path_entities = './%s/entities_X.npy' % sample
+    # vocabulary encodings for words
+    X_path_words = './%s/words_X.npy' % sample
+    y_path = './%s/y.npy' % sample
+
+    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
+    word_vocabulary = load_vocabulary('./%s/vocab_words.pkl' % sample)
+
+    encoded_docs_entities = []
+    encoded_docs_words = []
+    labels = []
+
+    dialogues = os.listdir(DIALOGUES_PATH)
+
+    # limit the number of dialogues to process
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+    
+    for file_name in dialogues:
+        # extract entities from dialogue and encode them with ids from the vocabulary
+        print file_name
+        doc_entities = []
+        doc_words = []
+        encoded_doc_entities = []
+        encoded_doc_words = []
+        with open(os.path.join(DIALOGUES_PATH, file_name),"rb") as dialog_file:
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
+            for dialog_line in dialog_reader:
+                # print dialog_line
+                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                entities = json.loads(dialog_line[4])
+                if entities:
+                    # print entities
+                    for entity in entities:
+                        
+                        # encode entity with its URI
+                        entity_URI = entity['URI']
+                        # skip duplicate entities within the same document
+                        if entity_URI not in doc_entities:
+                            # incode entities with ids
+                            if entity_URI in entity_vocabulary:
+                                # print len(vocabulary.keys())
+                                encoded_doc_entities.append(entity_vocabulary[entity_URI])
+                            else:
+                                encoded_doc_entities.append(entity_vocabulary['<UNK>'])
+                            doc_entities.append(entity_URI)
+                        
+                        # encode entity with its words
+                        entity_words = entity['surfaceForm']
+                        # skip duplicate entities within the same document
+                        for word in entity_words.split():
+                            if word not in doc_words:
+                                # encode words with ids
+                                if word in word_vocabulary:
+                                    # print len(vocabulary.keys())
+                                    encoded_doc_words.append(word_vocabulary[word])
+                                else:
+                                    encoded_doc_words.append(word_vocabulary['<UNK>'])
+                                doc_words.append(word)
+
+        # skip docs with 1 entity
+        if len(encoded_doc_entities) > 1:
+            encoded_docs_entities.append(encoded_doc_entities)
+            encoded_docs_words.append(encoded_doc_words)
+            labels.append(1)
+            # generate incorrect examples along the way by picking as many entities at random from the vocabulary
+            # to generate a document of the same # entities as a positive example
+            encoded_docs_entities.append(random.sample(xrange(1, len(entity_vocabulary.keys())), len(encoded_doc_entities)))
+            encoded_docs_words.append(random.sample(xrange(1, len(word_vocabulary.keys())), len(encoded_doc_words)))
+            labels.append(0)
+
+    # correct *2
+    print len(encoded_docs_entities), 'documents encoded'
+    X_entities = pad_sequences(encoded_docs_entities, padding='post')
+    X_words = pad_sequences(encoded_docs_words, padding='post')
+    labels = array(labels)
+
+    print X_entities
+    print X_entities.shape[0], 'dialogues', X_entities.shape[1], 'max entities per dialogue'
+
+    print X_words
+    print X_words.shape[0], 'dialogues', X_words.shape[1], 'max words per dialogue'
+
+    print labels
+
+    # save datasets
+    # save embedding_matrix for entities in the dataset
+    np.save(X_path_entities, X_entities)
+     # save embedding_matrix for words in the dataset
+    np.save(X_path_words, X_words)
+    np.save(y_path, labels)
+
+
+def load_annotated_dialogues(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, vocab_path=VOCAB_ENTITIES_PATH):
     # generate incorrect examples along the way
     encoded_docs = []
     labels = []
@@ -241,7 +341,7 @@ def load_vocabulary(path=VOCAB_ENTITIES_PATH):
         return vocabulary
 
 
-def create_vocabulary_words(n_dialogues=None, path=PATH_ENTITIES, save_to=VOCAB_WORDS_PATH):
+def create_vocabulary_words(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_WORDS_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
     dialogues = os.listdir(path)
@@ -274,7 +374,7 @@ def create_vocabulary_words(n_dialogues=None, path=PATH_ENTITIES, save_to=VOCAB_
     print 'Saved vocabulary with', len(vocabulary.keys()), 'words'
 
 
-def create_vocabulary(n_dialogues=None, path=PATH_ENTITIES, save_to=VOCAB_ENTITIES_PATH):
+def create_vocabulary(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_ENTITIES_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
     dialogues = os.listdir(path)
@@ -398,11 +498,12 @@ if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save (create dir ./ubuntu/annotated_dialogues)
     # annotate_ubuntu_dialogs()
     # 2. load all entities and save into a vocabulary dictionary
-    create_vocabulary()
-    test_load_vocabulary(VOCAB_ENTITIES_PATH)
+    # create_vocabulary()
+    # test_load_vocabulary(VOCAB_ENTITIES_PATH)
 
     # create_vocabulary_words()
     # test_load_vocabulary(VOCAB_WORDS_PATH)
     # 3. load annotated dialogues convert entities to ids using vocabulary
+    sample_random_negatives(sample='sample172098')
     # load_annotated_dialogues()
     # load_dialogues_words()

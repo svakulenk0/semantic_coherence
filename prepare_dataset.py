@@ -7,10 +7,6 @@ Preprocess input data
 '''
 import numpy as np
 
-# input matrix with random negative sampling
-X_path = './sample127932/ubuntu127932_X.npy'
-y_path = './sample127932/ubuntu127932_y.npy'
-
 
 def preprocess(docs, vocabulary, max_length):
     '''
@@ -48,7 +44,7 @@ def preprocess(docs, vocabulary, max_length):
 #     np.save(y_path, labels)
 
 
-def load_dataset_splits(test_split=0.2, validation_split=0.2):
+def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
     # load dataset
     data = np.load(X_path)
     labels = np.load(y_path)
