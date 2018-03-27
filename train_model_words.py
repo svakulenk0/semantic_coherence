@@ -19,7 +19,7 @@ from embeddings import word_embeddings
 
 # training parameters:
 batch_size = 128
-epochs = 5
+epochs = 20
 
 # dataset params
 sample = 'sample172098'
