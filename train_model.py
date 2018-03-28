@@ -19,10 +19,12 @@ sample = 'sample172098'
 vocabulary_size = 24081  # unique entities + extra token 0 for UNK
 
 # iterate over datasets
-negative_sampling_strategies = ['random', 'vertical', 'horizontal']
+negative_sampling_strategies = [ # 'random', 
+'vertical', 'horizontal']
 
 for strategy in negative_sampling_strategies:
 
+    print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STRATEGY:" + strategy
     X_path_entities = './%s/entities_%s_X.npy' % (sample, strategy)
     y_path = './%s/y.npy' % sample
 
@@ -41,9 +43,11 @@ for strategy in negative_sampling_strategies:
 
             # serialize the trained model to JSON
             model_json = model.to_json()
-            with open("./models/%s_model_127932.json" % label, "w") as json_file:
+            with open("./models/%s_%s_model_127932.json" % (strategy, label), "w") as json_file:
                 json_file.write(model_json)
             
             # serialize weights to HDF5
-            model.save_weights('./models/%s_weights_127932.h5' % label)
+            model.save_weights('./models/%s_%s_weights_127932.h5' % (strategy,label))
             print("Saved model to disk")
+
+print ("Make sure to rerun the needed parts for the random startegy")
