@@ -348,6 +348,67 @@ def add_dialogue_turns(dialog):
     return encoded_doc_entities, encoded_doc_words
 
 
+def encode_positive_examples(sample='sample172098', n_dialogues=None):
+    '''
+    produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings for the positive examples of sequences from the dialogues
+    '''
+    dialogues = os.listdir(DIALOGUES_PATH)
+
+    # limit the number of dialogues to process
+    if n_dialogues:
+        dialogues = dialogues[:n_dialogues]
+
+    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
+    word_vocabulary = load_vocabulary('./%s/vocab_words.pkl' % sample)
+
+    encoded_docs_entities = []
+    encoded_docs_words = []
+
+    for file_name in dialogues:
+        # extract entities from dialogue and encode them with ids from the vocabulary
+        print file_name
+        encoded_doc_entities = []
+        encoded_doc_words = []
+        with open(os.path.join(DIALOGUES_PATH, file_name),"rb") as dialog_file:
+            dialog_reader = unicodecsv.reader(dialog_file, delimiter='\t')
+            for dialog_line in dialog_reader:
+                # encode all entities in the dialog
+                # dialog line: [0] timestamp [1] sender [2] recepeint [3] utterance [4] entities
+                entities = json.loads(dialog_line[4])
+                if entities:
+                    # print entities
+                    for entity in entities:
+                        # encode entity with its URI
+                        entity_URI = entity['URI']
+                        if entity_URI in entity_vocabulary:
+                            # incode entities with ids
+                            entity_id = entity_vocabulary[entity_URI]
+                            # skip duplicate entities within the same document
+                            if entity_id not in encoded_doc_entities:
+                                encoded_doc_entities.append(entity_id)
+
+                                # encode entity with its words
+                                entity_words = entity['surfaceForm']
+                                # skip duplicate entities within the same document
+                                for word in entity_words.split():
+                                    # encode words with ids
+                                    if word in word_vocabulary:
+                                        word_id = word_vocabulary[word]
+                                        if word_id not in encoded_doc_words:
+                                            encoded_doc_words.append(word_id)
+            # add encoded dialog to the dataset
+            encoded_docs_entities.append(encoded_doc_entities)
+            encoded_docs_words.append(encoded_doc_words)
+
+    print len(encoded_docs_entities), 'documents encoded'
+    # distribution for the number of entities across dialogues
+    # print encoded_docs_entities
+    # print encoded_docs_words
+    print Counter([len(entities) for entities in encoded_docs_entities])
+    print Counter([len(words) for words in encoded_docs_words])
+    # frequency distribution of entities in the dataset
+
+
 def create_datasets(sample='sample172098', n_dialogues=None):
     '''
     produce 2 datasets (X, y arrays) with word- and entity-based vocabulary encodings
@@ -446,7 +507,7 @@ def create_datasets(sample='sample172098', n_dialogues=None):
             encoded_doc_entities12_v, encoded_doc_words12_v = add_dialogue_turns(dialogue12_v)
             encoded_docs_entities_vertical.append(encoded_doc_entities12_v[:len_doc1])
             encoded_docs_words_vertical.append(encoded_doc_words12_v[:len(encoded_doc_words1)])
-            # generate incorrect examples along the way by picking as many entities at random from the vocabulary
+            # generate incorrect examples along the way by picking as many entities at random from the vocabulary distribution TODO
             # to generate a document of the same # entities as a positive example
             encoded_docs_entities_random.append(random.sample(xrange(1, len(entity_vocabulary.keys())), len_doc1))
             encoded_docs_words_random.append(random.sample(xrange(1, len(word_vocabulary.keys())), len(encoded_doc_words1)))
@@ -763,9 +824,11 @@ if __name__ == '__main__':
     
     # generate datasets 
     sample = 'sample172098'
+    encode_positive_examples(sample)
+
     # sample_negatives_random(sample)
     # sample_negatives_horizontal(sample)
-    create_datasets(sample)
+    # create_datasets(sample)
 
     # load_annotated_dialogues()
     # load_dialogues_words()
