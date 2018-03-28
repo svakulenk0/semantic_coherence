@@ -366,7 +366,7 @@ def encode_positive_examples(sample='sample172098', n_dialogues=None):
 
     for file_name in dialogues:
         # extract entities from dialogue and encode them with ids from the vocabulary
-        print file_name
+        # print file_name
         encoded_doc_entities = []
         encoded_doc_words = []
         with open(os.path.join(DIALOGUES_PATH, file_name),"rb") as dialog_file:
