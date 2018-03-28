@@ -407,6 +407,8 @@ def encode_positive_examples(sample='sample172098', n_dialogues=None):
     print Counter([len(entities) for entities in encoded_docs_entities])
     print Counter([len(words) for words in encoded_docs_words])
     # frequency distribution of entities in the dataset
+    print Counter([entity for entities in encoded_docs_entities for entity in entities])
+    print Counter([word for words in encoded_docs_words for word in words])
 
 
 def create_datasets(sample='sample172098', n_dialogues=None):
