@@ -384,8 +384,8 @@ def encode_positive_examples(sample='sample172098', n_dialogues=None):
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
 
-    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
-    word_vocabulary = load_vocabulary('./%s/vocab_words.pkl' % sample)
+    entity_vocabulary = load_vocabulary(VOCAB_ENTITIES_PATH % sample)
+    word_vocabulary = load_vocabulary(VOCAB_WORDS_PATH % sample)
 
     encoded_docs_entities = []
     encoded_docs_words = []
