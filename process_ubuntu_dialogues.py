@@ -28,7 +28,7 @@ DIALOGUES_PATH = './ubuntu/annotated_dialogues_sample2'  # 172,098
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 # VOCAB_ENTITIES_PATH = './ubuntu/vocab_entities.pkl'
-VOCAB_ENTITIES_PATH = './sample172098/vocab.pkl'
+VOCAB_ENTITIES_PATH = './sample172098/vocab_entities.pkl'
 VOCAB_WORDS_PATH = './sample172098/vocab_words.pkl'
 
 dialog_end_symbol = "__dialog_end__"
