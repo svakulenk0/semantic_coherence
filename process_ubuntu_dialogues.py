@@ -356,17 +356,21 @@ def sample_negatives_random(positive_examples, voc_distr):
     '''
     dataset = []
 
+    # prepare probabilities from vocabulary counts distribution
+    counts = voc_distr.values()
+    probs = [count / float(sum(counts)) for count in counts]
+    vocabulary_keys = voc_distr.keys()
+
     print '\nGenerating random negatives from the vocabulary distribution'
+    
     for positive in positive_examples:
         n = len(positive)
         # filter out docs with only 2 entities
         if n > 2:
-            counts = voc_distr.values()
-            probs = [count / float(sum(counts)) for count in counts]
             # sample from vocabulary distribution without duplicates
-            negative = np.random.choice(voc_distr.keys(), replace=False, size=n, p=probs)
+            negative = np.random.choice(vocabulary_keys, replace=False, size=n, p=probs)
             # print positive
-            # print negative
+            print negative
             assert len(negative) == len(positive)
             dataset.append(positive)
             dataset.append(negative)
@@ -688,14 +692,14 @@ def load_annotated_dialogues(vocabulary, n_dialogues=None, path=DIALOGUES_PATH, 
     return padded_docs, array(labels)
 
 
-def load_vocabulary(path=VOCAB_ENTITIES_PATH):
+def load_vocabulary(path):
     with open(path, 'rb') as f:
         vocabulary = pickle.load(f)
         print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
         return vocabulary
 
 
-def create_vocabulary_words(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_WORDS_PATH):
+def create_vocabulary_words(sample, n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_WORDS_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
     dialogues = os.listdir(path)
@@ -723,12 +727,12 @@ def create_vocabulary_words(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB
                     print dialog_line
 
     # save vocabulary on disk
-    with open(save_to, 'wb') as f:
+    with open(save_to%sample, 'wb') as f:
         pickle.dump(vocabulary, f)
     print 'Saved vocabulary with', len(vocabulary.keys()), 'words'
 
 
-def create_vocabulary(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_ENTITIES_PATH):
+def create_vocabulary(sample, n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_ENTITIES_PATH):
     # entities -> int ids
     vocabulary = {'<UNK>': 0}
     dialogues = os.listdir(path)
@@ -754,7 +758,7 @@ def create_vocabulary(n_dialogues=None, path=DIALOGUES_PATH, save_to=VOCAB_ENTIT
                     print dialog_line
 
     # save vocabulary on disk
-    with open(save_to, 'wb') as f:
+    with open(save_to % sample, 'wb') as f:
         pickle.dump(vocabulary, f)
     print 'Saved vocabulary with', len(vocabulary.keys()), 'entities'
 
@@ -851,15 +855,18 @@ def test_load_vocabulary(path):
 if __name__ == '__main__':
     # 1. annotate dialogues with DBpedia entities and save (create dir ./ubuntu/annotated_dialogues)
     # annotate_ubuntu_dialogs()
-    # 2. load all entities and save into a vocabulary dictionary
-    # create_vocabulary()
-    # test_load_vocabulary(VOCAB_ENTITIES_PATH)
+    
+    sample = 'sample172098_new'
 
-    # create_vocabulary_words()
-    # test_load_vocabulary(VOCAB_WORDS_PATH)
+    # 2. load all entities and save into a vocabulary dictionary
+
+    # create_vocabulary(sample)
+    # test_load_vocabulary(VOCAB_ENTITIES_PATH%sample)
+
+    # create_vocabulary_words(sample)
+    # test_load_vocabulary(VOCAB_WORDS_PATH%sample)
     
     # generate dataset
-    sample = 'sample172098_new'
     # encode all positive examples from the dataset
     encoded_docs_entities, encoded_docs_words = encode_positive_examples(sample)
     assert len(encoded_docs_entities) == len(encoded_docs_words)
@@ -874,10 +881,6 @@ if __name__ == '__main__':
     print X_words_random
     print y
     np.save('./%s/y.npy' % sample, y)
-
-    # sample_negatives_random(sample)
-    # sample_negatives_horizontal(sample)
-    # create_datasets(sample)
 
     # load_annotated_dialogues()
     # load_dialogues_words()
