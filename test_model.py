@@ -1,45 +1,76 @@
 # -*- coding: utf-8 -*-
 '''
 svakulenko
-17 Mar 2018
+29 Mar 2018
 
-Small sample input data for training the model.
-DBpedia resources namespace dbr: for http://dbpedia.org/resource/
-https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+Run pre-trained model (inference) on different types of data samples
+# 1) True positive samples: all real dialogues from the Ubuntu dataset
+# 2) True negative samples: drawn uniformly at random from the vocabulary
+# 3) True negative samples: drawn from the vocabulary frequency (count) distribution
+# 4) True negative samples: 2 dialogues mixed by horizontal split
+# 5) True negative samples: 2 dialogues mixed by vertical split
 '''
-from numpy import array
+import numpy as np
+import keras
 
-from preprocess import preprocess, populate_emb_matrix_from_file
-from model import train
 
-DBPEDIA_GLOBAL_PR = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt'
+class Tester():
 
-# 1. Input: sample data
-# document is a dialogue represented as a set of DBpedia concepts
-dialogues = [[u'<http://dbpedia.org/resource/Arch>', u'<http://dbpedia.org/resource/Sudo>',
-              u'<http://dbpedia.org/resource/Organisation_of_Islamic_Cooperation>'],
-             [u'<http://dbpedia.org/resource/CPU_cache>', u'<http://dbpedia.org/resource/Password>']]
+    def __init__(self, sample, embeddings_name):
+        model_path = './models/%s/%s_model.json' % (sample, embeddings_name)
+        weights_path = './models/%s/%s.h5' % (sample, embeddings_name)
+        vocabulary_path = './%s/vocab_words.pkl' % sample
+        self.model = self.load_model(model_path, weights_path)
 
-# define class labels
-labels = array([0, 1])
+    def load_model(self, model_path, weights_path):
+        # 1. Load model pre-trained model
+        with open(model_path, 'r') as json_file:
+            loaded_model_json = json_file.read()
+        # print loaded_model_json
+        model = keras.models.model_from_json(loaded_model_json)
+        # load pre-trained model weights
+        model.load_weights(weights_path)
+        print('Model loaded.')
+        return model
 
-# 2. Analyse input data
-input_length = 3  # maximum number of concepts per document-dialogue
-# vocabulary encodes all unique concepts in the input data with integer ids
-vocabulary = {u'<http://dbpedia.org/resource/Arch>': 1,
-              u'<http://dbpedia.org/resource/Sudo>': 2,
-              u'<http://dbpedia.org/resource/Organisation_of_Islamic_Cooperation>': 3,
-              u'<http://dbpedia.org/resource/CPU_cache>': 4,
-              u'<http://dbpedia.org/resource/Password>': 5}
-# vocab_size =  len(vocabulary.keys())
-vocab_size =  6
-# test preprocessing input docs
-X = preprocess(dialogues, vocabulary, input_length)
+    def load_data(self, X_path):
+        '''
+        # 2. Load word data samples and split positive/negative pairs
+        '''
+        X = np.load(X_path)
+        print 'input shape:', X.shape
+        positive = X[0:][::2] # even
+        negative = X[1:][::2] # odd
+        return positive, negative
 
-# 3. Embeddings: load pre-trained entity embeddings reflecting the KG structure for each entity in the vocabulary
-# e.g. from global vectors pre-trained embeddings /DBpedia/2016-04/9_pageRank from:
-# http://data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2016-04/GlobalVectors/9_pageRank/DBpediaVecotrs200_20Shuffle.txt
-# embeddings_dim = 200
-# print populate_emb_matrix_from_file(vocabulary, embeddings_dim, emb_path=DBPEDIA_GLOBAL_PR)
+    def test_model(self, X, limit=10):
+        '''
+        3. Run model (inference)
 
-train(X, labels, X, labels, vocabulary, input_length)
+        limit <int> predict only the first n samples in each dataset
+        '''
+        return self.model.predict(X[:limit])
+
+
+if __name__ == '__main__':
+    # The best word model obtained by training on negative samples drawn uniformly at random (acc: 98.4 on its test set)
+    sample = 'sample172098'
+    embeddings_name = 'GloVe'
+    tester = Tester(sample, embeddings_name)
+
+    # 1) True positive samples: all real dialogues from the Ubuntu dataset
+    strategy = 'random'
+    X_path = './%s/words_%s_X.npy' % (sample, strategy)
+    positive, negative = tester.load_data(X_path)
+    positive_results = tester.test_model(positive)
+    print positive_results
+
+    # 2) True negative samples: drawn uniformly at random from the vocabulary
+    random_negative_results = tester.test_model(negative)
+    print random_negative_results
+
+    # 3) True negative samples: drawn from the vocabulary frequency (count) distribution
+    # 4) True negative samples: 2 dialogues mixed by horizontal split
+    # 5) True negative samples: 2 dialogues mixed by vertical split
+
+
