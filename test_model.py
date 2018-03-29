@@ -16,11 +16,16 @@ import keras
 
 class Tester():
 
-    def __init__(self, sample, embeddings_name):
+    def __init__(self, sample, embeddings_name, limit=10):
+        '''
+        Load model on init
+        limit <int> predict only the first n samples in each dataset
+        '''
         model_path = './models/%s/%s_model.json' % (sample, embeddings_name)
         weights_path = './models/%s/%s.h5' % (sample, embeddings_name)
         vocabulary_path = './%s/vocab_words.pkl' % sample
         self.model = self.load_model(model_path, weights_path)
+        self.limit = limit
 
     def load_model(self, model_path, weights_path):
         # 1. Load model pre-trained model
@@ -43,21 +48,26 @@ class Tester():
         negative = X[1:][::2] # odd
         return positive, negative
 
-    def test_model(self, X, limit=10):
+    def test_model(self, X):
         '''
         3. Run model (inference)
 
         limit <int> predict only the first n samples in each dataset
         '''
-        return self.model.predict(X[:limit])
+        return self.model.predict(X[:self.limit])
 
 
 if __name__ == '__main__':
-    # The best word model obtained by training on negative samples drawn uniformly at random (acc: 98.4 on its test set)
+    # The best word model obtained by training on negative samples drawn uniformly at random (acc: 98.4 on its test set): sample172098
+    # sample172098_new
     sample = 'sample172098'
     embeddings_name = 'GloVe'
-    tester = Tester(sample, embeddings_name)
+    # predict only the first n samples in each dataset
+    limit = 2
+    # initialize a Tester object to the model
+    tester = Tester(sample, embeddings_name, limit)
 
+    # test on:
     # 1) True positive samples: all real dialogues from the Ubuntu dataset
     strategy = 'random'
     X_path = './%s/words_%s_X.npy' % (sample, strategy)
@@ -66,11 +76,29 @@ if __name__ == '__main__':
     print positive_results
 
     # 2) True negative samples: drawn uniformly at random from the vocabulary
-    random_negative_results = tester.test_model(negative)
-    print random_negative_results
+    random_uniform_results = tester.test_model(negative)
+    print random_uniform_results
 
     # 3) True negative samples: drawn from the vocabulary frequency (count) distribution
+    sample2 = 'sample172098_new'
+    strategy = 'random'
+    X_path = './%s/words_%s_X.npy' % (sample2, strategy)
+    positive, negative = tester.load_data(X_path)
+    # pad with 0s to fit the input length of the model
+    negative = np.pad(negative, (0, 5), 'constant')
+    random_voc_distr_results = tester.test_model(negative)
+    print random_voc_distr_results
+
     # 4) True negative samples: 2 dialogues mixed by horizontal split
+    strategy = 'horizontal'
+    X_path = './%s/words_%s_X.npy' % (sample, strategy)
+    positive, negative = tester.load_data(X_path)
+    horizontal_split_results = tester.test_model(negative)
+    print horizontal_split_results
+
     # 5) True negative samples: 2 dialogues mixed by vertical split
-
-
+    strategy = 'vertical'
+    X_path = './%s/words_%s_X.npy' % (sample, strategy)
+    positive, negative = tester.load_data(X_path)
+    vertical_split_results = tester.test_model(negative)
+    print vertical_split_results
