@@ -349,33 +349,44 @@ def add_dialogue_turns(dialog):
     return encoded_doc_entities, encoded_doc_words
 
 
-def sample_negatives_random(positive_examples, voc_distr):
+def sample_negatives_random(positive_examples_entities, positive_examples_words):
     '''
     sample negatives from vocabulary distribution
     voc_distr <dict> vocabulary distribution (word/entity: count)
     '''
-    dataset = []
+    entities_dataset = []
+    words_dataset = []
 
     # prepare probabilities from vocabulary counts distribution
-    counts = voc_distr.values()
-    probs = [count / float(sum(counts)) for count in counts]
-    vocabulary_keys = voc_distr.keys()
+    entities = entity_distribution.keys()
+    entities_counts = entity_distribution.values()
+    entities_probs = [count / float(sum(entities_counts)) for count in entities_counts]
+
+    words = word_distribution.keys()
+    words_counts = word_distribution.values()
+    words_probs = [count / float(sum(words_counts)) for count in words_counts]
 
     print '\nGenerating random negatives from the vocabulary distribution'
     
-    for positive in positive_examples:
-        n = len(positive)
-        # filter out docs with only 2 entities
-        if n > 2:
-            # sample from vocabulary distribution without duplicates
-            negative = np.random.choice(vocabulary_keys, replace=False, size=n, p=probs)
-            # print positive
-            print negative
-            assert len(negative) == len(positive)
-            dataset.append(positive)
-            dataset.append(negative)
+    for i, positive_entities in enumerate(positive_examples_entities):
+        n_entities = len(positive_entities)
+        # consider only the dialogue with at least 3 detected entities
+        if n_entities > 2:
+            # sample from entity vocabulary distribution without duplicates
+            negative_entities = np.random.choice(entities, replace=False, size=n_entities, p=entities_probs)
+            assert len(negative_entities) == n_entities
+            entities_dataset.append(positive_entities)
+            entities_dataset.append(negative_entities)
 
-    return pad_sequences(dataset, padding='post')
+            # sample from word vocabulary distribution without duplicates
+            positive_words = positive_examples_words[i]
+            n_words = len(positive_words)
+            negative_words = np.random.choice(words, replace=False, size=n_words, p=words_probs)
+            assert len(negative_words) == n_words
+            words_dataset.append(positive_words)
+            words_dataset.append(negative_words)
+
+    return pad_sequences(entities_dataset, padding='post'), pad_sequences(words_dataset, padding='post')
 
 
 def encode_positive_examples(sample='sample172098', n_dialogues=None):
@@ -870,16 +881,15 @@ if __name__ == '__main__':
     # encode all positive examples from the dataset
     encoded_docs_entities, encoded_docs_words = encode_positive_examples(sample)
     assert len(encoded_docs_entities) == len(encoded_docs_words)
-    X_entities_random = sample_negatives_random(encoded_docs_entities, entity_distribution)
     # add one random sampled from vocabulary distribution for each positive
-    np.save('./%s/entities_random_X.npy' % sample, X_entities_random)
-    X_words_random = sample_negatives_random(encoded_docs_words, word_distribution)
-    np.save('./%s/words_random_X.npy' % sample, X_words_random)
+    X_entities_random, X_words_random = sample_negatives_random(encoded_docs_entities, encoded_docs_words)
     y = array([1, 0] * (len(X_words_random) / 2))
     assert len(X_entities_random) == len(X_words_random) == len(y)
-    print X_entities_random
-    print X_words_random
+    print len(X_entities_random)
+    print len(X_words_random)
     print y
+    np.save('./%s/entities_random_X.npy' % sample, X_entities_random)
+    np.save('./%s/words_random_X.npy' % sample, X_words_random)
     np.save('./%s/y.npy' % sample, y)
 
     # load_annotated_dialogues()
