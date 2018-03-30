@@ -29,6 +29,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
                 vector = wordAndVector[1]
                 vector = vector.split()
                 embedding_vector = np.asarray(vector, dtype='float32')
+                embedding_vector = np.expand_dims(embedding_vector, axis=0)
                 embeddings[word] = embedding_vector
                 if len(embeddings) >= len(sample):
                     print "Found embeddings for all words in the sample"
@@ -43,12 +44,12 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
     for word in sample:
         print word
         word_vector = embeddings[word]
-        print np.expand_dims(word_vector, axis=0)
+        print embedding_vector
         print previous_word_vectors
         # estimate distances from new word to all previous words
         # compare with cosine between the new word vector and the word vectors of the previous words
         if previous_word_vectors != [[]]:
-            word_distances = cosine_similarity(np.expand_dims(word_vector, axis=0), previous_word_vectors)
+            word_distances = cosine_similarity(embedding_vector, previous_word_vectors)
             words_distances.append(word_distances)
         previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
     print words_distances
