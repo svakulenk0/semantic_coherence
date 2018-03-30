@@ -43,6 +43,8 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
     for word in sample:
         print word
         word_vector = embeddings[word]
+        print np.reshape(word_vector, (-1, 2))
+        print previous_word_vectors
         # estimate distances from new word to all previous words
         # compare with cosine between the new word vector and the word vectors of the previous words
         if previous_word_vectors != [[]]:
