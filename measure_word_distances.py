@@ -37,7 +37,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
     print embeddings.keys()
 
     # snowball
-    previous_word_vectors = [[]]
+    previous_word_vectors = np.array([[]], ndmin=2)
     # and store distances (cosine similarities) between preceding words
     words_distances = []
     
@@ -47,7 +47,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
             word_vector = embeddings[word]
             # estimate distances from new word to all previous words
             # compare with cosine between the new word vector and the word vectors of the previous words
-            if len(previous_word_vectors) > 0:
+            if previous_word_vectors.size > 0:
                 word_distances = cosine_similarity(embedding_vector, previous_word_vectors)
                 words_distances.append(word_distances)
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
