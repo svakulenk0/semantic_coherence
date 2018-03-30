@@ -51,7 +51,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
         if previous_word_vectors != [[]]:
             word_distances = cosine_similarity(embedding_vector, previous_word_vectors)
             words_distances.append(word_distances)
-        previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
+        previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=1)
     print words_distances
 
 
