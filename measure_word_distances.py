@@ -5,6 +5,7 @@ svakulenko
 
 Estimate pair-wise distances between words in the conversation
 '''
+import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from embeddings import word_embeddings
