@@ -32,25 +32,19 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
     
     # snowball
-    previous_words = []
+    previous_word_vectors = []
     # and store distances (cosine similarities) between preceding words
     words_distances = []
     
     for word in sample:
-        word_distances = []
         print word
-        # estimate distances from new word to all previous words:
-        # iterate over the vectors of the previous words in the conversation
-        for previous_word in previous_words:
-            # compare with cosine between the two word vectors
-            print word, previous_word
-            word_distances.append(cosine_similarity(embeddings[word], embeddings[previous_word]))
-
-        previous_words.append(word)
-
+        word_vector = embeddings[word]
+        # estimate distances from new word to all previous words
+        # compare with cosine between the new word vector and the word vectors of the previous words
+        word_distances = cosine_similarity([word_vector], previous_word_vectors)
+        previous_word_vectors.append(word_vector)
         words_distances.append(word_distances)
     
-    print previous_words
     print words_distances
 
 
