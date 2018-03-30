@@ -15,6 +15,7 @@ SAMPLE_WORDS_4606 = [u'zip', u'file', u'.tar.gz', u'md5sum', u'md5', u'ubuntu', 
 def measure_word_distances(sample=SAMPLE_WORDS_4606):
     # load embeddings
     embeddings = {}
+
     with open(word_embeddings['GloVe']['path']) as embs_file:
         for line in embs_file:
             wordAndVector = line.split(None, 1)
@@ -27,7 +28,6 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
                 embeddings[word] = embedding_vector
                 if len(embeddings) >= len(sample):
                     print "Found embeddings for all words in the sample"
-
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
     
     # snowball
@@ -43,7 +43,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
         for previous_word in previous_words:
             # compare with cosine between the two word vectors
             print word, previous_word
-            word_distances.append(cosine_similarity(embeddings[word], embeddings[previous_word])
+            word_distances.append(cosine_similarity(embeddings[word], embeddings[previous_word]))
 
         previous_words.append(word)
 
