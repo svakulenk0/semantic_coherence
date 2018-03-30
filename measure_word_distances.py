@@ -42,7 +42,8 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
         word_vector = embeddings[word]
         # estimate distances from new word to all previous words
         # compare with cosine between the new word vector and the word vectors of the previous words
-        word_distances = cosine_similarity([word_vector], previous_word_vectors)
+        if previous_word_vectors:
+            word_distances = cosine_similarity([word_vector], previous_word_vectors)
         previous_word_vectors.append(word_vector)
         words_distances.append(word_distances)
     
