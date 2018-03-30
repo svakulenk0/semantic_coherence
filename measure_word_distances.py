@@ -30,9 +30,10 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
                 if len(embeddings) >= len(sample):
                     print "Found embeddings for all words in the sample"
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
-    
+    print embeddings.keys()
+
     # snowball
-    previous_word_vectors = []
+    previous_word_vectors = [[]]
     # and store distances (cosine similarities) between preceding words
     words_distances = []
     
