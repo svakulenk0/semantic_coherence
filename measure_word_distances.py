@@ -45,8 +45,6 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
         print word
         if word in embeddings:
             word_vector = embeddings[word]
-            print embedding_vector.shape
-            print previous_word_vectors.shape
             # estimate distances from new word to all previous words
             # compare with cosine between the new word vector and the word vectors of the previous words
             if previous_word_vectors:
