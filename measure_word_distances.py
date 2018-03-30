@@ -4,6 +4,9 @@ svakulenko
 30 Mar 2018
 
 Estimate pair-wise distances between words in the conversation
+
+loaded embeddings for 18 words out of 19 
+['OSX', 'compiz', 'zip', 'md5sum', 'Leopard', 'rc2', 'bluetooth', 'walkthrough', 'init', 'computer', 'file', 'ubuntu', 'battle', 'apt-get', 'spawning', 'runlevel', 'gdm', 'md5']
 '''
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -42,7 +45,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
         word_vector = embeddings[word]
         # estimate distances from new word to all previous words
         # compare with cosine between the new word vector and the word vectors of the previous words
-        if previous_word_vectors:
+        if previous_word_vectors != [[]]:
             word_distances = cosine_similarity([word_vector], previous_word_vectors)
         previous_word_vectors.append(word_vector)
         words_distances.append(word_distances)
