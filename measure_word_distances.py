@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from embeddings import word_embeddings
 
-SAMPLE_WORDS_4606 = [u'zip', u'file', u'.tar.gz', u'md5sum', u'md5', u'ubuntu', u'OSX', u'computer', u'Leopard', u'apt-get', u'runlevel', u'bluetooth', u'init', u'gdm', u'rc2', u'spawning', u'walkthrough', u'battle', u'compiz']
+SAMPLE_WORDS_4606 = [u'zip', u'file', u'tar.gz', u'md5sum', u'md5', u'ubuntu', u'OSX', u'computer', u'Leopard', u'apt-get', u'runlevel', u'bluetooth', u'init', u'gdm', u'rc2', u'spawning', u'walkthrough', u'battle', u'compiz']
 
 
 def measure_word_distances(sample=SAMPLE_WORDS_4606):
@@ -49,7 +49,7 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
             # compare with cosine between the new word vector and the word vectors of the previous words
             if previous_word_vectors.size > 0:
                 word_distances = cosine_similarity(embedding_vector, previous_word_vectors)
-                words_distances.append(word_distances)
+                words_distances.append(word_distances.tolist())
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
