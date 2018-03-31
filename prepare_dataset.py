@@ -8,12 +8,42 @@ Preprocess input data
 import numpy as np
 import json
 import pickle
+from keras.preprocessing.sequence import pad_sequences
 
 from annotate_ubuntu_dataset import ANNOTATION_FILE
 
 LATEST_SAMPLE = '291848'
+DEV_DATA_PATH = 'development_set.jl'
 VOCAB_ENTITIES_PATH = './%s/vocab_entities.pkl'
 VOCAB_WORDS_PATH = './%s/vocab_words.pkl'
+
+
+def load_vocabulary(path):
+    with open(path, 'rb') as f:
+        vocabulary = pickle.load(f)
+        print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
+        return vocabulary
+
+
+def encode_data_set(sample=LATEST_SAMPLE, path=DEV_DATA_PATH):
+    entity_vocabulary = load_vocabulary(VOCAB_ENTITIES_PATH % sample)
+    word_vocabulary = load_vocabulary(VOCAB_WORDS_PATH % sample)
+
+    encoded_docs_entities = []
+    encoded_docs_words = []
+
+    with open(path, "rb") as entities_file:
+        for line in entities_file:
+            annotation = json.loads(line)
+            encoded_docs_entities.append([entity_vocabulary[entity] for entity in annotation['entity_URIs']])
+            encoded_docs_words.append([word_vocabulary[word] for entity in annotation['surface_forms']
+                                                             for word in entity.split()])
+    assert len(encoded_docs_entities) == len(encoded_docs_words)
+    
+    np.save('./%s/entities/positive_X.npy' % sample, pad_sequences(encoded_docs_entities, padding='post'))
+    np.save('./%s/words/positive_X.npy' % sample, pad_sequences(encoded_docs_words, padding='post'))
+
+    print len(encoded_docs_entities), 'documents encoded'
 
 
 def create_vocabularies(path=ANNOTATION_FILE, sample=LATEST_SAMPLE):
@@ -51,7 +81,7 @@ def separate_test_set(path=ANNOTATION_FILE, test_set_size=5000):
     test_data = data[:test_set_size]
     development_data = data[test_set_size:]
     # write
-    with open('test_set.jl', "wb") as test_file, open('development_set.jl', "wb") as development_file:
+    with open('test_set.jl', "wb") as test_file, open(DEV_DATA_PATH, "wb") as development_file:
         test_file.writelines(test_data)
         development_file.writelines(development_data)
 
@@ -130,4 +160,4 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 
 if __name__ == '__main__':
-    create_vocabularies()
+    encode_data_set()
