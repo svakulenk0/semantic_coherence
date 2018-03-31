@@ -6,7 +6,38 @@ svakulenko
 Preprocess input data
 '''
 import numpy as np
+import json
+import pickle
+
 from annotate_ubuntu_dataset import ANNOTATION_FILE
+
+LATEST_SAMPLE = '291848'
+VOCAB_ENTITIES_PATH = './%s/vocab_entities.pkl'
+VOCAB_WORDS_PATH = './%s/vocab_words.pkl'
+
+
+def create_vocabularies(path=ANNOTATION_FILE, sample=LATEST_SAMPLE):
+    entity_vocabulary = {}
+    word_vocabulary = {}
+
+    with open(path, "rb") as entities_file:
+        for line in entities_file:
+            annotation = json.loads(line)
+            for entity in annotation['entity_URIs']:
+                if entity not in entity_vocabulary:
+                    entity_vocabulary[entity] = len(entity_vocabulary)
+            for entity in annotation['surface_forms']:
+                for word in entity.split():
+                    if word not in word_vocabulary:
+                        word_vocabulary[word] = len(word_vocabulary)
+    # save vocabularies
+    with open(VOCAB_ENTITIES_PATH % sample, 'wb') as f:
+        pickle.dump(entity_vocabulary, f)
+    print 'Saved vocabulary with', len(entity_vocabulary.keys()), 'entities'
+
+    with open(VOCAB_WORDS_PATH % sample, 'wb') as f:
+        pickle.dump(word_vocabulary, f)
+    print 'Saved vocabulary with', len(word_vocabulary.keys()), 'words'
 
 
 def separate_test_set(path=ANNOTATION_FILE, test_set_size=5000):
@@ -99,5 +130,4 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 
 if __name__ == '__main__':
-    separate_test_set()
-
+    create_vocabularies()
