@@ -36,6 +36,7 @@ Sample SPARQL queries:
 
 import requests
 import random
+import signal
 
 TOPK_SERVICE = 'http://svhdt.ai.wu.ac.at/dbpedia/query'
 DBPEDIA_ENDPOINT = 'http://dbpedia.org/sparql'
@@ -61,6 +62,10 @@ SAMPLE_ENTITIES2 = [['Lady_Bird_Johnson'], ['Greta_Gerwig']]
 SAMPLE_ENTITIES3 = [['Lady_Bird_Johnson', 'CPU_cache'], ['Greta_Gerwig', 'EMachines']]
 
 
+def handler(signum, frame):
+    raise Exception("time out!")
+
+
 def get_random():
     try:
         query = RANDOM_CONCEPT % random.randint(0, 4000000)
@@ -79,12 +84,16 @@ def get_topk_paths(uttered_entities, response_entities, k=10, max_length=25):
                               ' '.join([ENTITY_TEMPLATE % e for e in response_entities]),
                               k, max_length)
     # print query
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(300)
     try:
         response = requests.get(TOPK_SERVICE, params={'query': query, 'output': 'json'})
         paths = response.json()['results']['bindings']
         return [path['X']['value'] for path in paths]
-    except:
-        print response.text
+    except Exception, exc:
+        print exc
+        # produce an empty path on time out
+        return []
 
 
 def test_get_random():
