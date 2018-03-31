@@ -22,11 +22,11 @@ def load_glove_word_embeddings(embeddings_name='GloVe', sample=LATEST_SAMPLE):
     vocabulary = load_vocabulary('./%s/words/vocab.pkl' % sample)
     # from https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
     # create a weight matrix for entities in training docs
-    embedding_matrix = np.zeros((len(vocabulary)+1, word_embeddings[embeddings_name]['dims']))
+    embedding_matrix = np.zeros((len(vocabulary), word_embeddings[embeddings_name]['dims']))
     with open(word_embeddings[embeddings_name]['path']) as embs_file:
         embedding_matrix = load_embeddings(embs_file, embedding_matrix, vocabulary, entities=False)
         # save embedding_matrix for entities in the training dataset
-        np.save(PATH+'embeddings_name.npy', embedding_matrix)
+        np.save(PATH+'GloVe%s.npy'%sample, embedding_matrix)
     print embedding_matrix
 
 
