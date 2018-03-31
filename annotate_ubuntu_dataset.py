@@ -21,6 +21,7 @@ def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
     '''
 
     dialogues = os.listdir(path)
+    print len(dialogues), ' dialogues annotated with Dbpedia entities'
     # limit number of dialogues to process to a smaller sample
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
