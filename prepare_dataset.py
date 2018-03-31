@@ -17,8 +17,8 @@ def separate_test_set(path=ANNOTATION_FILE, test_set_size=5000):
     # shuffle
     random.shuffle(data)
     # split
-    test_data = data[:test_set_size+1]
-    development_data = data[test_set_size+1:]
+    test_data = data[:test_set_size]
+    development_data = data[test_set_size:]
     # write
     with open('test_set.jl', "wb") as test_file, open('development_set.jl', "wb") as development_file:
         test_file.writelines(test_data)
