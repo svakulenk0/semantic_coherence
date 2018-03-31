@@ -64,27 +64,27 @@ def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
                                     annotation['similarity_scores'].append(entity['similarityScore'])
                     except:
                         print dialog_line
-            # number of participants whose turns are annotated
-            n_participants = len(set(annotation['turns']))
-            # save annotation only if we have new entities contribution from both participants
-            if n_participants == 2:
-                annotation['n_participants'] = n_participants
-                # distribution of annotated entities between the participants
-                entity_distribution = Counter(annotation['turns']).values()
-                # save annotation only if we have new entities contribution from both participants
-                annotation['participants_entities'] = Counter(annotation['turns']).values()
-                # produce annotation summary
-                # number of annotated entities in total
-                annotation['n_entities'] = len(annotation['entity_URIs'])
-                # number of annotated utterances
-                annotation['n_utterances'] = len(set(annotation['utterance_ids']))
-                
-                # write annotation as a json line
-                json.dump(annotation, outfile)
-                outfile.write("\n")
+            
+            # distribution of annotated entities between the participants
+            entity_distribution = Counter(annotation['turns']).values()
+            # save annotation only if we have at least 3 new entities contribution from both participants
+            if len([True for n_entities in entity_distribution if n_entities > 2]) == 2:
+                    # number of participants whose turns are annotated
+                    annotation['n_participants'] = len(set(annotation['turns']))
 
-                # log progress for dialogue annotations being stored 
-                print entity_distribution
+                    annotation['participants_entities'] = entity_distribution
+                    # produce annotation summary
+                    # number of annotated entities in total
+                    annotation['n_entities'] = len(annotation['entity_URIs'])
+                    # number of annotated utterances
+                    annotation['n_utterances'] = len(set(annotation['utterance_ids']))
+                    
+                    # write annotation as a json line
+                    json.dump(annotation, outfile)
+                    outfile.write("\n")
+
+                    # log progress for dialogue annotations being stored 
+                    print entity_distribution
 
 if __name__ == '__main__':
     collect_entity_annotations()
