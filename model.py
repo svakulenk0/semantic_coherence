@@ -20,7 +20,7 @@ from keras.layers import Dense, Dropout, Embedding, Activation
 from keras.layers import Conv1D, GlobalMaxPooling1D
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
-from preprocess import populate_emb_matrix_from_file
+# from preprocess import populate_emb_matrix_from_file
 
 # PATH_EMBEDDINGS = './embeddings/data.dws.informatik.uni-mannheim.de/rdf2vec/models/DBpedia/2015-10/noTypes/db2vec_sg_200_5_25_5'
 
