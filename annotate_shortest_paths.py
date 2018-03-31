@@ -10,34 +10,58 @@ snow-balling
 import os
 import unicodecsv
 import ast
+import json
 
 from process_ubuntu_dialogues import DIALOGUES_PATH
 from hdt_topk import get_topk_paths
+from annotate_ubuntu_dataset import ANNOTATION_FILE
 
 PATH_SHORTEST_PATHS = './ubuntu/paths.txt'
 
 # 18 entities
 SAMPLE_4606 = [u'Zip_(file_format)', u'Tar_(computing)', u'Md5sum', u'MD5', u'Ubuntu_(philosophy)', u'MacOS', u'Computer', u'Mac_OS_X_Leopard', u'APT_(Debian)', u'Runlevel', u'Bluetooth', u'Init', u'Gestational_diabetes', u'RC2', u'Salmon_run', u'Strategy_guide', u'Battle', u'Compiz']
-SAMPLE_WORDS_4606 = [u'zip', u'file', u'.tar.gz', u'md5sum', u'md5', u'ubuntu', u'OSX', u'computer', u'Leopard', u'apt-get', u'runlevel', u'bluetooth', u'init', u'gdm', u'rc2', u'spawning', u'walkthrough', u'battle', u'compiz']
 
 
-def annotate_sample(entities=SAMPLE_4606):
+def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     paths = []
     previous_entities = []
 
     for entity in entities:
+        entity = entity.split('/')[-1]
         entity = entity.replace(')', '\)').replace('(', '\(').replace(',', '\,')
         print entity
         if entity not in previous_entities:
             if previous_entities:
-                # add links to the new entity from all entities mentioned previously through KG relations
-                paths.append(get_topk_paths(previous_entities, [entity], k=5, max_length=9))
+                # add links to the new entity from all entities mentioned previously through KG relations (stats last run max path: 7)
+                entity_paths = get_topk_paths(previous_entities, [entity], k=5, max_length=9)
+                paths.append(entity_paths)
                 print paths
+            else:
+                # indicate the first entity
+                paths.append([])
             previous_entities.append(entity)
-    print paths
+    return paths
 
 
-def annotate_shortest_paths(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS):
+def annotate_json(entities_path=ANNOTATION_FILE):
+    '''
+    extract top 5 shortest path from the dbpedia graph
+    '''
+    with open(entities_path, 'r') as entities_file, open('ubuntu_dialogues_top5_paths.jl', 'w') as outfile:
+        # iterate over the selected datasets
+        for line in entities_file:
+            path_annotation = {}
+            annotation = json.loads(line)
+            path_annotation['file_name'] = annotation['file_name']
+            entities = annotation['entity_URIs']
+            path_annotation['entities'] = entities
+            path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
+             # write path annotation as a json line
+            json.dump(path_annotation, outfile)
+            outfile.write("\n")
+
+
+def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS):
     '''
     the dialogues are annotated with shortest paths from DBpedia KG
     '''
@@ -72,5 +96,4 @@ def annotate_shortest_paths(offset=748, source=DIALOGUES_PATH, target=PATH_SHORT
 
 
 if __name__ == '__main__':
-    # annotate_shortest_paths()
-    annotate_sample()
+    annotate_json()
