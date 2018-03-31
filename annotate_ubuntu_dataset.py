@@ -64,25 +64,27 @@ def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
                                     annotation['similarity_scores'].append(entity['similarityScore'])
                     except:
                         print dialog_line
-            # distribution of annotated entities between the participants
-            entity_distribution = Counter(annotation['turns']).values()
+            # number of participants whose turns are annotated
+            n_participants = len(set(annotation['turns']))
             # save annotation only if we have new entities contribution from both participants
-            if 0 not in entity_distribution:
-                annotation['participants_entities'] = entity_distribution
+            if n_participants == 2:
+                annotation['n_participants'] = n_participants
+                # distribution of annotated entities between the participants
+                entity_distribution = Counter(annotation['turns']).values()
+                # save annotation only if we have new entities contribution from both participants
+                annotation['participants_entities'] = Counter(annotation['turns']).values()
                 # produce annotation summary
                 # number of annotated entities in total
                 annotation['n_entities'] = len(annotation['entity_URIs'])
                 # number of annotated utterances
                 annotation['n_utterances'] = len(set(annotation['utterance_ids']))
-                # number of participants whose turns are annotated
-                annotation['n_participants'] = len(set(annotation['turns']))
                 
                 # write annotation as a json line
                 json.dump(annotation, outfile)
                 outfile.write("\n")
 
-            # log progress
-            print entity_distribution
+                # log progress for dialogue annotations being stored 
+                print entity_distribution
 
 if __name__ == '__main__':
     collect_entity_annotations()
