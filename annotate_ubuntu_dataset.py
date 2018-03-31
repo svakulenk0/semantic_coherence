@@ -13,13 +13,14 @@ from collections import Counter
 DIALOGUES_PATH = './ubuntu/annotated_dialogues'
 
 
-def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=2):
+def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
     '''
     produce JSON lines for each dialogue from the annotatated sample
     jsonlines.org
     '''
 
     dialogues = os.listdir(path)
+    # limit number of dialogues to process to a smaller sample
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
 
