@@ -11,6 +11,7 @@ import json
 from collections import Counter
 
 DIALOGUES_PATH = './ubuntu/annotated_dialogues'
+ANNOTATION_FILE = 'ubuntu_dialogues_spotlight_annotation.jl'
 
 
 def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
@@ -24,13 +25,13 @@ def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
     if n_dialogues:
         dialogues = dialogues[:n_dialogues]
 
-    with open('ubuntu_dialogues_spotlight_annotation.jl', 'w') as outfile:
+    with open(ANNOTATION_FILE, 'w') as outfile:
         # iterate over dialogue-files
         for file_name in dialogues:
             # processing a single dialogue
             # create annotation as a dictionary
             annotation = {'file_name': file_name, 'turns': [], 'utterance_ids': [],
-                          'entitiy_URIs': [], 'surface_forms': [], 'supports': [], 'similarity_scores': [] }
+                          'entity_URIs': [], 'surface_forms': [], 'supports': [], 'similarity_scores': [] }
             # encoding nicknames of the dialogue participants as int
             participants = {}
 
@@ -46,34 +47,41 @@ def collect_entity_annotations(path=DIALOGUES_PATH, n_dialogues=None):
                         # store utterance annotation only if there are any entities regognised in it
                         if entities:
                             for entity in entities:
-                                # for each utterance with at least one entity store an annotation
-                                # 1) utterance attributes
-                                annotation['utterance_ids'].append(i)
-                                sender = dialog_line[1]
-                                if sender not in participants:
-                                    participants[sender] = len(participants)
-                                annotation['turns'].append(participants[sender])
-                                # 2) entity attributes
-                                # collect entity attribute in the annotation dictionary
-                                annotation['entitiy_URIs'].append(entity['URI'])
-                                annotation['surface_forms'].append(entity['surfaceForm'])
-                                annotation['supports'].append(entity['support'])
-                                annotation['similarity_scores'].append(entity['similarityScore'])
+                                # store only new entities that were not mentioned in the conversation previously
+                                entity_URI = entity['URI']
+                                if entity_URI not in annotation['entity_URIs']:
+                                    annotation['entity_URIs'].append(entity_URI)
+                                    # 1) utterance attributes
+                                    annotation['utterance_ids'].append(i)
+                                    sender = dialog_line[1]
+                                    if sender not in participants:
+                                        participants[sender] = len(participants)
+                                    annotation['turns'].append(participants[sender])
+                                    # 2) entity attributes: collect entity attribute in the annotation dictionary
+                                    annotation['surface_forms'].append(entity['surfaceForm'])
+                                    annotation['supports'].append(entity['support'])
+                                    annotation['similarity_scores'].append(entity['similarityScore'])
                     except:
                         print dialog_line
-            # produce annotation summary
-            # number of annotated entities in total
-            annotation['n_entities'] = len(annotation['entitiy_URIs'])
-            # number of annotated utterances
-            annotation['n_utterances'] = len(set(annotation['utterance_ids']))
-            # number of participants whose turns are annotated
-            annotation['n_participants'] = len(set(annotation['turns']))
             # distribution of annotated entities between the participants
-            annotation['participants_entities'] = Counter(annotation['turns']).values()
-            # write annotation as a json line
-            json.dump(annotation, outfile)
-            outfile.write("\n")
+            entity_distribution = Counter(annotation['turns']).values()
+            # save annotation only if we have new entities contribution from both participants
+            if 0 not in entity_distribution:
+                annotation['participants_entities'] = entity_distribution
+                # produce annotation summary
+                # number of annotated entities in total
+                annotation['n_entities'] = len(annotation['entity_URIs'])
+                # number of annotated utterances
+                annotation['n_utterances'] = len(set(annotation['utterance_ids']))
+                # number of participants whose turns are annotated
+                annotation['n_participants'] = len(set(annotation['turns']))
+                
+                # write annotation as a json line
+                json.dump(annotation, outfile)
+                outfile.write("\n")
 
+            # log progress
+            print entity_distribution
 
 if __name__ == '__main__':
     collect_entity_annotations()
