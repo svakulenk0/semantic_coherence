@@ -6,6 +6,23 @@ svakulenko
 Preprocess input data
 '''
 import numpy as np
+from annotate_ubuntu_dataset import ANNOTATION_FILE
+
+
+def separate_test_set(path=ANNOTATION_FILE, test_set_size=5000):
+    import random
+
+    with open(path, "rb") as f:
+        data = f.readlines()
+    # shuffle
+    random.shuffle(data)
+    # split
+    test_data = data[:test_set_size+1]
+    development_data = data[test_set_size+1:]
+    # write
+    with open('test_set.jl', "wb") as test_file, open('development_set.jl', "wb") as development_file:
+        test_file.writelines(test_data)
+        development_file.writelines(development_data)
 
 
 def preprocess(docs, vocabulary, max_length):
@@ -79,3 +96,8 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
     y_val = y[-num_validation_samples:]
 
     return x_train, y_train, x_val, y_val, x_test, y_test, input_length
+
+
+if __name__ == '__main__':
+    separate_test_set()
+
