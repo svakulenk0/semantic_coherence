@@ -84,8 +84,8 @@ def get_topk_paths(uttered_entities, response_entities, k=10, max_length=25):
                               ' '.join([ENTITY_TEMPLATE % e for e in response_entities]),
                               k, max_length)
     # print query
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(60)
+    # signal.signal(signal.SIGALRM, handler)
+    # signal.alarm(60)
     try:
         response = requests.get(TOPK_SERVICE, params={'query': query, 'output': 'json'})
         paths = response.json()['results']['bindings']
