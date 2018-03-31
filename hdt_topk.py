@@ -85,7 +85,7 @@ def get_topk_paths(uttered_entities, response_entities, k=10, max_length=25):
                               k, max_length)
     # print query
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(300)
+    signal.alarm(60)
     try:
         response = requests.get(TOPK_SERVICE, params={'query': query, 'output': 'json'})
         paths = response.json()['results']['bindings']
