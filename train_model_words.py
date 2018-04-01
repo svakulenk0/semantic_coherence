@@ -44,9 +44,11 @@ def load_test_data(path, input_length, sample=LATEST_SAMPLE):
 def load_training_data(strategy, sample=LATEST_SAMPLE):
     positives = np.load('./%s/words/positive_X.npy' % sample)
     n_positives = positives.shape[0]
+    print positives
     
     negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
     n_negatives = negatives.shape[0]
+    print negatives
 
     assert n_positives == n_negatives
     print n_positives, 'positive and negative samples'
@@ -75,15 +77,15 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     x_train = x[:-num_validation_samples]
     y_train = y[:-num_validation_samples]
-    print y_train
+
     x_val = x[-num_validation_samples:]
     y_val = y[-num_validation_samples:]
-    print y_val
 
     # load test data
 
     # positive examples
     x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
+    print x_test_positives
     n_positives = x_test_positives.shape[0]
     # verify the dimensions
     print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
@@ -91,6 +93,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # negative examples
     x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
+    print x_test_random
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
     print 'size of test set negative examples:', n_negatives, x_test_random.shape[1]
