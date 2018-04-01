@@ -32,7 +32,7 @@ def load_vocabulary(path):
         return vocabulary
 
 
-def encode_data_set(sample=LATEST_SAMPLE, path=DEV_DATA_PATH):
+def encode_data_set(sample=LATEST_SAMPLE, source=DEV_DATA_PATH, targets=(POSITIVE_ENTITIES_DEV, POSITIVE_WORDS_DEV)):
     entity_vocabulary = load_vocabulary(VOCAB_ENTITIES_PATH % sample)
     word_vocabulary = load_vocabulary(VOCAB_WORDS_PATH % sample)
 
@@ -47,8 +47,8 @@ def encode_data_set(sample=LATEST_SAMPLE, path=DEV_DATA_PATH):
                                                              for word in entity.split()])
     assert len(encoded_docs_entities) == len(encoded_docs_words)
     
-    np.save(POSITIVE_ENTITIES_TEST % sample, pad_sequences(encoded_docs_entities, padding='post'))
-    np.save(POSITIVE_WORDS_TEST % sample, pad_sequences(encoded_docs_words, padding='post'))
+    np.save(targets[0] % sample, pad_sequences(encoded_docs_entities, padding='post'))
+    np.save(targets[1] % sample, pad_sequences(encoded_docs_words, padding='post'))
 
     print len(encoded_docs_entities), 'documents encoded'
 
@@ -168,5 +168,5 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 if __name__ == '__main__':
     create_vocabularies()
-    encode_data_set(path=DEV_DATA_PATH)
-    encode_data_set(path=TEST_DATA_PATH)
+    encode_data_set(source=DEV_DATA_PATH, targets=(POSITIVE_ENTITIES_DEV, POSITIVE_WORDS_DEV))
+    encode_data_set(path=TEST_DATA_PATH, targets=(POSITIVE_ENTITIES_TEST, POSITIVE_WORDS_TEST))
