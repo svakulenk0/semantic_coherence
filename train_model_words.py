@@ -52,7 +52,7 @@ def load_data(strategy, test='', sample=LATEST_SAMPLE):
     return x, y
 
 
-for strategy in negative_sampling_strategies:
+def train_model(strategy, sample=LATEST_SAMPLE):
     # load dataset
     x, y = load_data(strategy)
     # verify the dimensions
@@ -92,4 +92,8 @@ for strategy in negative_sampling_strategies:
         model_json = model.to_json()
         with open("./models/%s_model.json" % label, "w") as json_file:
             json_file.write(model_json)
- 
+
+
+if __name__ == '__main__':
+    for strategy in negative_sampling_strategies:
+        train_model(strategy)
