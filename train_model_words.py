@@ -13,6 +13,7 @@ svakulenko
 Load and split the dataset to train the classification model
 '''
 import numpy as np
+from keras.preprocessing.sequence import pad_sequences
 
 from model import train
 from prepare_dataset import load_dataset_splits
