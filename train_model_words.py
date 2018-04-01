@@ -69,6 +69,8 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     np.random.shuffle(indices)
     x = x[indices]
     y = y[indices]
+    print x
+    print y
     num_validation_samples = int(validation_split * x.shape[0])
 
     x_train = x[:-num_validation_samples]
@@ -84,13 +86,15 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     # verify the dimensions
     print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
     y_test_positives = np.ones(n_positives)
+    print x_test_positives, y_test_positives
 
     # negative examples
     x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
-    print 'size of test set positive examples:', n_negatives, x_test_random.shape[1]
+    print 'size of test set negative examples:', n_negatives, x_test_random.shape[1]
     y_test_random = np.zeros(n_negatives)
+    print x_test_random, y_test_random
 
     for embeddings_name in embedding_names:
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
