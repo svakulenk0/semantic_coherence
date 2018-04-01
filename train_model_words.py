@@ -29,16 +29,18 @@ negative_sampling_strategies = ['random']
 embedding_names = ['GloVe']
 
 # dataset params
-sample = '291848'
+LATEST_SAMPLE = '291848'
 vocabulary_size = 21832  # unique words
 
 
-for strategy in negative_sampling_strategies:
-    # load dataset
-    positives = np.load('./%s/words/positive_X.npy' % sample)
+def load_data(strategy, test='', sample=LATEST_SAMPLE):
+    '''
+    for the test set append the folder path: test='test/'
+    '''
+    positives = np.load('./%s/words/%spositive_X.npy' % (sample,test))
     n_positives = positives.shape[0]
     
-    negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
+    negatives = np.load('./%s/words/%s%s_X.npy' % (sample, test, strategy))
     n_negatives = negatives.shape[0]
 
     assert n_positives == n_positives
@@ -47,6 +49,12 @@ for strategy in negative_sampling_strategies:
     x = np.append(positives, negatives, axis=0)
     y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
 
+    return x, y
+
+
+for strategy in negative_sampling_strategies:
+    # load dataset
+    x, y = load_data(strategy)
     # verify the dimensions
     print 'size of development set:', x.shape[0]
     input_length = x.shape[1]
@@ -64,8 +72,13 @@ for strategy in negative_sampling_strategies:
     x_val = x[-num_validation_samples:]
     y_val = y[-num_validation_samples:]
 
+    # load test data
+    x_test, y_test = load_data(strategy, test='test/')
+    # verify the dimensions
+    print 'size of test set:', x_test.shape[0], x_test.shape[1]
+
     for embeddings_name in embedding_names:
-        label = "%s_%s" % (strategy, embeddings_name)
+        label = "%s_%s_%s" % (sample, strategy, embeddings_name)
         print label
         embeddings_config = word_embeddings[embeddings_name]
         embeddings_config['matrix_path'] = PATH + embeddings_name + sample + '.npy'
@@ -77,9 +90,6 @@ for strategy in negative_sampling_strategies:
 
         # serialize the trained model to JSON
         model_json = model.to_json()
-        with open("./models/%s_%s_model.json" % (sample, label), "w") as json_file:
+        with open("./models/%s_model.json" % label, "w") as json_file:
             json_file.write(model_json)
-    
-    # # serialize weights to HDF5
-    # model.save_weights('./models/%s_weights_172098.h5' % label)
-    # print("Saved model to disk")
+ 
