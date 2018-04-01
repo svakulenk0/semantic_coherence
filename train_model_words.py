@@ -13,6 +13,7 @@ svakulenko
 Load and split the dataset to train the classification model
 '''
 import numpy as np
+np.random.seed(1337) # for reproducibility
 from keras.preprocessing.sequence import pad_sequences
 
 from model import train
@@ -69,7 +70,6 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # split the training set into a training set and a validation set
     indices = np.arange(x.shape[0])
-    np.random.seed(1)
     np.random.shuffle(indices)
     x = x[indices]
     y = y[indices]
