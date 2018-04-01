@@ -27,7 +27,7 @@ def generate_uniform_random(folder, sample=LATEST_SAMPLE, test='test/'):
         adversaries.append(random.sample(xrange(0, len(vocabulary)), len(dialogue)))
 
     assert len(adversaries) == len(positives)
-    np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), pad_sequences(adversaries, padding='post'))
+    np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), adversaries)
 
 
 def generate_adversaries():

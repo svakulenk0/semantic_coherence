@@ -47,8 +47,8 @@ def encode_data_set(sample=LATEST_SAMPLE, source=DEV_DATA_PATH, targets=(POSITIV
                                                              for word in entity.split()])
     assert len(encoded_docs_entities) == len(encoded_docs_words)
     
-    np.save(targets[0] % sample, pad_sequences(encoded_docs_entities, padding='post'))
-    np.save(targets[1] % sample, pad_sequences(encoded_docs_words, padding='post'))
+    np.save(targets[0] % sample, encoded_docs_entities)
+    np.save(targets[1] % sample, encoded_docs_words)
 
     print len(encoded_docs_entities), 'documents encoded'
 

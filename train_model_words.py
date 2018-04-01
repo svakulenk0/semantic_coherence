@@ -54,6 +54,7 @@ def load_training_data(strategy, sample=LATEST_SAMPLE):
     print n_positives, 'positive and negative samples'
     # merge positives + negatives for training the model to separate them
     x = np.append(positives, negatives, axis=0)
+    x = pad_sequences(x, padding='post')
     y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
     return x, y
 
