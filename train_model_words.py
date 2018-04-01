@@ -82,7 +82,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
     n_positives = x_test_positives.shape[0]
     # verify the dimensions
-    print 'size of test set positive examples:', n_positives, x_test.shape[1]
+    print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
     y_test_positives = np.ones(n_positives)
 
     # negative examples
