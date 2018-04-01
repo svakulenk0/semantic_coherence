@@ -111,10 +111,10 @@ def generate_vertical_split(sample=LATEST_SAMPLE):
     word_vocabulary = load_vocabulary(VOCAB_WORDS_PATH % sample)
 
     test = ['', 'test/']
-    entities_adversaries, words_adversaries = [], []
     for i, path in enumerate([DEV_DATA_PATH, TEST_DATA_PATH]):
         dialogues_by_length = []
-        
+        entities_adversaries, words_adversaries = [], []
+
         # load dialogues and order them by length
         with open(path, "rb") as entities_file:
             for line in entities_file:
@@ -132,7 +132,7 @@ def generate_vertical_split(sample=LATEST_SAMPLE):
             entity_adversary2, words_adversary2 = merge_verticaly(dialogue2, dialogue1, entity_vocabulary, word_vocabulary)
             entities_adversaries.extend([entity_adversary1, entity_adversary2])
             words_adversaries.extend([words_adversary1, words_adversary2])
-            
+
         np.save('./%s/entities/%svertical_X.npy' % (sample, test[i]), entities_adversaries)
         np.save('./%s/words/%svertical_X.npy' % (sample, test[i]), words_adversaries)
 
