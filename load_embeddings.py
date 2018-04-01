@@ -14,7 +14,6 @@ from embeddings import entity_embeddings
 from embeddings import word_embeddings
 from prepare_dataset import load_vocabulary, LATEST_SAMPLE
 
-
 PATH = './embeddings_npy/'
 
 

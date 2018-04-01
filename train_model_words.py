@@ -22,7 +22,7 @@ from embeddings import word_embeddings
 
 # training parameters:
 batch_size = 128
-epochs = 5
+epochs = 1
 validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'vertical', 'horizontal'
 negative_sampling_strategies = ['random']
@@ -31,7 +31,7 @@ embedding_names = ['GloVe']
 
 # dataset params
 LATEST_SAMPLE = '291848'
-vocabulary_size = 21832  # unique words
+vocabulary_size = 21832  # words
 
 
 def load_test_data(path, input_length, sample=LATEST_SAMPLE):

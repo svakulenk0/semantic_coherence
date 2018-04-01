@@ -167,4 +167,6 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 
 if __name__ == '__main__':
+    create_vocabularies()
+    encode_data_set(path=DEV_DATA_PATH)
     encode_data_set(path=TEST_DATA_PATH)
