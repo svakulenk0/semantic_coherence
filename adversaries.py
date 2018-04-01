@@ -8,6 +8,7 @@ from true positive samples
 '''
 import numpy as np
 import random
+from keras.preprocessing.sequence import pad_sequences
 
 from prepare_dataset import load_vocabulary
 from prepare_dataset import LATEST_SAMPLE
@@ -25,7 +26,7 @@ def generate_uniform_random(folder, sample=LATEST_SAMPLE, test='test/'):
         adversaries.append(random.sample(xrange(0, len(vocabulary)), len(dialogue)))
 
     assert len(adversaries) == len(positives)
-    np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), adversaries)
+    np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), pad_sequences(adversaries, padding='post'))
 
 
 def generate_adversaries():

@@ -48,12 +48,11 @@ def load_training_data(strategy, sample=LATEST_SAMPLE):
     negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
     n_negatives = negatives.shape[0]
 
-    assert n_positives == n_positives
+    assert n_positives == n_negatives
     print n_positives, 'positive and negative samples'
     # merge positives + negatives for training the model to separate them
     x = np.append(positives, negatives, axis=0)
     y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
-    print y
     return x, y
 
 
@@ -93,6 +92,8 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     # verify the dimensions
     print 'size of test set negative examples:', n_negatives, x_test_random.shape[1]
     y_test_random = np.zeros(n_negatives)
+
+    assert n_positives == n_negatives
 
     for embeddings_name in embedding_names:
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
