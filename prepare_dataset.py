@@ -39,7 +39,7 @@ def encode_data_set(sample=LATEST_SAMPLE, source=DEV_DATA_PATH, targets=(POSITIV
     encoded_docs_entities = []
     encoded_docs_words = []
 
-    with open(path, "rb") as entities_file:
+    with open(source, "rb") as entities_file:
         for line in entities_file:
             annotation = json.loads(line)
             encoded_docs_entities.append([entity_vocabulary[entity] for entity in annotation['entity_URIs']])
