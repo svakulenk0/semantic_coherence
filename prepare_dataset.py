@@ -14,14 +14,21 @@ from annotate_ubuntu_dataset import ANNOTATION_FILE
 
 LATEST_SAMPLE = '291848'
 DEV_DATA_PATH = 'development_set.jl'
-VOCAB_ENTITIES_PATH = './%s/vocab_entities.pkl'
-VOCAB_WORDS_PATH = './%s/vocab_words.pkl'
+TEST_DATA_PATH = 'test_set.jl'
+VOCAB_ENTITIES_PATH = './%s/entities/vocab.pkl'
+VOCAB_WORDS_PATH = './%s/words/vocab.pkl'
+
+POSITIVE_ENTITIES_DEV = './%s/entities/positive_X.npy'
+POSITIVE_WORDS_DEV = './%s/words/positive_X.npy'
+
+POSITIVE_ENTITIES_TEST = './%s/entities/test/positive_X.npy'
+POSITIVE_WORDS_TEST = './%s/words/test/positive_X.npy'
 
 
 def load_vocabulary(path):
     with open(path, 'rb') as f:
         vocabulary = pickle.load(f)
-        print 'Loaded vocabulary with', len(vocabulary.keys()), 'entities'
+        print 'Loaded vocabulary with', len(vocabulary), 'keys'
         return vocabulary
 
 
@@ -40,8 +47,8 @@ def encode_data_set(sample=LATEST_SAMPLE, path=DEV_DATA_PATH):
                                                              for word in entity.split()])
     assert len(encoded_docs_entities) == len(encoded_docs_words)
     
-    np.save('./%s/entities/positive_X.npy' % sample, pad_sequences(encoded_docs_entities, padding='post'))
-    np.save('./%s/words/positive_X.npy' % sample, pad_sequences(encoded_docs_words, padding='post'))
+    np.save(POSITIVE_ENTITIES_TEST % sample, pad_sequences(encoded_docs_entities, padding='post'))
+    np.save(POSITIVE_WORDS_TEST % sample, pad_sequences(encoded_docs_words, padding='post'))
 
     print len(encoded_docs_entities), 'documents encoded'
 
@@ -160,4 +167,4 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 
 if __name__ == '__main__':
-    encode_data_set()
+    encode_data_set(path=TEST_DATA_PATH)
