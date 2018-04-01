@@ -3,8 +3,7 @@
 svakulenko
 31 Mar 2018
 
-Negative sampling strategies to produce adversary samples
-from true positive samples
+Different negative sampling strategies to produce adversary samples by corrupting true positive samples
 '''
 import numpy as np
 import random
@@ -15,6 +14,9 @@ from prepare_dataset import LATEST_SAMPLE
 
 
 def generate_uniform_random(folder, sample=LATEST_SAMPLE, test='test/'):
+    '''
+    Pick items from the vocabulry unifromly at random using the same length as of a positive example
+    '''
     # load vocabulary
     vocabulary = load_vocabulary('./%s/%s/vocab.pkl' % (sample, folder))
     # load positive samples
@@ -23,20 +25,36 @@ def generate_uniform_random(folder, sample=LATEST_SAMPLE, test='test/'):
     adversaries = []
     
     for dialogue in positives:
-        print len(dialogue)
         adversaries.append(random.sample(xrange(0, len(vocabulary)), len(dialogue)))
 
     assert len(adversaries) == len(positives)
     np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), adversaries)
 
 
-def generate_adversaries():
+def generate_sequence_disorder(folder, sample=LATEST_SAMPLE, test='test/'):
+    '''
+    Randomly rearrange (permute) the original sequence (sentence ordering task)
+    '''
+    # load positive samples
+    positives = np.load('./%s/%s/%spositive_X.npy' % (sample, folder, test))
+
+    adversaries = []
+    
+    for dialogue in positives:
+        # randomly permute list of ids
+        adversaries.append(random.shuffle(dialogue))
+
+    assert len(adversaries) == len(positives)
+    np.save('./%s/%s/%sdisorder_X.npy' % (sample, folder, test), adversaries)
+
+
+def generate_adversaries(generator):
     for folder in ['entities', 'words']:
         # development
-        generate_uniform_random(folder, test='')
+        generator(folder, test='')
         # test set
-        generate_uniform_random(folder)
+        generator(folder)
 
 
 if __name__ == '__main__':
-    generate_adversaries()
+    generate_adversaries(generate_sequence_disorder)
