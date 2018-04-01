@@ -22,7 +22,7 @@ from embeddings import word_embeddings
 
 # training parameters:
 batch_size = 128
-epochs = 5
+epochs = 10
 validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'vertical', 'horizontal'
 negative_sampling_strategies = ['random']
