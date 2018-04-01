@@ -79,21 +79,21 @@ def merge_horizontally(dialogue1, dialogue2):
     '''
     merge the first half of the first dialogue with the second part of the second dialogue
     '''
-    return dialogue1[:len(dialogue1)/2].extend(dialogue2[len(dialogue2)/2:])
+    adversary = dialogue1[:len(dialogue1)/2]
+    adversary.extend(dialogue2[len(dialogue2)/2:])
+    return adversary
 
 
 # def generate_vertical_split():
 def generate_horizontal_split(folder, sample=LATEST_SAMPLE, test='test/', **kwargs):
     # load positive samples
     positives = np.load('./%s/%s/%spositive_X.npy' % (sample, folder, test))
-    
     # chain head to the tail
     adversaries = [ merge_horizontally(positives[0], positives[-1]) ]
-    print adversaries
     
     for i, dialogue in enumerate(positives[1:]):
         # merge previous dialogue with the current dialogue
-        adversary = merge_horizontally(dialogue[i-1], dialogue) 
+        adversary = merge_horizontally(positives[i-1], dialogue) 
         adversaries.append(dialogue)
 
     assert len(adversaries) == len(positives)
