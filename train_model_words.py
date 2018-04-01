@@ -74,6 +74,8 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # load test data
     x_test, y_test = load_data(strategy, test='test/')
+    # adjust input length to the layer size
+    x_test = pad_sequences(x_test, padding='post', maxlen=input_length)
     # verify the dimensions
     print 'size of test set:', x_test.shape[0], x_test.shape[1]
 
