@@ -25,8 +25,8 @@ from embeddings import word_embeddings
 batch_size = 128
 epochs = 10
 validation_split = 0.2
-# specify negative sampling strategies used e.g. 'random', 'vertical', 'horizontal'
-negative_sampling_strategies = ['random']
+# specify negative sampling strategies used e.g. 'random', 'disorder', 'distribution', 'vertical', 'horizontal' (5)
+negative_sampling_strategies = ['random', 'disorder', 'distribution']
 # specify embeddings, e.g. GloVe, word2vec
 embedding_names = ['GloVe']
 
@@ -91,12 +91,23 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     y_test_positives = np.ones(n_positives)
 
     # negative examples
+    # uniform random
     x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
-    print 'size of test set negative examples:', n_negatives, x_test_random.shape[1]
-    y_test_random = np.zeros(n_negatives)
+    print 'size of test set negative uniform random examples:', n_negatives, x_test_random.shape[1]
 
+    # sequence disorder
+    x_test_disorder = load_test_data('./%s/words/test/disorder_X.npy', input_length)
+    # verify the dimensions
+    print 'size of test set negative sequence disorder examples:', x_test_disorder.shape[0], x_test_disorder.shape[1]
+
+    # vocabulary distribution
+    x_test_distribution = load_test_data('./%s/words/test/distribution_X.npy', input_length)
+    # verify the dimensions
+    print 'size of test set negative vocabulary distribution examples:', x_test_distribution.shape[0], x_test_distribution.shape[1]
+    
+    y_test_negatives = np.zeros(n_negatives)
     assert n_positives == n_negatives
 
     for embeddings_name in embedding_names:
@@ -107,11 +118,21 @@ def train_model(strategy, sample=LATEST_SAMPLE):
         model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
         # evaluate the model on each of the test set groups
+        
+        # true positive samples
         loss, accuracy = model.evaluate(x_test_positives, y_test_positives, verbose=1)
-        print('Accuracy: %f' % (accuracy * 100))
+        print('Accuracy on true positive: %f' % (accuracy * 100))
+        
+        # negative samples
 
-        loss, accuracy = model.evaluate(x_test_random, y_test_random, verbose=1)
-        print('Accuracy: %f' % (accuracy * 100))
+        loss, accuracy = model.evaluate(x_test_random, y_test_negatives, verbose=1)
+        print('Accuracy on uniform random: %f' % (accuracy * 100))
+
+        loss, accuracy = model.evaluate(x_test_disorder, y_test_negatives, verbose=1)
+        print('Accuracy on sequence disorder: %f' % (accuracy * 100))
+
+        loss, accuracy = model.evaluate(x_test_distribution, y_test_negatives, verbose=1)
+        print('Accuracy on vocabulary distribution: %f' % (accuracy * 100))
 
         # serialize the trained model to JSON
         model_json = model.to_json()
