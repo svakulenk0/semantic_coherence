@@ -52,7 +52,8 @@ def load_training_data(strategy, sample=LATEST_SAMPLE):
     print n_positives, 'positive and negative samples'
     # merge positives + negatives for training the model to separate them
     x = np.append(positives, negatives, axis=0)
-    y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=1)
+    y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
+    print y
     return x, y
 
 
@@ -61,9 +62,9 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     x, y = load_training_data(strategy)
     # verify the dimensions
     print 'size of development set:', x.shape[0]
+    assert x.shape[0] == y.shape[0]
     input_length = x.shape[1]
     print 'max input length:', input_length
-    print y.shape
 
     # split the training set into a training set and a validation set
     indices = np.arange(x.shape[0])
