@@ -51,8 +51,8 @@ def generate_vocabulary_distribution(folder, vocabulary_distribution, sample=LAT
     
     for dialogue in positives:
         print dialogue
-        print adversary
         adversary = np.random.choice(entities, replace=False, size=len(dialogue), p=entities_probs)
+        print adversary
         adversaries.append(adversary)
 
     assert len(adversaries) == len(positives)
@@ -70,9 +70,7 @@ def generate_sequence_disorder(folder, sample=LATEST_SAMPLE, test='test/', **kwa
     
     for dialogue in positives:
         # randomly permute list of ids
-        print dialogue
         random.shuffle(dialogue)
-        print dialogue
         adversaries.append(dialogue)
 
     assert len(adversaries) == len(positives)
