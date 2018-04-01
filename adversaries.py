@@ -23,6 +23,7 @@ def generate_uniform_random(folder, sample=LATEST_SAMPLE, test='test/'):
     adversaries = []
     
     for dialogue in positives:
+        print len(dialogue)
         adversaries.append(random.sample(xrange(0, len(vocabulary)), len(dialogue)))
 
     assert len(adversaries) == len(positives)
