@@ -90,7 +90,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
     print 'size of test set positive examples:', n_negatives, x_test_random.shape[1]
-    y_test_random = np.zeros(x_test_random)
+    y_test_random = np.zeros(n_negatives)
 
     for embeddings_name in embedding_names:
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
