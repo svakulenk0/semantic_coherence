@@ -67,6 +67,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # split the training set into a training set and a validation set
     indices = np.arange(x.shape[0])
+    np.random.seed(1)
     np.random.shuffle(indices)
     x = x[indices]
     y = y[indices]
@@ -74,8 +75,10 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     x_train = x[:-num_validation_samples]
     y_train = y[:-num_validation_samples]
+    print y_train
     x_val = x[-num_validation_samples:]
     y_val = y[-num_validation_samples:]
+    print y_val
 
     # load test data
 
