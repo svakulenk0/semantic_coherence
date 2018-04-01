@@ -53,7 +53,7 @@ def generate_vocabulary_distribution(folder, vocabulary_distribution, sample=LAT
         adversaries.append(np.random.choice(entities, replace=False, size=len(dialogue), p=entities_probs))
 
     assert len(adversaries) == len(positives)
-    np.save('./%s/%s/%srandom_X.npy' % (sample, folder, test), adversaries)
+    np.save('./%s/%s/%sdistribution_X.npy' % (sample, folder, test), adversaries)
 
 
 def generate_sequence_disorder(folder, sample=LATEST_SAMPLE, test='test/', **kwargs):
@@ -83,4 +83,4 @@ def generate_adversaries(generator):
 
 
 if __name__ == '__main__':
-    generate_adversaries(generate_sequence_disorder)
+    generate_adversaries(generate_vocabulary_distribution)
