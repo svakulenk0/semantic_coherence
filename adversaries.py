@@ -70,10 +70,10 @@ def generate_sequence_disorder(folder, sample=LATEST_SAMPLE, test='test/', **kwa
     
     for dialogue in positives:
         # randomly permute list of ids
-        adversary = random.shuffle(dialogue)
         print dialogue
-        print adversary
-        adversaries.append(adversary)
+        random.shuffle(dialogue)
+        print dialogue
+        adversaries.append(dialogue)
 
     assert len(adversaries) == len(positives)
     np.save('./%s/%s/%sdisorder_X.npy' % (sample, folder, test), adversaries)
