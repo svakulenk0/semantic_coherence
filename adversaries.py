@@ -13,7 +13,7 @@ from prepare_dataset import load_vocabulary
 from prepare_dataset import LATEST_SAMPLE
 
 
-def generate_uniform_random(folder, sample, test='test/'):
+def generate_uniform_random(folder, sample=, test='test/'):
     # load vocabulary
     vocabulary = load_vocabulary('./%s/%s/vocab.pkl' % (sample, folder))
     # load positive samples
@@ -30,11 +30,11 @@ def generate_uniform_random(folder, sample, test='test/'):
 
 def generate_adversaries():
     for folder in ['entities', 'words']:
+        # development
+        generate_uniform_random(folder, LATEST_SAMPLE, test='')
+        # test set
         generate_uniform_random(folder, LATEST_SAMPLE)
 
 
 if __name__ == '__main__':
-    # develompent
-    generate_adversaries(test='')
-    # test set
     generate_adversaries()
