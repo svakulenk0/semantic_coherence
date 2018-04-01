@@ -51,7 +51,7 @@ def get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embedd
     
     # model parameters:
     filters = 250
-    kernel_size = 6  # previously: 3
+    kernel_size = 3  # previously: 6
     hidden_dims = 250
 
     model = Sequential()
