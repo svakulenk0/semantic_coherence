@@ -112,8 +112,7 @@ def generate_vertical_split(sample=LATEST_SAMPLE):
 
     test = ['', 'test/']
     entities_adversaries, words_adversaries = [], []
-    # , TEST_DATA_PATH
-    for i, path in enumerate([DEV_DATA_PATH]):
+    for i, path in enumerate([DEV_DATA_PATH, TEST_DATA_PATH]):
         dialogues_by_length = []
         
         # load dialogues and order them by length
@@ -130,8 +129,6 @@ def generate_vertical_split(sample=LATEST_SAMPLE):
 
             entity_adversary1, words_adversary1 = merge_verticaly(dialogue1, dialogue2, entity_vocabulary, word_vocabulary)
             entity_adversary2, words_adversary2 = merge_verticaly(dialogue2, dialogue1, entity_vocabulary, word_vocabulary)
-            print words_adversary1
-            print words_adversary2
             entities_adversaries.extend([entity_adversary1, entity_adversary2])
             words_adversaries.extend([words_adversary1, words_adversary2])
             
