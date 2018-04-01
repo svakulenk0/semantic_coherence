@@ -17,7 +17,7 @@ def generate_uniform_random(folder, sample):
     # load vocabulary
     vocabulary = load_vocabulary('./%s/%s/vocab.pkl' % (sample, folder))
     # load positive samples
-    positives = np.load('./%s/%s/positive_X.npy' % (sample, folder))
+    positives = np.load('./%s/%s/test/positive_X.npy' % (sample, folder))
 
     adversaries = []
     
@@ -25,7 +25,7 @@ def generate_uniform_random(folder, sample):
         adversaries.append(random.sample(xrange(0, len(vocabulary)), len(dialogue)))
 
     assert len(adversaries) == len(positives)
-    np.save('./%s/%s/random_X.npy' % (sample, folder), adversaries)
+    np.save('./%s/%s/test/random_X.npy' % (sample, folder), adversaries)
 
 
 def generate_adversaries():
