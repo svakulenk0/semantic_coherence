@@ -34,14 +34,18 @@ LATEST_SAMPLE = '291848'
 vocabulary_size = 21832  # unique words
 
 
-def load_data(strategy, test='', sample=LATEST_SAMPLE):
-    '''
-    for the test set append the folder path: test='test/'
-    '''
-    positives = np.load('./%s/words/%spositive_X.npy' % (sample,test))
+def load_test_data(path, input_length, sample=LATEST_SAMPLE):
+    x_test = np.load(path % sample)
+    # adjust input length to the layer size
+    x_test = pad_sequences(x_test, padding='post', maxlen=input_length)
+    return x_test
+
+
+def load_training_data(strategy, sample=LATEST_SAMPLE):
+    positives = np.load('./%s/words/positive_X.npy' % sample)
     n_positives = positives.shape[0]
     
-    negatives = np.load('./%s/words/%s%s_X.npy' % (sample, test, strategy))
+    negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
     n_negatives = negatives.shape[0]
 
     assert n_positives == n_positives
@@ -49,13 +53,12 @@ def load_data(strategy, test='', sample=LATEST_SAMPLE):
     # merge positives + negatives for training the model to separate them
     x = np.append(positives, negatives, axis=0)
     y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
-
     return x, y
 
 
 def train_model(strategy, sample=LATEST_SAMPLE):
     # load dataset
-    x, y = load_data(strategy)
+    x, y = load_training_data(strategy)
     # verify the dimensions
     print 'size of development set:', x.shape[0]
     input_length = x.shape[1]
@@ -74,11 +77,20 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     y_val = y[-num_validation_samples:]
 
     # load test data
-    x_test, y_test = load_data(strategy, test='test/')
-    # adjust input length to the layer size
-    x_test = pad_sequences(x_test, padding='post', maxlen=input_length)
+
+    # positive examples
+    x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
+    n_positives = x_test_positives.shape[0]
     # verify the dimensions
-    print 'size of test set:', x_test.shape[0], x_test.shape[1]
+    print 'size of test set positive examples:', n_positives, x_test.shape[1]
+    y_test_positives = np.ones(n_positives)
+
+    # negative examples
+    x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
+    n_negatives = x_test_random.shape[0]
+    # verify the dimensions
+    print 'size of test set positive examples:', n_negatives, x_test_random.shape[1]
+    y_test_random = np.zeros(x_test_random)
 
     for embeddings_name in embedding_names:
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
@@ -87,8 +99,11 @@ def train_model(strategy, sample=LATEST_SAMPLE):
         embeddings_config['matrix_path'] = PATH + embeddings_name + sample + '.npy'
         model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
-        # evaluate the model
-        loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
+        # evaluate the model on each of the test set groups
+        loss, accuracy = model.evaluate(x_test_positives, y_test_positives, verbose=1)
+        print('Accuracy: %f' % (accuracy * 100))
+
+        loss, accuracy = model.evaluate(x_test_random, y_test_random, verbose=1)
         print('Accuracy: %f' % (accuracy * 100))
 
         # serialize the trained model to JSON
