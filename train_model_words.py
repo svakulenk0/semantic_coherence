@@ -22,7 +22,7 @@ from embeddings import word_embeddings
 
 # training parameters:
 batch_size = 128
-epochs = 1
+epochs = 5
 validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'vertical', 'horizontal'
 negative_sampling_strategies = ['random']
@@ -44,11 +44,9 @@ def load_test_data(path, input_length, sample=LATEST_SAMPLE):
 def load_training_data(strategy, sample=LATEST_SAMPLE):
     positives = np.load('./%s/words/positive_X.npy' % sample)
     n_positives = positives.shape[0]
-    print positives
     
     negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
     n_negatives = negatives.shape[0]
-    print negatives
 
     assert n_positives == n_negatives
     print n_positives, 'positive and negative samples'
@@ -56,6 +54,7 @@ def load_training_data(strategy, sample=LATEST_SAMPLE):
     x = np.append(positives, negatives, axis=0)
     x = pad_sequences(x, padding='post')
     y = np.append(np.ones(n_positives), np.zeros(n_negatives), axis=0)
+
     return x, y
 
 
@@ -86,7 +85,6 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # positive examples
     x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
-    print x_test_positives
     n_positives = x_test_positives.shape[0]
     # verify the dimensions
     print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
@@ -94,7 +92,6 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # negative examples
     x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
-    print x_test_random
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
     print 'size of test set negative examples:', n_negatives, x_test_random.shape[1]
