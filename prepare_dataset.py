@@ -8,6 +8,7 @@ Preprocess input data
 import numpy as np
 import json
 import pickle
+from collections import Counter
 from keras.preprocessing.sequence import pad_sequences
 
 from annotate_ubuntu_dataset import ANNOTATION_FILE
@@ -51,6 +52,29 @@ def encode_data_set(sample=LATEST_SAMPLE, source=DEV_DATA_PATH, targets=(POSITIV
     np.save(targets[1] % sample, encoded_docs_words)
 
     print len(encoded_docs_entities), 'documents encoded'
+
+
+def measure_vocabulary_distribution(path=ANNOTATION_FILE, sample=LATEST_SAMPLE):
+    # load vocabularies
+    entity_vocabulary = load_vocabulary(VOCAB_ENTITIES_PATH % sample)
+    word_vocabulary = load_vocabulary(VOCAB_WORDS_PATH % sample)
+    # produce vocabulary distributions
+    # entity distribution across dialogues
+    entity_distribution = Counter()
+    # entity word distribution across dialogues: entity id -> count
+    word_distribution = Counter()
+
+    with open(path, "rb") as entities_file:
+        for line in entities_file:
+            annotation = json.loads(line)
+            for entity in annotation['entity_URIs']:
+                entity_distribution[entity_vocabulary[entity]] += 1
+            for entity in annotation['surface_forms']:
+                for word in entity.split():
+                    word_distribution[word_vocabulary[word]] += 1
+
+    print entity_distribution
+    print word_distribution
 
 
 def create_vocabularies(path=ANNOTATION_FILE, sample=LATEST_SAMPLE):
@@ -167,6 +191,7 @@ def load_dataset_splits(X_path, y_path, test_split=0.2, validation_split=0.2):
 
 
 if __name__ == '__main__':
-    create_vocabularies()
-    encode_data_set(source=DEV_DATA_PATH, targets=(POSITIVE_ENTITIES_DEV, POSITIVE_WORDS_DEV))
-    encode_data_set(source=TEST_DATA_PATH, targets=(POSITIVE_ENTITIES_TEST, POSITIVE_WORDS_TEST))
+    # create_vocabularies()
+    # encode_data_set(source=DEV_DATA_PATH, targets=(POSITIVE_ENTITIES_DEV, POSITIVE_WORDS_DEV))
+    # encode_data_set(source=TEST_DATA_PATH, targets=(POSITIVE_ENTITIES_TEST, POSITIVE_WORDS_TEST))
+    measure_vocabulary_distribution()
