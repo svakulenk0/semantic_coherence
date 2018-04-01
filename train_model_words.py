@@ -14,6 +14,7 @@ Load and split the dataset to train the classification model
 '''
 import numpy as np
 np.random.seed(1337) # for reproducibility
+
 from keras.preprocessing.sequence import pad_sequences
 
 from model import train
@@ -26,7 +27,7 @@ batch_size = 128
 epochs = 10
 validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'disorder', 'distribution', 'vertical', 'horizontal' (5)
-negative_sampling_strategies = ['random', 'disorder', 'distribution']
+negative_sampling_strategies = ['random', 'disorder', 'distribution', 'vertical', 'horizontal']
 # specify embeddings, e.g. GloVe, word2vec
 embedding_names = ['GloVe']
 
@@ -106,6 +107,16 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     x_test_distribution = load_test_data('./%s/words/test/distribution_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative vocabulary distribution examples:', x_test_distribution.shape[0], x_test_distribution.shape[1]
+
+    # horizontal split
+    x_test_horizontal = load_test_data('./%s/words/test/horizontal_X.npy', input_length)
+    # verify the dimensions
+    print 'size of test set negative horizontal split examples:', x_test_horizontal.shape[0], x_test_horizontal.shape[1]
+
+    # vertical split
+    x_test_vertical = load_test_data('./%s/words/test/vertical_X.npy', input_length)
+    # verify the dimensions
+    print 'size of test set negative vertical split examples:', x_test_vertical.shape[0], x_test_vertical.shape[1]
     
     y_test_negatives = np.zeros(n_negatives)
     assert n_positives == n_negatives
@@ -121,18 +132,24 @@ def train_model(strategy, sample=LATEST_SAMPLE):
         
         # true positive samples
         loss, accuracy = model.evaluate(x_test_positives, y_test_positives, verbose=1)
-        print('Accuracy on true positive: %f' % (accuracy * 100))
+        print('Accuracy on true positive: %f' % accuracy)
         
         # negative samples
 
         loss, accuracy = model.evaluate(x_test_random, y_test_negatives, verbose=1)
-        print('Accuracy on uniform random: %f' % (accuracy * 100))
+        print('Accuracy on uniform random: %f' % accuracy)
 
         loss, accuracy = model.evaluate(x_test_disorder, y_test_negatives, verbose=1)
-        print('Accuracy on sequence disorder: %f' % (accuracy * 100))
+        print('Accuracy on sequence disorder: %f' % accuracy)
 
         loss, accuracy = model.evaluate(x_test_distribution, y_test_negatives, verbose=1)
-        print('Accuracy on vocabulary distribution: %f' % (accuracy * 100))
+        print('Accuracy on vocabulary distribution: %f' % accuracy)
+
+        loss, accuracy = model.evaluate(x_test_horizontal, y_test_negatives, verbose=1)
+        print('Accuracy on horizontal split: %f' % accuracy)
+
+        loss, accuracy = model.evaluate(x_test_vertical, y_test_negatives, verbose=1)
+        print('Accuracy on vertical split: %f' % accuracy)
 
         # serialize the trained model to JSON
         model_json = model.to_json()
