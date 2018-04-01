@@ -100,7 +100,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
         print label
         embeddings_config = word_embeddings[embeddings_name]
-        embeddings_config['matrix_path'] = PATH + embeddings_name + sample + '.npy'
+        embeddings_config['matrix_path'] = PATH + 'GloVe%s.npy' % sample
         model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
         # evaluate the model on each of the test set groups

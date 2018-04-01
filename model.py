@@ -97,7 +97,7 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
     # # summarize the model
     # print(model.summary())
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=2)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=2, mode='auto')
     best_weights_filepath = 'models/%s.h5' % label
     model_checkpoint = ModelCheckpoint(best_weights_filepath, monitor='val_loss', verbose=0, save_best_only=True, save_weights_only=True, mode='auto')
 
