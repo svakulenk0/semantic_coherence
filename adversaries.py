@@ -121,6 +121,7 @@ def generate_vertical_split(sample=LATEST_SAMPLE):
                 annotation = json.loads(line)
                 heappush(dialogues_by_length, (annotation['turns'], annotation['entity_URIs'], annotation['surface_forms']))
         
+        print len(dialogues_by_length), 'dialogues'
         # iterate over the dialogues
         while len(dialogues_by_length) > 1:
             # get a pair of dialogues with similar length
@@ -171,6 +172,6 @@ def generate_adversaries(generator):
 
 
 if __name__ == '__main__':
-    generate_adversaries(generate_sequence_disorder)
-    generate_adversaries(generate_horizontal_split)
+    # generate_adversaries(generate_sequence_disorder)
+    # generate_adversaries(generate_horizontal_split)
     generate_vertical_split()
