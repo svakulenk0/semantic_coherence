@@ -18,10 +18,13 @@ cosines = [[[0.9999998807907104]], [[1.0, 0.12084029614925385]], [[1.0, 0.120840
 
 
 def analyse_coherence(entities_cosines= cosines):
+    '''
+    find maximum similarities minimum distances in the sequence of words
+    '''
     print [np.max(enity_cosine) for enity_cosine in entities_cosines]
 
 
-def measure_word_distances(sample=SAMPLE_WORDS_4606):
+def load_GloVe_embeddings():
     # load embeddings
     embeddings = {}
 
@@ -40,7 +43,10 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
                     print "Found embeddings for all words in the sample"
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
     print embeddings.keys()
+    return embeddings
 
+
+def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
     # snowball
     previous_word_vectors = np.array([[]], ndmin=2)
     # and store distances (cosine similarities) between preceding words
@@ -60,8 +66,18 @@ def measure_word_distances(sample=SAMPLE_WORDS_4606):
                 # first word in the dialogue
                 previous_word_vectors = word_vector
     print words_distances
+    return words_distances
 
 
 if __name__ == '__main__':
-    measure_word_distances()
-    # analyse_coherence()
+    embeddings = load_GloVe_embeddings()
+    # load training data
+    sample = '291848'
+    # positive samples
+    positives = np.load('./%s/words/positive_X.npy' % sample)
+    n_positives = positives.shape[0]
+    # collect distance distributions across dialogues
+    words_distances = []
+    for positive in positives:
+        words_distances.append(measure_word_distances(embeddings))
+    print words_distances
