@@ -1,20 +1,28 @@
-Embeddings,Epochs,Embedded/Total,Accuracy random,Accuracy vertical,Accuracy horizontal
-GloVe words,5,"28,294/30,540",98.399383,60.529361,70.677852
-word2vec,5,"21,542/30,540",97.5364,55.057372,69.916112
-rdf2vec_PageRankSplit,5,24080,,,
-rdf2vec_InversePredicateFrequency,5,24080,,,
-rdf2vec_PageRank,5,24080,,,
-rdf2vec_uniform,5,24080,,,
-GlobalVectors_2_predicate,5,24080,,,
-GlobalVectors_4_predicateObject,5,24080,,,
-GlobalVectors_10_inversePageRank,5,24080,,,
-GlobalVectors_3_inversePredicate,5,24080,,,
-GlobalVectors_11_pageRankSplit,5,24080,,,
-GlobalVectors_12_inversePageRankSplit,5,24080,,,
-GlobalVectors_1_uniform,5,24080,,,
-GlobalVectors_7_inverseObject,5,24080,,,
-GlobalVectors_5_inversePredicateObject,5,24080,,,
-GlobalVectors_8_InverseObjectSplit,5,24080,,,
-GlobalVectors_9_pageRank,5,24080,,,
-GlobalVectors_6_object,5,24080,,,
-rdf2vec_predicateFrequency,5,24080,,,
+,Epochs,Vocabulary coverage,Accuracy,,,,,
+Embeddings/Train set\Test set,,,True positive,Random uniform,Sequence disorder,Vocabulary distribution,Horizontal split,Vertical split
+GloVe words/Random uniform,10,0.93,0.9934,0.9934,0.0072,0.0042,0.0066,0.0044
+GloVe words/Sequence disorder,10,0.93,0.8038,0.5218,0.7816,0.8754,0.196,0.2204
+GloVe words/Vocabulary distribution,10,0.93,0.917,0.3714,0.4198,0.9388,0.083,0.1892
+GloVe words/Horizontal split,10,0.93,0.9994,0.0244,0.0006,0,0.0006,0.0002
+GloVe words/Vertical split,10,0.93,0.541,0.603,0.485,0.9382,0.459,0.6962
+,,,,,,,,
+GloVe words 0.2mix,,0.93,,,,,,
+,,,,,,,,
+word2vec,5,0.71,,97.5364,,,69.916112,55.057372
+rdf2vec_PageRankSplit,5,24080,,,,,,
+rdf2vec_InversePredicateFrequency,5,24080,,,,,,
+rdf2vec_PageRank,5,24080,,,,,,
+rdf2vec_uniform,5,24080,,,,,,
+GlobalVectors_2_predicate,5,24080,,,,,,
+GlobalVectors_4_predicateObject,5,24080,,,,,,
+GlobalVectors_10_inversePageRank,5,24080,,,,,,
+GlobalVectors_3_inversePredicate,5,24080,,,,,,
+GlobalVectors_11_pageRankSplit,5,24080,,,,,,
+GlobalVectors_12_inversePageRankSplit,5,24080,,,,,,
+GlobalVectors_1_uniform,5,24080,,,,,,
+GlobalVectors_7_inverseObject,5,24080,,,,,,
+GlobalVectors_5_inversePredicateObject,5,24080,,,,,,
+GlobalVectors_8_InverseObjectSplit,5,24080,,,,,,
+GlobalVectors_9_pageRank,5,24080,,,,,,
+GlobalVectors_6_object,5,24080,,,,,,
+rdf2vec_predicateFrequency,5,24080,,,,,,
