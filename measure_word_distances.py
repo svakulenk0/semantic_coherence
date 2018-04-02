@@ -66,9 +66,11 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
         if previous_word_vectors.size > 0:
             word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
             # min distance = max similarity
-            max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances]
+            max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances.tolist()]
             min_words_distances.extend(max_similarities)
-        previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
+            previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
+        else:
+            previous_word_vectors = word_vector
     return min_words_distances
 
 
