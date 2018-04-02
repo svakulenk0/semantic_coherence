@@ -95,7 +95,7 @@ def compare_distance_distributions(sample='291848'):
     '''
     embeddings = np.load(PATH + 'GloVe%s.npy' % sample)
 
-    positive_distances_distribution = collect_word_distances('positive', embeddings)
+    positive_distances_distribution = collect_word_distances(embeddings, 'positive')
     print positive_distribution
     
     random_distances = collect_word_distances('random', embeddings)
