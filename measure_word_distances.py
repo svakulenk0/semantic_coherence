@@ -77,7 +77,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
 def collect_word_distances(embeddings, samples_type, sample='291848'):
     
     # load data
-    samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))[:520]
+    samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
     print samples.shape[0], 'samples'
 
     # collect distance distributions across dialogues
