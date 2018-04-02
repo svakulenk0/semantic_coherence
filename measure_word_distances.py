@@ -11,6 +11,7 @@ import numpy as np
 from collections import Counter
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
+from load_embeddings import PATH
 
 from embeddings import word_embeddings
 
@@ -27,27 +28,6 @@ def get_maximum_similarities(sample=SAMPLE_WORDS_4606, entities_cosines=cosines)
     # print len(cosines)
     # print [np.argmax(enity_cosine) for enity_cosine in entities_cosines]
     return [np.max(enity_cosine) for enity_cosine in entities_cosines]
-
-
-def load_GloVe_embeddings():
-    # load all embeddings in a dictionary
-    embeddings = {}
-    with open(word_embeddings['GloVe']['path']) as embs_file:
-        for line in embs_file:
-            wordAndVector = line.split(None, 1)
-            word = wordAndVector[0]
-            # collect embeddings for the words in the sample dialogue
-            # if word in sample:
-            vector = wordAndVector[1]
-            vector = vector.split()
-            embedding_vector = np.asarray(vector, dtype='float32')
-            embedding_vector = np.expand_dims(embedding_vector, axis=0)
-            embeddings[word] = embedding_vector
-            # if len(embeddings) >= len(sample):
-            #     print "Found embeddings for all words in the sample"
-    print len(embeddings), 'embeddings loaded'  # for ', len(sample), 'words in the sample dialogue'
-    # print embeddings.keys()
-    return embeddings
 
 
 def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
@@ -79,21 +59,20 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
     # and store distances (cosine similarities) between preceding words
     min_words_distances = []
     
-    for word in sample:
-        # print word
-        if word in embeddings:
-            word_vector = embeddings[word]
-            # estimate distances from new word to all previous words
-            # compare with cosine between the new word vector and the word vectors of the previous words
-            if previous_word_vectors.size > 0:
-                word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
-                # min distance = max similarity
-                max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances]
-                min_words_distances.extend(max_similarities)
-                previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
-            else:
-                # first word in the dialogue
-                previous_word_vectors = word_vector
+    for word_id in sample:
+        print word_id
+        word_vector = embeddings[word_id]
+        # estimate distances from new word to all previous words
+        # compare with cosine between the new word vector and the word vectors of the previous words
+        if previous_word_vectors.size > 0:
+            word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
+            # min distance = max similarity
+            max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances]
+            min_words_distances.extend(max_similarities)
+            previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
+        else:
+            # first word in the dialogue
+            previous_word_vectors = word_vector
     return min_words_distances
 
 
@@ -110,20 +89,25 @@ def collect_word_distances(embeddings, samples_type, sample='291848'):
     return words_distances
 
 
-def compare_distance_distributions():
+def compare_distance_distributions(sample='291848'):
     '''
     compare word distance distributions in dialogues
     '''
-    embeddings = load_GloVe_embeddings()
+    embeddings = np.load(PATH + 'GloVe%s.npy' % sample)
 
     positive_distances_distribution = collect_word_distances('positive', embeddings)
-    print positive_distances_distribution
+    print positive_distribution
     
-    # random_distances = collect_word_distances('random', embeddings)
-    # random_distances_distribution = Counter(random_distances)
-    # print random_distances_distribution
+    random_distances = collect_word_distances('random', embeddings)
+    random_distances_distribution = Counter(random_distances)
+    print random_distribution
 
-    # print stats.entropy(pk=distribution_positives, qk=distribution_random)
+    # make sure keys are the same
+    print positive_distribution.keys()
+    print random_distribution.keys()
+    assert positive_distribution.keys() == random_distribution.keys()
+
+    print stats.entropy(pk=positive_distribution.values(), qk=random_distribution.values())
 
 
 if __name__ == '__main__':
