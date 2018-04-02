@@ -106,7 +106,7 @@ def collect_word_distances(samples_type, sample='291848'):
     # collect distance distributions across dialogues
     words_distances = []
     for positive in positives:
-        words_distances.append(measure_min_distances(embeddings))
+        words_distances.extend(measure_min_distances(embeddings))
     return words_distances
 
 
