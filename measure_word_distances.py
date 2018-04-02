@@ -69,10 +69,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
             # min distance = max similarity
             max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances]
             min_words_distances.extend(max_similarities)
-            previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
-        else:
-            # first word in the dialogue
-            previous_word_vectors = word_vector
+        previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
     return min_words_distances
 
 
