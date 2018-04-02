@@ -75,7 +75,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
 
 
 def collect_word_distances(embeddings, samples_type, sample='291848'):
-    
+    print samples_type
     # load data
     samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
     print samples.shape[0], 'samples'
@@ -101,11 +101,12 @@ def compare_distance_distributions(sample='291848'):
     print random_distribution
 
     # make sure keys are the same
-    print positive_distribution.keys()
-    print random_distribution.keys()
-    assert positive_distribution.keys() == random_distribution.keys()
+    print sorted(positive_distribution.keys())
+    print sorted(random_distribution.keys())
+    print sorted(positive_distribution.values())
+    assert sorted(positive_distribution.keys()) == sorted(random_distribution.keys())
 
-    print stats.entropy(pk=positive_distribution.values(), qk=random_distribution.values())
+    print stats.entropy(pk=sorted(positive_distribution.values()), qk=sorted(random_distribution.values()))
 
 
 if __name__ == '__main__':
