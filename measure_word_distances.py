@@ -77,7 +77,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
     # snowball
     previous_word_vectors = np.array([[]], ndmin=2)
     # and store distances (cosine similarities) between preceding words
-    min_words_distances = Counter
+    min_words_distances = []
     
     for word in sample:
         # print word
@@ -88,9 +88,8 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
             if previous_word_vectors.size > 0:
                 word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
                 # min distance = max similarity
-                max_similarity = [np.max(enity_cosine) for enity_cosine in word_distances]
-                print max_similarity
-                # min_words_distances.extend()
+                max_similarities = [int(np.max(enity_cosine)) for enity_cosine in word_distances]
+                min_words_distances.extend(max_similarities)
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
@@ -105,9 +104,9 @@ def collect_word_distances(embeddings, samples_type, sample='291848'):
     print samples.shape[0], 'samples'
 
     # collect distance distributions across dialogues
-    words_distances = []
+    words_distances = Counter()
     for sample in samples:
-        words_distances.extend(measure_min_distances(embeddings, sample))
+        words_distances.update(measure_min_distances(embeddings, sample))
     return words_distances
 
 
@@ -117,13 +116,12 @@ def compare_distance_distributions():
     '''
     embeddings = load_GloVe_embeddings()
 
-    positive_distances = collect_word_distances('positive', embeddings)
-    positive_distances_distribution = Counter(positive_distances)
+    positive_distances_distribution = collect_word_distances('positive', embeddings)
     print positive_distances_distribution
     
-    random_distances = collect_word_distances('random', embeddings)
-    random_distances_distribution = Counter(random_distances)
-    print random_distances_distribution
+    # random_distances = collect_word_distances('random', embeddings)
+    # random_distances_distribution = Counter(random_distances)
+    # print random_distances_distribution
 
     # print stats.entropy(pk=distribution_positives, qk=distribution_random)
 
