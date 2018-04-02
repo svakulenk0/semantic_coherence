@@ -27,7 +27,6 @@ def analyse_coherence(entities_cosines= cosines):
 def load_GloVe_embeddings():
     # load all embeddings in a dictionary
     embeddings = {}
-
     with open(word_embeddings['GloVe']['path']) as embs_file:
         for line in embs_file:
             wordAndVector = line.split(None, 1)
@@ -42,7 +41,7 @@ def load_GloVe_embeddings():
             # if len(embeddings) >= len(sample):
             #     print "Found embeddings for all words in the sample"
     print len(embeddings), 'embeddings loaded'  # for ', len(sample), 'words in the sample dialogue'
-    print embeddings.keys()
+    # print embeddings.keys()
     return embeddings
 
 
@@ -53,7 +52,7 @@ def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
     words_distances = []
     
     for word in sample:
-        print word
+        # print word
         if word in embeddings:
             word_vector = embeddings[word]
             # estimate distances from new word to all previous words
@@ -65,7 +64,7 @@ def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
             else:
                 # first word in the dialogue
                 previous_word_vectors = word_vector
-    print words_distances
+    # print words_distances
     return words_distances
 
 
