@@ -88,7 +88,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
             if previous_word_vectors.size > 0:
                 word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
                 # min distance = max similarity
-                min_words_distances.append([np.max(enity_cosine) for enity_cosine in word_distances])
+                min_words_distances.extend([np.max(enity_cosine) for enity_cosine in word_distances])
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
@@ -115,6 +115,7 @@ def compare_distance_distributions():
     compare word distance distributions in dialogues
     '''
     positive_distances = collect_word_distances('positive')
+    print positive_distances
     positive_distances_distribution = Counter(positive_distances)
     print positive_distances_distribution
     
