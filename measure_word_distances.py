@@ -92,7 +92,6 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
-                min_words_distances.append([])
                 previous_word_vectors = word_vector
     return min_words_distances
 
@@ -115,7 +114,6 @@ def compare_distance_distributions():
     compare word distance distributions in dialogues
     '''
     positive_distances = collect_word_distances('positive')
-    print positive_distances
     positive_distances_distribution = Counter(positive_distances)
     print positive_distances_distribution
     
