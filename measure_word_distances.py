@@ -96,7 +96,7 @@ def compare_distance_distributions(sample='291848'):
     positive_distribution = collect_word_distances(embeddings, 'positive')
     print positive_distribution
     
-    random_distances = collect_word_distances('random', embeddings)
+    random_distances = collect_word_distances(embeddings, 'random')
     random_distribution = Counter(random_distances)
     print random_distribution
 
