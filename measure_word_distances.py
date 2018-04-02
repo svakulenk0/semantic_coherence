@@ -92,7 +92,7 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
-                words_distances.append([])
+                min_words_distances.append([])
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
     return min_words_distances
 
