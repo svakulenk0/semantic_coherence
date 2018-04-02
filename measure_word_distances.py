@@ -73,7 +73,7 @@ def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
     return words_distances
 
 
-def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
+def measure_min_distances(embeddings, sample):
     # snowball
     previous_word_vectors = np.array([[]], ndmin=2)
     # and store distances (cosine similarities) between preceding words
@@ -96,16 +96,16 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
     return min_words_distances
 
 
-def collect_word_distances(samples_type, sample='291848'):
-    embeddings = load_GloVe_embeddings()
-    # load training data
-    # positive samples
-    positives = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
-    n_positives = positives.shape[0]
+def collect_word_distances(embeddings, samples_type, sample='291848'):
+    
+    # load data
+    samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
+    print samples.shape[0], 'samples'
+
     # collect distance distributions across dialogues
     words_distances = []
     for positive in positives:
-        words_distances.extend(measure_min_distances(embeddings))
+        words_distances.extend(measure_min_distances(embeddings, sample))
     return words_distances
 
 
@@ -113,11 +113,13 @@ def compare_distance_distributions():
     '''
     compare word distance distributions in dialogues
     '''
-    positive_distances = collect_word_distances('positive')
+    embeddings = load_GloVe_embeddings()
+
+    positive_distances = collect_word_distances('positive', embeddings)
     positive_distances_distribution = Counter(positive_distances)
     print positive_distances_distribution
     
-    random_distances = collect_word_distances('random')
+    random_distances = collect_word_distances('random', embeddings)
     random_distances_distribution = Counter(random_distances)
     print random_distances_distribution
 
