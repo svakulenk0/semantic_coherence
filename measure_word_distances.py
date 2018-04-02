@@ -39,8 +39,8 @@ def load_GloVe_embeddings():
             embedding_vector = np.asarray(vector, dtype='float32')
             embedding_vector = np.expand_dims(embedding_vector, axis=0)
             embeddings[word] = embedding_vector
-            if len(embeddings) >= len(sample):
-                print "Found embeddings for all words in the sample"
+            # if len(embeddings) >= len(sample):
+            #     print "Found embeddings for all words in the sample"
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
     print embeddings.keys()
     return embeddings
