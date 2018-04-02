@@ -60,7 +60,6 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
     min_words_distances = []
     
     for word_id in sample:
-        print word_id
         word_vector = embeddings[word_id]
         # estimate distances from new word to all previous words
         # compare with cosine between the new word vector and the word vectors of the previous words
