@@ -25,7 +25,7 @@ def analyse_coherence(entities_cosines= cosines):
 
 
 def load_GloVe_embeddings():
-    # load embeddings
+    # load all embeddings in a dictionary
     embeddings = {}
 
     with open(word_embeddings['GloVe']['path']) as embs_file:
@@ -33,14 +33,14 @@ def load_GloVe_embeddings():
             wordAndVector = line.split(None, 1)
             word = wordAndVector[0]
             # collect embeddings for the words in the sample dialogue
-            if word in sample:
-                vector = wordAndVector[1]
-                vector = vector.split()
-                embedding_vector = np.asarray(vector, dtype='float32')
-                embedding_vector = np.expand_dims(embedding_vector, axis=0)
-                embeddings[word] = embedding_vector
-                if len(embeddings) >= len(sample):
-                    print "Found embeddings for all words in the sample"
+            # if word in sample:
+            vector = wordAndVector[1]
+            vector = vector.split()
+            embedding_vector = np.asarray(vector, dtype='float32')
+            embedding_vector = np.expand_dims(embedding_vector, axis=0)
+            embeddings[word] = embedding_vector
+            if len(embeddings) >= len(sample):
+                print "Found embeddings for all words in the sample"
     print len(embeddings), 'embeddings loaded for ', len(sample), 'words in the sample dialogue'
     print embeddings.keys()
     return embeddings
