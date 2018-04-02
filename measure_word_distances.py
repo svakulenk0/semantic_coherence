@@ -73,11 +73,11 @@ def measure_word_distances(embeddings, sample=SAMPLE_WORDS_4606):
     return words_distances
 
 
-def measure_min_distances(embeddings, sample):
+def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
     # snowball
     previous_word_vectors = np.array([[]], ndmin=2)
     # and store distances (cosine similarities) between preceding words
-    min_words_distances = []
+    min_words_distances = Counter
     
     for word in sample:
         # print word
@@ -88,7 +88,9 @@ def measure_min_distances(embeddings, sample):
             if previous_word_vectors.size > 0:
                 word_distances = cosine_similarity(word_vector, previous_word_vectors).tolist()
                 # min distance = max similarity
-                min_words_distances.extend([np.max(enity_cosine) for enity_cosine in word_distances])
+                max_similarity = [np.max(enity_cosine) for enity_cosine in word_distances]
+                print max_similarity
+                # min_words_distances.extend()
                 previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
             else:
                 # first word in the dialogue
@@ -99,12 +101,12 @@ def measure_min_distances(embeddings, sample):
 def collect_word_distances(embeddings, samples_type, sample='291848'):
     
     # load data
-    samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
+    samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))[:2]
     print samples.shape[0], 'samples'
 
     # collect distance distributions across dialogues
     words_distances = []
-    for positive in positives:
+    for sample in samples:
         words_distances.extend(measure_min_distances(embeddings, sample))
     return words_distances
 
