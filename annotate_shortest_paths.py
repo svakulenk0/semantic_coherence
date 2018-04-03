@@ -44,23 +44,29 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
 
 def annotate_json(entities_path='development_set.jl'):
     '''
-    extract top 5 shortest path from the dbpedia graph
+    extract top 5 shortest path from the dbpedia graph.
+    Process in batches of 10,000 dialogues (8+ batches for development set) to refresh the server.
     '''
-    offset = 0
-    limit = 10000
+    offset = 10000
 
-    with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
-        # iterate over the selected datasets
-        for line in entities_file.readlines()[offset:limit]:
-            path_annotation = {}
-            annotation = json.loads(line)
-            path_annotation['file_name'] = annotation['file_name']
-            entities = annotation['entity_URIs']
-            path_annotation['entities'] = entities
-            path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
-             # write path annotation as a json line
-            json.dump(path_annotation, outfile)
-            outfile.write("\n")
+    while True:
+
+        limit = offset + 10000
+
+        with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
+            # iterate over the selected datasets
+            for line in entities_file.readlines()[offset:limit]:
+                path_annotation = {}
+                annotation = json.loads(line)
+                path_annotation['file_name'] = annotation['file_name']
+                entities = annotation['entity_URIs']
+                path_annotation['entities'] = entities
+                path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
+                 # write path annotation as a json line
+                json.dump(path_annotation, outfile)
+                outfile.write("\n")
+
+        offset = limit
 
 
 def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS):
