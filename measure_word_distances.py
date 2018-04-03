@@ -76,7 +76,6 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
 
 
 def collect_word_distances(embeddings, samples_type, sample='291848'):
-    print samples_type
     # load data
     samples = np.load('./%s/words/%s_X.npy' % (sample, samples_type))
     print samples.shape[0], 'samples'
@@ -100,10 +99,11 @@ def compare_distance_distributions(sample='291848'):
     for dev_set in dev_sets:
         print dev_set
         dev_sets[dev_set]['distribution'] = collect_word_distances(embeddings, dev_set)
-        print dev_sets[dev_set]['distribution']
+        print dev_sets[dev_set]['distribution'].keys()
         # order distance counts
         dev_sets[dev_set]['counts'] = []
         for distance in np.arange(0.0, 1.0, 0.1):
+            print distance
             dev_sets[dev_set]['counts'].append(dev_sets[dev_set]['distribution'][distance])
         print dev_sets[dev_set]['counts']
 
