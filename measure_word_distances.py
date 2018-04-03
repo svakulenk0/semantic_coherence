@@ -107,7 +107,7 @@ def compare_distance_distributions(sample='291848'):
             dev_sets[dev_set]['counts'].append(dev_sets[dev_set]['distribution'][distance])
         print dev_sets[dev_set]['counts']
 
-    for p,q in itertools.combinations(dev_sets.keys(), 2)
+    for p,q in itertools.combinations(dev_sets.keys(), 2):
         print p, q
         print stats.entropy(pk=dev_sets[p]['counts'], qk=dev_sets[q]['counts'])
 
