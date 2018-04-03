@@ -103,7 +103,7 @@ def compare_distance_distributions(sample='291848'):
     # collect distance counts
     positive = []
     random = []
-    for distance in range(0, 1, 1):
+    for distance in range(0, 1, 0.1):
         random.append(random_distribution[distance])
         positive.append(positive_distribution[distance])
     
