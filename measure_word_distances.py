@@ -8,6 +8,7 @@ Estimate pair-wise distances between words in the conversation
 loaded embeddings for all words (but had to manually convert '.tar.gz' to 'tar.gz')
 '''
 import numpy as np
+import itertools
 from collections import Counter
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
@@ -93,30 +94,22 @@ def compare_distance_distributions(sample='291848'):
     '''
     embeddings = np.load(PATH + 'GloVe%s.npy' % sample)
 
-    positive_distribution = collect_word_distances(embeddings, 'positive')
-   
-    
-    random_distances = collect_word_distances(embeddings, 'random')
-    random_distribution = Counter(random_distances)
-    
+    dev_sets = { 'positive': {}, 'random': {}, 'disorder': {},
+                 'distribution': {}, 'vertical': {}, 'horizontal': {}}
 
-    # collect distance counts
-    positive = []
-    random = []
-    for distance in np.arange(0.0, 1.0, 0.1):
-        random.append(random_distribution[distance])
-        positive.append(positive_distribution[distance])
-    
-    # log
-    print positive_distribution
-    print positive
+    for dev_set in dev_sets:
+        print dev_set
+        dev_sets[dev_set]['distribution'] = collect_word_distances(embeddings, dev_set)
+        print dev_sets[dev_set]['distribution']
+        # order distance counts
+        dev_sets[dev_set]['counts'] = []
+        for distance in np.arange(0.0, 1.0, 0.1):
+            dev_sets[dev_set]['counts'].append(dev_sets[dev_set]['distribution'][distance])
+        print dev_sets[dev_set]['counts']
 
-    print random_distribution
-    print random
-
-    assert len(random) == len(positive)
-
-    print stats.entropy(pk=positive, qk=random)
+    for p,q in itertools.combinations(dev_sets.keys(), 2)
+        print p, q
+        print stats.entropy(pk=dev_sets[p]['counts'], qk=dev_sets[q]['counts'])
 
 
 if __name__ == '__main__':
