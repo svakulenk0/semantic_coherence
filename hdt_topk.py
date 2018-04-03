@@ -38,14 +38,17 @@ import requests
 import random
 import signal
 
-TOPK_SERVICE = 'http://svhdt.ai.wu.ac.at/dbpedia/query'
+# 10000 10 seconds
+# 2000 2 seconds
+# TOPK_SERVICE = 'http://svhdt.ai.wu.ac.at/dbpedia/query'
+TOPK_SERVICE = 'http://wikidata.communidata.at/wikidata/query'
 DBPEDIA_ENDPOINT = 'http://dbpedia.org/sparql'
 
 QUERY_TEMPLATE = '''
                 PREFIX ppf: <java:at.ac.wu.arqext.path.>
                 PREFIX dbr: <http://dbpedia.org/resource/>
                 SELECT * WHERE {
-                ?X ppf:topk ("--source" %s "--target" %s "--k" %d "--maxlength" %d "--timeout" 100)
+                ?X ppf:topk ("--source" %s "--target" %s "--k" %d "--maxlength" %d "--timeout" 2000)
                 }
                  '''
 
