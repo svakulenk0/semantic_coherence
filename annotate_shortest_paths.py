@@ -12,7 +12,7 @@ import unicodecsv
 import ast
 import json
 
-# from process_ubuntu_dialogues import DIALOGUES_PATH
+from process_ubuntu_dialogues import DIALOGUES_PATH
 from hdt_topk import get_topk_paths
 
 PATH_SHORTEST_PATHS = './ubuntu/paths.txt'
