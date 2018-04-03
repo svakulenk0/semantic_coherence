@@ -12,7 +12,7 @@ import unicodecsv
 import ast
 import json
 
-from process_ubuntu_dialogues import DIALOGUES_PATH
+# from process_ubuntu_dialogues import DIALOGUES_PATH
 from hdt_topk import get_topk_paths
 
 PATH_SHORTEST_PATHS = './ubuntu/paths.txt'
@@ -46,8 +46,8 @@ def annotate_json(entities_path='development_set.jl'):
     '''
     extract top 5 shortest path from the dbpedia graph
     '''
-    offset = 0
-    limit = 100
+    offset = 100
+    limit = 500
 
     with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
         # iterate over the selected datasets
