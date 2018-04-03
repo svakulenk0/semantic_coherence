@@ -94,19 +94,29 @@ def compare_distance_distributions(sample='291848'):
     embeddings = np.load(PATH + 'GloVe%s.npy' % sample)
 
     positive_distribution = collect_word_distances(embeddings, 'positive')
-    print positive_distribution
+   
     
     random_distances = collect_word_distances(embeddings, 'random')
     random_distribution = Counter(random_distances)
+    
+
+    # collect distance counts
+    positive = []
+    random = []
+    for distance in range(0, 1, 1):
+        random.append(random_distribution[distance])
+        positive.append(positive_distribution[distance])
+    
+    # log
+    print positive_distribution
+    print positive
+
     print random_distribution
+    print random
 
-    # make sure keys are the same
-    print sorted(positive_distribution.keys())
-    print sorted(random_distribution.keys())
-    print sorted(positive_distribution.values())
-    assert sorted(positive_distribution.keys()) == sorted(random_distribution.keys())
+    assert len(random) == len(positive)
 
-    print stats.entropy(pk=sorted(positive_distribution.values()), qk=sorted(random_distribution.values()))
+    print stats.entropy(pk=positive, qk=random)
 
 
 if __name__ == '__main__':
