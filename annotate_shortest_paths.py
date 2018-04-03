@@ -46,8 +46,8 @@ def annotate_json(entities_path='development_set.jl'):
     '''
     extract top 5 shortest path from the dbpedia graph
     '''
-    offset = 100
-    limit = 500
+    offset = 0
+    limit = 10000
 
     with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
         # iterate over the selected datasets
