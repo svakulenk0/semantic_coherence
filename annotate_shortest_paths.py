@@ -51,7 +51,7 @@ def annotate_json(entities_path='development_set.jl'):
 
     with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
         # iterate over the selected datasets
-        for line in entities_file[offset:limit]:
+        for line in entities_file.readlines()[offset:limit]:
             path_annotation = {}
             annotation = json.loads(line)
             path_annotation['file_name'] = annotation['file_name']
