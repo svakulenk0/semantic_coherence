@@ -46,9 +46,12 @@ def annotate_json(entities_path='development_set.jl'):
     '''
     extract top 5 shortest path from the dbpedia graph
     '''
-    with open(entities_path, 'r') as entities_file, open('ubuntu_dialogues_top5_paths.jl', 'w') as outfile:
+    offset = 0
+    limit = 100
+
+    with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
         # iterate over the selected datasets
-        for line in entities_file:
+        for line in entities_file[offset:limit]:
             path_annotation = {}
             annotation = json.loads(line)
             path_annotation['file_name'] = annotation['file_name']
