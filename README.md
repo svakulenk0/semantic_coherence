@@ -22,6 +22,12 @@ pip install -r requirements.txt
 
 # Run
 
+1. prepare_dataset.py: create vocabulary and encode development and training data.
+2. load_embeddings.py
+3. train_model.py
+
+
+
 Summary: paths to the input matrices and embeddings are specified in preprocess.py. 1) Generate embeddings matrix preprocess.py: populate_emb_matrix_from_file; 2) train_model.py
 
 * Specify path to the input matrices X y and the embeddings matrix:
