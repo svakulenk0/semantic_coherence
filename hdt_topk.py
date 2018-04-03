@@ -45,7 +45,7 @@ QUERY_TEMPLATE = '''
                 PREFIX ppf: <java:at.ac.wu.arqext.path.>
                 PREFIX dbr: <http://dbpedia.org/resource/>
                 SELECT * WHERE {
-                ?X ppf:topk ("--source" %s "--target" %s "--k" %d "--maxlength" %d "--timeout" 10000)
+                ?X ppf:topk ("--source" %s "--target" %s "--k" %d "--maxlength" %d "--timeout" 100)
                 }
                  '''
 
