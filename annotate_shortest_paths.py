@@ -54,7 +54,7 @@ def annotate_json(entities_path='development_set.jl'):
 
         limit = offset + increment
 
-        with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
+        with open(entities_path, 'r') as entities_file, open('top5_dbpedia/%s.jl' % limit, 'w') as outfile:
             # iterate over the selected datasets
             for line in entities_file.readlines()[offset:limit]:
                 path_annotation = {}
