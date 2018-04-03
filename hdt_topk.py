@@ -40,8 +40,8 @@ import signal
 
 # 10000 10 seconds
 # 2000 2 seconds
-TOPK_SERVICE = 'http://svhdt.ai.wu.ac.at/dbpedia/query'
-# TOPK_SERVICE = 'http://wikidata.communidata.at/wikidata/query'
+# TOPK_SERVICE = 'http://svhdt.ai.wu.ac.at/dbpedia/query'
+TOPK_SERVICE = 'http://wikidata.communidata.at/widipedia/query'
 DBPEDIA_ENDPOINT = 'http://dbpedia.org/sparql'
 
 QUERY_TEMPLATE = '''
