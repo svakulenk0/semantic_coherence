@@ -47,11 +47,12 @@ def annotate_json(entities_path='development_set.jl'):
     extract top 5 shortest path from the dbpedia graph.
     Process in batches of 10,000 dialogues (8+ batches for development set) to refresh the server.
     '''
-    offset = 10000
+    offset = 0
+    increment = 1000
 
     while True:
 
-        limit = offset + 10000
+        limit = offset + increment
 
         with open(entities_path, 'r') as entities_file, open('development_top5_paths_%s.jl' % limit, 'w') as outfile:
             # iterate over the selected datasets
