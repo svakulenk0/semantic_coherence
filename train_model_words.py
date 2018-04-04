@@ -85,7 +85,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     # load test data
 
     # positive examples
-    x_test_positives = load_test_data('./%s/words/test/positive_X.npy' % sample, input_length)
+    x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
     n_positives = x_test_positives.shape[0]
     # verify the dimensions
     print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
@@ -93,28 +93,28 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # negative examples
     # uniform random
-    x_test_random = load_test_data('./%s/words/test/random_X.npy' % sample, input_length)
+    x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
     print 'size of test set negative uniform random examples:', n_negatives, x_test_random.shape[1]
 
     # sequence disorder
-    x_test_disorder = load_test_data('./%s/words/test/disorder_X.npy' % sample, input_length)
+    x_test_disorder = load_test_data('./%s/words/test/disorder_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative sequence disorder examples:', x_test_disorder.shape[0], x_test_disorder.shape[1]
 
     # vocabulary distribution
-    x_test_distribution = load_test_data('./%s/words/test/distribution_X.npy' % sample, input_length)
+    x_test_distribution = load_test_data('./%s/words/test/distribution_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative vocabulary distribution examples:', x_test_distribution.shape[0], x_test_distribution.shape[1]
 
     # horizontal split
-    x_test_horizontal = load_test_data('./%s/words/test/horizontal_X.npy' % sample, input_length)
+    x_test_horizontal = load_test_data('./%s/words/test/horizontal_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative horizontal split examples:', x_test_horizontal.shape[0], x_test_horizontal.shape[1]
 
     # vertical split
-    x_test_vertical = load_test_data('./%s/words/test/vertical_X.npy' % sample, input_length)
+    x_test_vertical = load_test_data('./%s/words/test/vertical_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative vertical split examples:', x_test_vertical.shape[0], x_test_vertical.shape[1]
     
