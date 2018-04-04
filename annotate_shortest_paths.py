@@ -42,6 +42,31 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
+def annotate_numpy(x_path='./291848/entities/random_X.npy', entities_path='development_set.jl')
+    negatives = np.load(x_path)
+    vocabulary = load_vocabulary('./291848/entities/vocab.pkl')
+    inv_vocabulary = {v: k for k, v in vocabulary.iteritems()}
+
+    offset = 0
+    increment = 1000
+
+    while True:
+
+        limit = offset + increment
+        with open('top5_n_widipedia/%s.jl' % limit, 'w') as outfile:
+
+            for negative in negatives[offset:limit]:
+                path_annotation = {}
+                entities = [inv_vocabulary[_id].encode('utf-8') for _id in negative]
+                path_annotation['entities'] = entities
+                path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
+                 # write path annotation as a json line
+                json.dump(path_annotation, outfile)
+                outfile.write("\n")
+
+        offset = limit
+
+
 def annotate_json(entities_path='development_set.jl'):
     '''
     extract top 5 shortest path from the dbpedia graph.
@@ -105,4 +130,4 @@ def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS
 
 
 if __name__ == '__main__':
-    annotate_json()
+    annotate_numpy()
