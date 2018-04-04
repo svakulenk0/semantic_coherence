@@ -44,7 +44,7 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(endpoint='widipedia', sample='random', entities_path='development_set.jl'):
+def annotate_numpy(endpoint='widipedia', sample='distribution', entities_path='development_set.jl'):
     '''
     endpoint='dbpedia' widipedia
     '''
@@ -67,7 +67,7 @@ def annotate_numpy(endpoint='widipedia', sample='random', entities_path='develop
                 path_annotation['entities'] = entities
                 path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
                  # write path annotation as a json line
-                json.dump(path_annotation, outfile)
+                json.dumps(path_annotation, outfile)
                 outfile.write("\n")
 
         offset = limit
