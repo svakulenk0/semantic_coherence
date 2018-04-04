@@ -155,10 +155,11 @@ def generate_horizontal_split(folder, sample=LATEST_SAMPLE, test='test/', **kwar
     
     for i, dialogue in enumerate(positives[1:]):
         # merge previous dialogue with the current dialogue
-        # print dialogue
+        print dialogue, 'original'
         adversary = merge_horizontally(positives[i-1], dialogue)
-        # print adversary
+        print adversary, 'adversary'
         adversaries.append(adversary)
+        return
 
     assert len(adversaries) == len(positives)
     np.save('./%s/%s/%shorizontal_X.npy' % (sample, folder, test), adversaries)
@@ -174,6 +175,6 @@ def generate_adversaries(generator):
 
 
 if __name__ == '__main__':
-    # generate_adversaries(generate_sequence_disorder)
+    generate_adversaries(generate_sequence_disorder)
     generate_adversaries(generate_horizontal_split)
-    # generate_vertical_split()
+    generate_vertical_split()
