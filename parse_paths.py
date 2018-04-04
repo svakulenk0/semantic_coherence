@@ -53,7 +53,7 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(endpoint='dbpedia', nfiles=10):
+def parse_paths_folder(endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
@@ -88,6 +88,7 @@ def parse_paths_folder(endpoint='dbpedia', nfiles=10):
                     for path in entity_paths:
                         if path:
                             hops = path[1:-1].split('-<')
+                            print hops
                             nhops = len(hops)  # path length
                             entity_paths_lengths.append(nhops)
                             start_node = hops[0]
