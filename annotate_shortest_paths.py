@@ -44,7 +44,7 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(x_path='./291848/entities/random_X.npy', entities_path='development_set.jl'):
+def annotate_numpy(endpoint, x_path='./291848/entities/random_X.npy', entities_path='development_set.jl'):
     negatives = np.load(x_path)
     vocabulary = load_vocabulary('./291848/entities/vocab.pkl')
     inv_vocabulary = {v: k for k, v in vocabulary.iteritems()}
@@ -55,7 +55,7 @@ def annotate_numpy(x_path='./291848/entities/random_X.npy', entities_path='devel
     while True:
 
         limit = offset + increment
-        with open('top5_n_widipedia/%s.jl' % limit, 'w') as outfile:
+        with open('top5_n_%s/%s.jl' % (endpoint, limit), 'w') as outfile:
 
             for negative in negatives[offset:limit]:
                 path_annotation = {}
@@ -132,4 +132,4 @@ def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS
 
 
 if __name__ == '__main__':
-    annotate_numpy()
+    annotate_numpy(endpoint=dbpedia)
