@@ -44,7 +44,7 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(endpoint='widipedia', sample='disorder'):
+def annotate_numpy(endpoint='widipedia', sample='distribution'):
     '''
     endpoint='dbpedia' widipedia
     '''
@@ -59,7 +59,7 @@ def annotate_numpy(endpoint='widipedia', sample='disorder'):
     while True:
 
         limit = offset + increment
-        with open('top5_%s_%s/%s.jl' % (sample,endpoint, limit), 'w') as outfile:
+        with open('top5_%s_%s/%s.jl' % (sample, endpoint, limit), 'w') as outfile:
 
             for negative in negatives[offset:limit]:
                 path_annotation = {}
