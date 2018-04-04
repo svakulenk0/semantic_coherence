@@ -47,6 +47,7 @@ max length of the shortest paths
 
 '''
 import os
+from collections import Counter
 import json
 import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
