@@ -94,7 +94,7 @@ def load_entity_embeddings(sample=LATEST_SAMPLE):
     # dataset params
     entity_vocabulary = load_vocabulary('./%s/entities/vocab.pkl' % sample)
 
-    for embeddings_name, config in embeddings['GlobalVectors'].items():
+    for embeddings_name, config in entity_embeddings['GlobalVectors'].items():
         try:
             label = 'GlobalVectors_' + embeddings_name
             print label
@@ -102,7 +102,7 @@ def load_entity_embeddings(sample=LATEST_SAMPLE):
         except Exception as e:
             print e
 
-    for embeddings_name, config in embeddings['rdf2vec'].items():
+    for embeddings_name, config in entity_embeddings['rdf2vec'].items():
         try:
             label = 'rdf2vec_' + embeddings_name
             print label

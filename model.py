@@ -93,7 +93,7 @@ def train(X_train, y_train, X_val, y_val, vocabulary_size, input_length, embeddi
     print len(np.where(embedding_matrix.any(axis=1))[0])
     # print embedding_matrix
 
-    model = get_cnn_architecture(vocabulary_size, embedding_matrix, input_length, embeddings['dims'])
+    model = get_cnn_architecture(vocabulary_size + 1, embedding_matrix, input_length, embeddings['dims'])
     # # summarize the model
     # print(model.summary())
 

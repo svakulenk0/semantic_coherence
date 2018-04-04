@@ -121,14 +121,15 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     y_test_negatives = np.zeros(n_negatives)
     assert n_positives == n_negatives
 
-    for embedding_model in embeddings:
-        for embeddings_name, embeddings_config in embeddings[embedding_model].items():
+    for embedding_model in entity_embeddings:
+        for embeddings_name, embeddings_config in entity_embeddings[embedding_model].items():
             
 
             label = "%s_%s_%s_%s" % (sample, strategy, embedding_model, embeddings_name)
             print label
             
-            embeddings_config['matrix_path'] = PATH + label + '.npy'
+            #embeddings_config['matrix_path'] = PATH + label + '.npy'
+            embeddings_config['matrix_path'] = PATH +  embedding_model + '_'+ embeddings_name +'.npy'
 
             model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
