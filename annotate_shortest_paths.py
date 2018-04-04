@@ -64,6 +64,7 @@ def annotate_numpy(endpoint='widipedia', sample='horizontal', entities_path='dev
             for negative in negatives[offset:limit]:
                 path_annotation = {}
                 entities = [inv_vocabulary[_id].encode('utf-8') for _id in negative]
+                print entities
                 path_annotation['entities'] = entities
                 path_annotation['top5_paths'] = annotate_sample(entities, strip_URL=True)
                  # write path annotation as a json line
