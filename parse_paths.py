@@ -53,7 +53,7 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(folder='top5_dbpedia/', nfiles=1):
+def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
     '''
     Show most common relations and external entities
 
@@ -70,7 +70,9 @@ def parse_paths_folder(folder='top5_dbpedia/', nfiles=1):
     for file_name in files[:nfiles]:
         print file_name
         with open(folder + file_name, 'r') as paths_file:
-            for line in paths_file:
+            lines = paths_file.readlines()
+            print lines, 'lines'
+            for line in lines:
                 path_annotation = json.loads(line)
                 # mentioned entities
                 entities = path_annotation['entities']
@@ -84,10 +86,10 @@ def parse_paths_folder(folder='top5_dbpedia/', nfiles=1):
                                 edge_label, next_node = hop.split('>-')
                                 edges[edge_label] += 1
                                 if next_node not in entities:
-                                    nodes[next_node] += 1
+                                    nodes[next_node.split('_(')[0]] += 1
                                 start_node = next_node
-    print nodes.most_common(10)
-    print edges.most_common(10)
+    print nodes.most_common()
+    print edges.most_common()
 
 
 def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
