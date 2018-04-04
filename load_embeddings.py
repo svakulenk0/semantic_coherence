@@ -92,7 +92,7 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
 
 def load_entity_embeddings(sample=LATEST_SAMPLE):
     # dataset params
-    entity_vocabulary = load_vocabulary('./%s/vocab.pkl' % sample)
+    entity_vocabulary = load_vocabulary('./%s/entities/vocab.pkl' % sample)
 
     for embeddings_name, config in embeddings['GlobalVectors'].items():
         try:
@@ -112,4 +112,6 @@ def load_entity_embeddings(sample=LATEST_SAMPLE):
 
 
 if __name__ == '__main__':
-    load_glove_word_embeddings()
+    # load_glove_word_embeddings()
+    # path to the data: './291848/entities/vocab.pkl'
+    load_entity_embeddings()
