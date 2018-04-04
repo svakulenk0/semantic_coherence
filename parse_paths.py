@@ -46,13 +46,14 @@ max length of the shortest paths
 
 
 '''
+import os
 import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
 def parse_paths_folder(folder='top5_widipedia', nfiles=1):
     '''
-    folder top5_%s_%s top5_random_dbpedia
+    folder: top5_widipedia top5_dbpedia top5_%s_%s top5_random_dbpedia
     nfiles <int> limit the number of files to parse
     '''
     # collect a number of stats for the dialogue graphs
