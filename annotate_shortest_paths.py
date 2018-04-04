@@ -15,6 +15,7 @@ import numpy as np
 
 from process_ubuntu_dialogues import DIALOGUES_PATH
 from hdt_topk import get_topk_paths
+from prepare_dataset import load_vocabulary
 
 PATH_SHORTEST_PATHS = './ubuntu/paths.txt'
 
