@@ -44,7 +44,10 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(endpoint, sample='horizontal', entities_path='development_set.jl'):
+def annotate_numpy(endpoint='widipedia', sample='horizontal', entities_path='development_set.jl'):
+    '''
+    endpoint='dbpedia'
+    '''
     x_path='./291848/entities/%s_X.npy' % sample
     negatives = np.load(x_path)
     vocabulary = load_vocabulary('./291848/entities/vocab.pkl')
@@ -133,4 +136,4 @@ def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS
 
 
 if __name__ == '__main__':
-    annotate_numpy(endpoint='dbpedia')
+    annotate_numpy()
