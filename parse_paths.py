@@ -67,6 +67,8 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
     files = os.listdir(folder)
     print len(files), 'files'
 
+    n_most_common = 20
+
     for file_name in files[:nfiles]:
         print file_name
         with open(folder + file_name, 'r') as paths_file:
@@ -88,8 +90,8 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
                                 if next_node not in entities:
                                     nodes[next_node.split('_(')[0]] += 1
                                 start_node = next_node
-    print nodes.most_common()
-    print edges.most_common()
+    print nodes.most_common(n_most_common)
+    print edges.most_common(n_most_common)
 
 
 def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
