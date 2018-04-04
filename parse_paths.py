@@ -53,7 +53,7 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(sample='_random', endpoint='widipedia', nfiles=10):
+def parse_paths_folder(sample='_vertical', endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
