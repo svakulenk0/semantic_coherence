@@ -53,71 +53,73 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(sample='_random', endpoint='widipedia', nfiles=10):
+def parse_paths_folder(endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
     endpoint: dbpedia, widipedia
-    sample: '' - positive, '_random', '_disorder', '_distribution', '_vertical', '_horizontal'
-    top5_widipedia top5_dbpedia top5_%s_%s top5_random_dbpedia
     nfiles <int> limit the number of files to parse
     '''
-    folder='top5%s_%s/' % (sample, endpoint)
+    # sample: '' - positive, '_random', '_disorder', '_distribution', '_vertical', '_horizontal'
+    for sample in ['', '_random', '_disorder', '_distribution', '_vertical', '_horizontal']:
+        print sample
+        
+        folder='top5%s_%s/' % (sample, endpoint)
 
-    mentions = Counter()
-    nodes = Counter()
-    edges = Counter()
-    min_distances = Counter()
+        mentions = Counter()
+        nodes = Counter()
+        edges = Counter()
+        min_distances = Counter()
 
-    files = os.listdir(folder)
-    print len(files), 'files'
+        files = os.listdir(folder)
+        print len(files), 'files'
 
-    n_most_common = 20
+        n_most_common = 20
 
-    for file_name in files[:nfiles]:
-        print file_name
-        with open(folder + file_name, 'r') as paths_file:
-            lines = paths_file.readlines()
-            print len(lines), 'lines'
+        for file_name in files[:nfiles]:
+            print file_name
+            with open(folder + file_name, 'r') as paths_file:
+                lines = paths_file.readlines()
+                print len(lines), 'lines'
 
-            for line in lines:
-                try:
-                    path_annotation = json.loads(line)
-                    # mentioned entities: strip prefix
-                    entities = [entity.split('/')[-1] for entity in path_annotation['entities']]
-                    mentions.update(entities)
-                    min_paths_lengths = []
-                    for entity_paths in path_annotation['top5_paths']:
-                        entity_paths_lengths = []
-                        for path in entity_paths:
-                            if path:
-                                hops = path[1:-1].split('-<')
-                                # print hops
-                                nhops = len(hops) - 1 # path length
-                                entity_paths_lengths.append(nhops)
-                                start_node = hops[0]
-                                for hop in hops[1:]:
-                                    edge_label, next_node = hop.split('>-')
-                                    edges[edge_label] += 1
-                                    if next_node not in entities:
-                                        nodes[next_node] += 1
-                                    start_node = next_node
-                        if entity_paths_lengths:
-                            min_distance = min(entity_paths_lengths)
-                        else:
-                            min_distance = float("inf")
-                        min_paths_lengths.append(min_distance)
-                    min_distances.update(min_paths_lengths)
-                except:
-                    print "Error parsing"
-                    continue
-        # print "Mentioned entities"
-        # print mentions.most_common(n_most_common)
-        # print "Context (non-mentioned) entities"
-        # print nodes.most_common(n_most_common)
-        # print "Relations"
-        # print edges.most_common(n_most_common)
-    print min_distances
+                for line in lines:
+                    try:
+                        path_annotation = json.loads(line)
+                        # mentioned entities: strip prefix
+                        entities = [entity.split('/')[-1] for entity in path_annotation['entities']]
+                        mentions.update(entities)
+                        min_paths_lengths = []
+                        for entity_paths in path_annotation['top5_paths']:
+                            entity_paths_lengths = []
+                            for path in entity_paths:
+                                if path:
+                                    hops = path[1:-1].split('-<')
+                                    # print hops
+                                    nhops = len(hops) - 1 # path length
+                                    entity_paths_lengths.append(nhops)
+                                    start_node = hops[0]
+                                    for hop in hops[1:]:
+                                        edge_label, next_node = hop.split('>-')
+                                        edges[edge_label] += 1
+                                        if next_node not in entities:
+                                            nodes[next_node] += 1
+                                        start_node = next_node
+                            if entity_paths_lengths:
+                                min_distance = min(entity_paths_lengths)
+                            else:
+                                min_distance = float("inf")
+                            min_paths_lengths.append(min_distance)
+                        min_distances.update(min_paths_lengths)
+                    except:
+                        print "Error parsing"
+                        continue
+            # print "Mentioned entities"
+            # print mentions.most_common(n_most_common)
+            # print "Context (non-mentioned) entities"
+            # print nodes.most_common(n_most_common)
+            # print "Relations"
+            # print edges.most_common(n_most_common)
+        print min_distances
 
 
 def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
