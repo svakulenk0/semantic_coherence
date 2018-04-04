@@ -42,7 +42,7 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(x_path='./291848/entities/random_X.npy', entities_path='development_set.jl')
+def annotate_numpy(x_path='./291848/entities/random_X.npy', entities_path='development_set.jl'):
     negatives = np.load(x_path)
     vocabulary = load_vocabulary('./291848/entities/vocab.pkl')
     inv_vocabulary = {v: k for k, v in vocabulary.iteritems()}
