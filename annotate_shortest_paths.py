@@ -44,7 +44,8 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(endpoint, x_path='./291848/entities/vertical_X.npy', entities_path='development_set.jl'):
+def annotate_numpy(endpoint, sample='horizontal', entities_path='development_set.jl'):
+    x_path='./291848/entities/%s_X.npy' % sample
     negatives = np.load(x_path)
     vocabulary = load_vocabulary('./291848/entities/vocab.pkl')
     inv_vocabulary = {v: k for k, v in vocabulary.iteritems()}
@@ -55,7 +56,7 @@ def annotate_numpy(endpoint, x_path='./291848/entities/vertical_X.npy', entities
     while True:
 
         limit = offset + increment
-        with open('top5_vertical_%s/%s.jl' % (endpoint, limit), 'w') as outfile:
+        with open('top5_%s_%s/%s.jl' % (sample,endpoint, limit), 'w') as outfile:
 
             for negative in negatives[offset:limit]:
                 path_annotation = {}
