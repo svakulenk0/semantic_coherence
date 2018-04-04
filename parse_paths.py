@@ -69,28 +69,28 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
 
     for file_name in files[:nfiles]:
         print file_name
-        with open(folder + file_name, 'r') as paths_file:
-            for line in paths_file:
-                entities = []
-                # skip dialogues with parsing errors
-                try:
-                    path_annotation = json.load(line)
-                    entities.extend(path_annotation['entities'])
+        # with open(folder + file_name, 'r') as paths_file:
+        #     for line in paths_file:
+        #         entities = []
+        #         # skip dialogues with parsing errors
+        #         try:
+        #             path_annotation = json.load(line)
+        #             entities.extend(path_annotation['entities'])
 
-                    for entity_paths in path_annotation['top5_paths']:
-                        for path in entity_paths:
-                            hops = path[1:-1].split('-<')
-                            nhops = len(hops)  # path length
-                            start_node = hops[0]
-                            for hop in hops[1:]:
-                                edge_label, next_node = hop.split('>-')
-                                edges[edge_label] += 1
-                                if next_node not in entities:
-                                    nodes[next_node] += 1
-                                start_node = next_node
-                except:
-                    print "Error parsing"
-                    continue
+        #             for entity_paths in path_annotation['top5_paths']:
+        #                 for path in entity_paths:
+        #                     hops = path[1:-1].split('-<')
+        #                     nhops = len(hops)  # path length
+        #                     start_node = hops[0]
+        #                     for hop in hops[1:]:
+        #                         edge_label, next_node = hop.split('>-')
+        #                         edges[edge_label] += 1
+        #                         if next_node not in entities:
+        #                             nodes[next_node] += 1
+        #                         start_node = next_node
+        #         except:
+        #             print "Error parsing"
+        #             continue
     print nodes.most_common(10)
     print edges.most_common(10)
 
