@@ -53,7 +53,7 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(endpoint='dbpedia', nfiles=10):
+def parse_paths_folder(endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
@@ -65,6 +65,7 @@ def parse_paths_folder(endpoint='dbpedia', nfiles=10):
 
     nodes = Counter()
     edges = Counter()
+    min_distances = Counter()
 
     files = os.listdir(folder)
     print len(files), 'files'
@@ -76,15 +77,19 @@ def parse_paths_folder(endpoint='dbpedia', nfiles=10):
         with open(folder + file_name, 'r') as paths_file:
             lines = paths_file.readlines()
             print len(lines), 'lines'
+
             for line in lines:
                 path_annotation = json.loads(line)
                 # mentioned entities
                 entities = path_annotation['entities']
+                min_paths_lengths = []
                 for entity_paths in path_annotation['top5_paths']:
+                    entity_paths_lengths = []
                     for path in entity_paths:
                         if path:
                             hops = path[1:-1].split('-<')
                             nhops = len(hops)  # path length
+                            entity_paths_lengths.append(nhops)
                             start_node = hops[0]
                             for hop in hops[1:]:
                                 edge_label, next_node = hop.split('>-')
@@ -92,8 +97,12 @@ def parse_paths_folder(endpoint='dbpedia', nfiles=10):
                                 if next_node not in entities:
                                     nodes[next_node.split('_(')[0]] += 1
                                 start_node = next_node
+                    min_paths_lengths.append(min(entity_paths_lengths))
+                min_distances.update(min_paths_lengths)
+
     print nodes.most_common(n_most_common)
     print edges.most_common(n_most_common)
+    print min_distances
 
 
 def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
