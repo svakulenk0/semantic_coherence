@@ -132,4 +132,4 @@ def annotate_files(offset=748, source=DIALOGUES_PATH, target=PATH_SHORTEST_PATHS
 
 
 if __name__ == '__main__':
-    annotate_numpy(endpoint=dbpedia)
+    annotate_numpy(endpoint='dbpedia')
