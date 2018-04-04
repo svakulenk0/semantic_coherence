@@ -82,39 +82,39 @@ def parse_paths_folder(folder='top5_widipedia', nfiles=1):
     for file in files[:nfiles]:
         print file
         with open(path, 'r') as paths_file:
-        for line in paths_file.readlines():
-            # skip dialogues with parsing errors
-            try:
-                # process 1 dialogue per line
-                nodes = []
-                edges = []
-                paths_lengths = []  # collect distribution of the length of the shortest paths
+            for line in paths_file.readlines():
+                # skip dialogues with parsing errors
+                try:
+                    # process 1 dialogue per line
+                    nodes = []
+                    edges = []
+                    paths_lengths = []  # collect distribution of the length of the shortest paths
 
-                parse = line.split('\t')
-                file = parse[0]
-                # print file, 'dialogue'
-                paths = parse[1:]
-                for path in paths:
-                    hops = path[1:-1].split('-<')
-                    nhops = len(hops)  # path length
-                    paths_lengths.append(nhops)
-                    start_node = hops[0]
-                    nodes.append(start_node)
-                    for hop in hops[1:]:
-                        edge_label, next_node = hop.split('>-')
-                        nodes.append(next_node)
-                        edges.append((start_node, next_node))
-                        start_node = next_node
-                
-                n_nodes.append(len(set(nodes)))
-                n_edges.append(len(set(edges)))
-                n_paths.append(len(paths))
-                min_paths_lengths.append(min(paths_lengths))
-                mean_paths_lengths.append(np.mean(paths_lengths))
-                max_paths_lengths.append(max(paths_lengths))
-            except:
-                print "Error parsing"
-                continue
+                    parse = line.split('\t')
+                    file = parse[0]
+                    # print file, 'dialogue'
+                    paths = parse[1:]
+                    for path in paths:
+                        hops = path[1:-1].split('-<')
+                        nhops = len(hops)  # path length
+                        paths_lengths.append(nhops)
+                        start_node = hops[0]
+                        nodes.append(start_node)
+                        for hop in hops[1:]:
+                            edge_label, next_node = hop.split('>-')
+                            nodes.append(next_node)
+                            edges.append((start_node, next_node))
+                            start_node = next_node
+                    
+                    n_nodes.append(len(set(nodes)))
+                    n_edges.append(len(set(edges)))
+                    n_paths.append(len(paths))
+                    min_paths_lengths.append(min(paths_lengths))
+                    mean_paths_lengths.append(np.mean(paths_lengths))
+                    max_paths_lengths.append(max(paths_lengths))
+                except:
+                    print "Error parsing"
+                    continue
     # derivative metrics final
     nodes_per_path.extend(np.divide(n_nodes, n_paths))
     edges_per_path.extend(np.divide(n_edges, n_paths))
