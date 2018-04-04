@@ -80,32 +80,35 @@ def parse_paths_folder(sample='_random', endpoint='widipedia', nfiles=10):
             print len(lines), 'lines'
 
             for line in lines:
-                path_annotation = json.loads(line)
-                # mentioned entities
-                entities = path_annotation['entities']
-                min_paths_lengths = []
-                for entity_paths in path_annotation['top5_paths']:
-                    entity_paths_lengths = []
-                    for path in entity_paths:
-                        if path:
-                            hops = path[1:-1].split('-<')
-                            # print hops
-                            nhops = len(hops) - 1 # path length
-                            entity_paths_lengths.append(nhops)
-                            start_node = hops[0]
-                            for hop in hops[1:]:
-                                edge_label, next_node = hop.split('>-')
-                                edges[edge_label] += 1
-                                if next_node not in entities:
-                                    nodes[next_node.split('_(')[0]] += 1
-                                start_node = next_node
-                    if entity_paths_lengths:
-                        min_distance = min(entity_paths_lengths)
-                    else:
-                        min_distance = float("inf")
-                    min_paths_lengths.append(min_distance)
-                min_distances.update(min_paths_lengths)
-
+                try:
+                    path_annotation = json.loads(line)
+                    # mentioned entities
+                    entities = path_annotation['entities']
+                    min_paths_lengths = []
+                    for entity_paths in path_annotation['top5_paths']:
+                        entity_paths_lengths = []
+                        for path in entity_paths:
+                            if path:
+                                hops = path[1:-1].split('-<')
+                                # print hops
+                                nhops = len(hops) - 1 # path length
+                                entity_paths_lengths.append(nhops)
+                                start_node = hops[0]
+                                for hop in hops[1:]:
+                                    edge_label, next_node = hop.split('>-')
+                                    edges[edge_label] += 1
+                                    if next_node not in entities:
+                                        nodes[next_node.split('_(')[0]] += 1
+                                    start_node = next_node
+                        if entity_paths_lengths:
+                            min_distance = min(entity_paths_lengths)
+                        else:
+                            min_distance = float("inf")
+                        min_paths_lengths.append(min_distance)
+                    min_distances.update(min_paths_lengths)
+                except:
+                    print "Error parsing"
+                    continue
     print nodes.most_common(n_most_common)
     print edges.most_common(n_most_common)
     print min_distances
