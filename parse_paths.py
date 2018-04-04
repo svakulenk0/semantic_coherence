@@ -53,15 +53,16 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(endpoint='widipedia', nfiles=10):
+def parse_paths_folder(sample='random', endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
     endpoint: dbpedia, widipedia
+    sample: '' - positive, 'random', 'disorder', 'distribution', 'vertical', 'horizontal'
     top5_widipedia top5_dbpedia top5_%s_%s top5_random_dbpedia
     nfiles <int> limit the number of files to parse
     '''
-    folder='top5_%s/' % endpoint
+    folder='top5%s_%s/' % (sample, endpoint)
 
     nodes = Counter()
     edges = Counter()
