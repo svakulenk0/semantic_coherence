@@ -53,7 +53,7 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(sample='', endpoint='widipedia', nfiles=10):
+def parse_paths_folder(sample='_random', endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
@@ -111,12 +111,12 @@ def parse_paths_folder(sample='', endpoint='widipedia', nfiles=10):
                 except:
                     print "Error parsing"
                     continue
-    print "Mentioned entities"
-    print mentions.most_common(n_most_common)
-    print "Context (non-mentioned) entities"
-    print nodes.most_common(n_most_common)
-    print "Relations"
-    print edges.most_common(n_most_common)
+        # print "Mentioned entities"
+        # print mentions.most_common(n_most_common)
+        # print "Context (non-mentioned) entities"
+        # print nodes.most_common(n_most_common)
+        # print "Relations"
+        # print edges.most_common(n_most_common)
     print min_distances
 
 
