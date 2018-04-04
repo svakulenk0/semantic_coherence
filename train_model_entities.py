@@ -20,7 +20,7 @@ from keras.preprocessing.sequence import pad_sequences
 from model import train
 from prepare_dataset import load_dataset_splits
 from load_embeddings import PATH
-from embeddings import word_embeddings
+from embeddings import entity_embeddings
 
 # training parameters:
 batch_size = 128
@@ -29,11 +29,11 @@ validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'disorder', 'distribution', 'vertical', 'horizontal' (5)
 negative_sampling_strategies = ['random', 'disorder', 'distribution', 'vertical', 'horizontal']
 # specify embeddings, e.g. GloVe, word2vec
-embedding_names = ['word2vec']
+embedding_names = ['GloVe']
 
 # dataset params
 LATEST_SAMPLE = '291848'
-vocabulary_size = 21832  # words
+vocabulary_size = 17802  # entities
 
 
 def load_test_data(path, input_length, sample=LATEST_SAMPLE):
@@ -44,10 +44,10 @@ def load_test_data(path, input_length, sample=LATEST_SAMPLE):
 
 
 def load_training_data(strategy, sample=LATEST_SAMPLE):
-    positives = np.load('./%s/words/positive_X.npy' % sample)
+    positives = np.load('./%s/entities/positive_X.npy' % sample)
     n_positives = positives.shape[0]
     
-    negatives = np.load('./%s/words/%s_X.npy' % (sample, strategy))
+    negatives = np.load('./%s/entities/%s_X.npy' % (sample, strategy))
     n_negatives = negatives.shape[0]
 
     assert n_positives == n_negatives
@@ -85,7 +85,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
     # load test data
 
     # positive examples
-    x_test_positives = load_test_data('./%s/words/test/positive_X.npy', input_length)
+    x_test_positives = load_test_data('./%s/entities/test/positive_X.npy', input_length)
     n_positives = x_test_positives.shape[0]
     # verify the dimensions
     print 'size of test set positive examples:', n_positives, x_test_positives.shape[1]
@@ -93,72 +93,76 @@ def train_model(strategy, sample=LATEST_SAMPLE):
 
     # negative examples
     # uniform random
-    x_test_random = load_test_data('./%s/words/test/random_X.npy', input_length)
+    x_test_random = load_test_data('./%s/entities/test/random_X.npy', input_length)
     n_negatives = x_test_random.shape[0]
     # verify the dimensions
     print 'size of test set negative uniform random examples:', n_negatives, x_test_random.shape[1]
 
     # sequence disorder
-    x_test_disorder = load_test_data('./%s/words/test/disorder_X.npy', input_length)
+    x_test_disorder = load_test_data('./%s/entities/test/disorder_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative sequence disorder examples:', x_test_disorder.shape[0], x_test_disorder.shape[1]
 
     # vocabulary distribution
-    x_test_distribution = load_test_data('./%s/words/test/distribution_X.npy', input_length)
+    x_test_distribution = load_test_data('./%s/entities/test/distribution_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative vocabulary distribution examples:', x_test_distribution.shape[0], x_test_distribution.shape[1]
 
     # horizontal split
-    x_test_horizontal = load_test_data('./%s/words/test/horizontal_X.npy', input_length)
+    x_test_horizontal = load_test_data('./%s/entities/test/horizontal_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative horizontal split examples:', x_test_horizontal.shape[0], x_test_horizontal.shape[1]
 
     # vertical split
-    x_test_vertical = load_test_data('./%s/words/test/vertical_X.npy', input_length)
+    x_test_vertical = load_test_data('./%s/entities/test/vertical_X.npy', input_length)
     # verify the dimensions
     print 'size of test set negative vertical split examples:', x_test_vertical.shape[0], x_test_vertical.shape[1]
     
     y_test_negatives = np.zeros(n_negatives)
     assert n_positives == n_negatives
 
-    for embeddings_name in embedding_names:
-        label = "%s_%s_%s" % (sample, strategy, embeddings_name)
-        print label
-        embeddings_config = word_embeddings[embeddings_name]
-        embeddings_config['matrix_path'] = PATH + label + '.npy'
-        model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
+    for embedding_model in embeddings:
+        for embeddings_name, embeddings_config in embeddings[embedding_model].items():
+            
 
-        # evaluate the model on each of the test set groups
-        
-        # true positive samples
-        loss, accuracy = model.evaluate(x_test_positives, y_test_positives, verbose=1)
-        print('Accuracy on true positive: %f' % accuracy)
-        
-        # negative samples
+            label = "%s_%s_%s_%s" % (sample, strategy, embedding_model, embeddings_name)
+            print label
+            
+            embeddings_config['matrix_path'] = PATH + label + '.npy'
 
-        loss, accuracy = model.evaluate(x_test_random, y_test_negatives, verbose=1)
-        print('Accuracy on uniform random: %f' % accuracy)
+            model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
-        loss, accuracy = model.evaluate(x_test_disorder, y_test_negatives, verbose=1)
-        print('Accuracy on sequence disorder: %f' % accuracy)
+            # evaluate the model on each of the test set groups
+            
+            # true positive samples
+            loss, accuracy = model.evaluate(x_test_positives, y_test_positives, verbose=1)
+            print('Accuracy on true positive: %f' % accuracy)
+            
+            # negative samples
 
-        loss, accuracy = model.evaluate(x_test_distribution, y_test_negatives, verbose=1)
-        print('Accuracy on vocabulary distribution: %f' % accuracy)
+            loss, accuracy = model.evaluate(x_test_random, y_test_negatives, verbose=1)
+            print('Accuracy on uniform random: %f' % accuracy)
 
-        loss, accuracy = model.evaluate(x_test_horizontal, y_test_negatives, verbose=1)
-        print('Accuracy on horizontal split: %f' % accuracy)
+            loss, accuracy = model.evaluate(x_test_disorder, y_test_negatives, verbose=1)
+            print('Accuracy on sequence disorder: %f' % accuracy)
 
-        loss, accuracy = model.evaluate(x_test_vertical, y_test_negatives, verbose=1)
-        print('Accuracy on vertical split: %f' % accuracy)
+            loss, accuracy = model.evaluate(x_test_distribution, y_test_negatives, verbose=1)
+            print('Accuracy on vocabulary distribution: %f' % accuracy)
 
-        # serialize the trained model to JSON
-        model_json = model.to_json()
-        with open("./%s/words/models/%s_model.json" % (sample, label), "w") as json_file:
-            json_file.write(model_json)
+            loss, accuracy = model.evaluate(x_test_horizontal, y_test_negatives, verbose=1)
+            print('Accuracy on horizontal split: %f' % accuracy)
 
-        # serialize weights to HDF5
-        model.save_weights('./%s/words/models/%s.h5' % (sample, label))
-        print("Saved model to disk")
+            loss, accuracy = model.evaluate(x_test_vertical, y_test_negatives, verbose=1)
+            print('Accuracy on vertical split: %f' % accuracy)
+
+            # serialize the trained model to JSON
+            model_json = model.to_json()
+            with open("./%s/entities/models/%s_model.json" % (sample, label), "w") as json_file:
+                json_file.write(model_json)
+
+            # serialize weights to HDF5
+            model.save_weights('./%s/entities/models/%s.h5' % (sample, label))
+            print("Saved model to disk")
 
 
 if __name__ == '__main__':
