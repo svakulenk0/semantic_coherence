@@ -47,84 +47,51 @@ max length of the shortest paths
 
 '''
 import os
+import json
 import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(folder='top5_widipedia', nfiles=1):
+def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
     '''
+    Show most common relations and external entities
+
     folder: top5_widipedia top5_dbpedia top5_%s_%s top5_random_dbpedia
     nfiles <int> limit the number of files to parse
     '''
-    # collect a number of stats for the dialogue graphs
-    n_dialogues = 0  # count the number of dialogues managed to parse
-    n_nodes = []
-    n_edges = []
-    n_paths = []
-    nodes_per_path = []
-    edges_per_path = []
-    min_paths_lengths = []
-    mean_paths_lengths = []
-    max_paths_lengths = []
 
-    metrics = {'nodes in the dialogue graph': n_nodes,
-               'edges in the dialogue graph': n_edges,
-               'paths in the dialogue graph': n_paths,
-               '#nodes per path': nodes_per_path,
-               '#edges per path': edges_per_path,
-                # length of the shortest paths stats: min max mean
-               'min length of the shortest paths': min_paths_lengths,
-               'mean length of the shortest paths': mean_paths_lengths,
-               'max length of the shortest paths': max_paths_lengths}
+    nodes = Counter()
+    edges = Counter()
 
     files = os.listdir(folder)
     print len(files), 'files'
 
-    for file in files[:nfiles]:
-        print file
-        with open(path, 'r') as paths_file:
-            for line in paths_file.readlines():
+    for file_name in files[:nfiles]:
+        print file_name
+        with open(folder + file_name, 'r') as paths_file:
+            for line in paths_file:
+                entities = []
                 # skip dialogues with parsing errors
                 try:
-                    # process 1 dialogue per line
-                    nodes = []
-                    edges = []
-                    paths_lengths = []  # collect distribution of the length of the shortest paths
+                    path_annotation = json.load(line)
+                    entities.extend(path_annotation['entities'])
 
-                    parse = line.split('\t')
-                    file = parse[0]
-                    # print file, 'dialogue'
-                    paths = parse[1:]
-                    for path in paths:
-                        hops = path[1:-1].split('-<')
-                        nhops = len(hops)  # path length
-                        paths_lengths.append(nhops)
-                        start_node = hops[0]
-                        nodes.append(start_node)
-                        for hop in hops[1:]:
-                            edge_label, next_node = hop.split('>-')
-                            nodes.append(next_node)
-                            edges.append((start_node, next_node))
-                            start_node = next_node
-                    
-                    n_nodes.append(len(set(nodes)))
-                    n_edges.append(len(set(edges)))
-                    n_paths.append(len(paths))
-                    min_paths_lengths.append(min(paths_lengths))
-                    mean_paths_lengths.append(np.mean(paths_lengths))
-                    max_paths_lengths.append(max(paths_lengths))
+                    for entity_paths in path_annotation['top5_paths']:
+                        for path in entity_paths:
+                            hops = path[1:-1].split('-<')
+                            nhops = len(hops)  # path length
+                            start_node = hops[0]
+                            for hop in hops[1:]:
+                                edge_label, next_node = hop.split('>-')
+                                edges[edge_label] += 1
+                                if next_node not in entities:
+                                    nodes[next_node] += 1
+                                start_node = next_node
                 except:
                     print "Error parsing"
                     continue
-    # derivative metrics final
-    nodes_per_path.extend(np.divide(n_nodes, n_paths))
-    edges_per_path.extend(np.divide(n_edges, n_paths))
-
-    # analyze the distribution for each of the metric (stats)
-    report = "min: %f mean: %f max: %f"
-    for metric_name, metric in metrics.items():
-        print metric_name
-        print report % (min(metric), np.mean(metric), max(metric))
+    print nodes.most_common(10)
+    print edges.most_common(10)
 
 
 def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
