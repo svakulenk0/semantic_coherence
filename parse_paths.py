@@ -73,14 +73,12 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
             print folder + file_name
             for line in paths_file:
                 print line
-                entities = []
-                # skip dialogues with parsing errors
-                try:
-                    path_annotation = json.load(line)
-                    entities.extend(path_annotation['entities'])
-
-                    for entity_paths in path_annotation['top5_paths']:
-                        for path in entity_paths:
+                path_annotation = json.load(line)
+                # mentioned entities
+                entities = path_annotation['entities']
+                for entity_paths in path_annotation['top5_paths']:
+                    for path in entity_paths:
+                        if path:
                             hops = path[1:-1].split('-<')
                             nhops = len(hops)  # path length
                             start_node = hops[0]
@@ -90,9 +88,6 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
                                 if next_node not in entities:
                                     nodes[next_node] += 1
                                 start_node = next_node
-                except:
-                    print "Error parsing"
-                    continue
     print nodes.most_common(10)
     print edges.most_common(10)
 
