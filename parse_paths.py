@@ -88,8 +88,8 @@ def parse_paths_folder(endpoint='widipedia', nfiles=10):
                     for path in entity_paths:
                         if path:
                             hops = path[1:-1].split('-<')
-                            print hops
-                            nhops = len(hops)  # path length
+                            # print hops
+                            nhops = len(hops) - 1 # path length
                             entity_paths_lengths.append(nhops)
                             start_node = hops[0]
                             for hop in hops[1:]:
