@@ -53,17 +53,18 @@ import numpy as np
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
 
-def parse_paths_folder(sample='_vertical', endpoint='widipedia', nfiles=10):
+def parse_paths_folder(sample='', endpoint='widipedia', nfiles=10):
     '''
     Show most common relations and external entities
 
     endpoint: dbpedia, widipedia
-    sample: '' - positive, 'random', 'disorder', 'distribution', 'vertical', 'horizontal'
+    sample: '' - positive, '_random', '_disorder', '_distribution', '_vertical', '_horizontal'
     top5_widipedia top5_dbpedia top5_%s_%s top5_random_dbpedia
     nfiles <int> limit the number of files to parse
     '''
     folder='top5%s_%s/' % (sample, endpoint)
 
+    mentions = Counter()
     nodes = Counter()
     edges = Counter()
     min_distances = Counter()
@@ -82,8 +83,9 @@ def parse_paths_folder(sample='_vertical', endpoint='widipedia', nfiles=10):
             for line in lines:
                 try:
                     path_annotation = json.loads(line)
-                    # mentioned entities
-                    entities = path_annotation['entities']
+                    # mentioned entities: strip prefix
+                    entities = [entity.split('/')[-1] for entity in path_annotation['entities']]
+                    mentions.update(entities)
                     min_paths_lengths = []
                     for entity_paths in path_annotation['top5_paths']:
                         entity_paths_lengths = []
@@ -98,7 +100,7 @@ def parse_paths_folder(sample='_vertical', endpoint='widipedia', nfiles=10):
                                     edge_label, next_node = hop.split('>-')
                                     edges[edge_label] += 1
                                     if next_node not in entities:
-                                        nodes[next_node.split('_(')[0]] += 1
+                                        nodes[next_node] += 1
                                     start_node = next_node
                         if entity_paths_lengths:
                             min_distance = min(entity_paths_lengths)
@@ -109,7 +111,11 @@ def parse_paths_folder(sample='_vertical', endpoint='widipedia', nfiles=10):
                 except:
                     print "Error parsing"
                     continue
+    print "Mentioned entities"
+    print mentions.most_common(n_most_common)
+    print "Context (non-mentioned) entities"
     print nodes.most_common(n_most_common)
+    print "Relations"
     print edges.most_common(n_most_common)
     print min_distances
 
