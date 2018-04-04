@@ -11,6 +11,7 @@ import os
 import unicodecsv
 import ast
 import json
+import numpy as np
 
 from process_ubuntu_dialogues import DIALOGUES_PATH
 from hdt_topk import get_topk_paths
