@@ -101,7 +101,7 @@ def parse_paths_folder(endpoint='widipedia', nfiles=10):
                         min_distance = min(entity_paths_lengths)
                     else:
                         min_distance = float("inf")
-                    min_paths_lengths.extend(min_distance)
+                    min_paths_lengths.append(min_distance)
                 min_distances.update(min_paths_lengths)
 
     print nodes.most_common(n_most_common)
