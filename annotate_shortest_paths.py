@@ -44,7 +44,7 @@ def annotate_sample(entities=SAMPLE_4606, strip_URL=False):
     return paths
 
 
-def annotate_numpy(endpoint='dbpedia', sample='horizontal', entities_path='development_set.jl'):
+def annotate_numpy(endpoint='dbpedia', sample='random', entities_path='development_set.jl'):
     '''
     endpoint='dbpedia' widipedia
     '''
