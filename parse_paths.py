@@ -73,7 +73,7 @@ def parse_paths_folder(folder='top5_widipedia/', nfiles=1):
         print file_name
         with open(folder + file_name, 'r') as paths_file:
             lines = paths_file.readlines()
-            print lines, 'lines'
+            print len(lines), 'lines'
             for line in lines:
                 path_annotation = json.loads(line)
                 # mentioned entities
