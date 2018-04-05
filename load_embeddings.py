@@ -10,11 +10,16 @@ import numpy as np
 import gensim
 from keras.preprocessing.sequence import pad_sequences
 
-from embeddings import entity_embeddings
-from embeddings import word_embeddings
+from embeddings import entity_embeddings, word_embeddings
 from prepare_dataset import load_vocabulary, LATEST_SAMPLE
 
 PATH = './embeddings_npy/'
+
+
+def load_word2vec(embeddings_name='word2vec', sample=LATEST_SAMPLE):
+    vocabulary = load_vocabulary('./%s/words/vocab.pkl' % sample)
+    save_to = './%s/words/%s.npy' % (sample, embeddings_name)
+    load_embeddings_gensim(word_embeddings[embeddings_name], embeddings_name, vocabulary, save_to)
 
 
 def load_glove_word_embeddings(embeddings_name='GloVe', sample=LATEST_SAMPLE):
@@ -65,9 +70,9 @@ def load_embeddings_lines(embeddings_config, label, vocabulary):
     return embedding_matrix
 
 
-def load_embeddings_gensim(embeddings_config, label, vocabulary):
+def load_embeddings_gensim(embeddings_config, label, vocabulary, save_to):
     # create a weight matrix for entities in training docs
-    embedding_matrix = np.zeros((len(vocabulary)+1, embeddings_config['dims']))
+    embedding_matrix = np.zeros((len(vocabulary), embeddings_config['dims']))
         
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
     model = gensim.models.Word2Vec.load(embeddings_config['path'])
@@ -85,7 +90,7 @@ def load_embeddings_gensim(embeddings_config, label, vocabulary):
             missing += 1
     print "done loading gensim entities. %d missing" % missing
     # save embedding_matrix for entities in the training dataset
-    np.save(PATH+label+'.npy', embedding_matrix)
+    np.save(save_to, embedding_matrix)
     # print embedding_matrix
     return embedding_matrix
 
@@ -113,5 +118,6 @@ def load_entity_embeddings(sample=LATEST_SAMPLE):
 
 if __name__ == '__main__':
     # load_glove_word_embeddings()
-    # path to the data: './291848/entities/vocab.pkl'
-    load_entity_embeddings()
+    load_word2vec()
+    # path to the data set: './291848/entities/vocab.pkl'
+    # load_entity_embeddings()

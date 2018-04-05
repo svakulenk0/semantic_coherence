@@ -19,7 +19,7 @@ from keras.preprocessing.sequence import pad_sequences
 
 from model import train
 from prepare_dataset import load_dataset_splits
-from load_embeddings import PATH
+# from load_embeddings import PATH
 from embeddings import word_embeddings
 
 # training parameters:
@@ -125,7 +125,7 @@ def train_model(strategy, sample=LATEST_SAMPLE):
         label = "%s_%s_%s" % (sample, strategy, embeddings_name)
         print label
         embeddings_config = word_embeddings[embeddings_name]
-        embeddings_config['matrix_path'] = PATH + label + '.npy'
+        embeddings_config['matrix_path'] = './%s/words/%s.npy' % (sample, embeddings_name)
         model = train(x_train, y_train, x_val, y_val, vocabulary_size, input_length, embeddings_config, label, batch_size, epochs)
 
         # evaluate the model on each of the test set groups
