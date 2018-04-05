@@ -61,7 +61,8 @@ def parse_paths_folder(endpoint='widipedia', nfiles=10):
     nfiles <int> limit the number of files to parse
     '''
     # sample: '' - positive, '_random', '_disorder', '_distribution', '_vertical', '_horizontal'
-    for sample in ['', '_random', '_disorder', '_distribution', '_vertical', '_horizontal']:
+    # for sample in ['', '_random', '_disorder', '_distribution', '_vertical', '_horizontal']:
+    for sample in ['_random']:
         print sample
         
         folder='top5%s_%s/' % (sample, endpoint)
