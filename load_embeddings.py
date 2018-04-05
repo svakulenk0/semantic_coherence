@@ -16,10 +16,27 @@ from prepare_dataset import load_vocabulary, LATEST_SAMPLE
 PATH = './embeddings_npy/'
 
 
-def load_word2vec(embeddings_name='word2vec', sample=LATEST_SAMPLE):
+def load_word2vec(sample=LATEST_SAMPLE):
     vocabulary = load_vocabulary('./%s/words/vocab.pkl' % sample)
-    save_to = './%s/words/%s.npy' % (sample, embeddings_name)
-    load_embeddings_gensim(word_embeddings[embeddings_name], embeddings_name, vocabulary, save_to)
+    save_to = './%s/words/%s.npy' % (sample, 'word2vec')
+    embeddings_config =  word_embeddings['word2vec']
+    # create a weight matrix for entities in training docs
+    embedding_matrix = np.zeros((len(vocabulary), embeddings_config['dims']))
+    # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
+    model = gensim.models.Word2Vec.load(embeddings_config['path'])
+    #model = gensim.models.KeyedVectors.load_word2vec_format(embeddings_config['path'], binary=True)
+    embedded_words = model.wv
+    missing = 0
+    for word, word_id in vocabulary.items():
+        if word in embedded_words:
+            embedding_matrix[word_id] = embedded_words[word]
+        else:
+            missing += 1
+    print "Done loading word2vec embeddings. %d missing" % missing
+    # save embedding_matrix
+    np.save(save_to, embedding_matrix)
+    # print embedding_matrix
+    return embedding_matrix
 
 
 def load_glove_word_embeddings(embeddings_name='GloVe', sample=LATEST_SAMPLE):
