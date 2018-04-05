@@ -23,8 +23,8 @@ def load_word2vec(sample=LATEST_SAMPLE):
     # create a weight matrix for entities in training docs
     embedding_matrix = np.zeros((len(vocabulary), embeddings_config['dims']))
     # load embeddings binary model with gensim for word2vec and rdf2vec embeddings
-    model = gensim.models.Word2Vec.load(embeddings_config['path'])
-    #model = gensim.models.KeyedVectors.load_word2vec_format(embeddings_config['path'], binary=True)
+    # model = gensim.models.Word2Vec.load(embeddings_config['path'])
+    model = gensim.models.KeyedVectors.load_word2vec_format(embeddings_config['path'], binary=True)
     embedded_words = model.wv
     missing = 0
     for word, word_id in vocabulary.items():
