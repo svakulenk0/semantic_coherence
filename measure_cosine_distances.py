@@ -12,7 +12,7 @@ import itertools
 from collections import Counter
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
-from load_embeddings import PATH
+# from load_embeddings import PATH
 
 from embeddings import word_embeddings
 
@@ -66,9 +66,10 @@ def measure_min_distances(embeddings, sample=SAMPLE_WORDS_4606):
         # compare with cosine between the new word vector and the word vectors of the previous words
         if previous_word_vectors.size > 0:
             word_distances = cosine_similarity(word_vector, previous_word_vectors)
-            # min distance = max similarity
-            max_similarities = [int((1 - np.max(enity_cosine))/2*10) for enity_cosine in word_distances.tolist()]
-            min_words_distances.extend(max_similarities)
+            # min_distance = max similarity
+            # min_distance = [int((1 - np.max(enity_cosine))/2*10) for enity_cosine in word_distances.tolist()]
+            min_distances = [int((1 - np.max(enity_cosine))*10) for enity_cosine in word_distances.tolist()]
+            min_words_distances.extend(min_distances)
             previous_word_vectors = np.append(previous_word_vectors, word_vector, axis=0)
         else:
             previous_word_vectors = word_vector
@@ -87,31 +88,38 @@ def collect_distances(embeddings, samples_type, path):
     return words_distances
 
 
-def compare_distance_distributions(embeddings, path):
+def compare_distance_distributions(embeddings, path, embedding_name='kg'):
     dev_sets = { 'positive': {}, 'random': {}, 'disorder': {},
                  'distribution': {}, 'vertical': {}, 'horizontal': {}}
 
     for dev_set in dev_sets:
-        print dev_set
+        # print dev_set
         dev_sets[dev_set]['distribution'] = collect_distances(embeddings, dev_set, path)
-        print dev_sets[dev_set]['distribution']
+        # print dev_sets[dev_set]['distribution']
         # order distance counts
         dev_sets[dev_set]['counts'] = []
         for distance in range(0, 10, 1):
             dev_sets[dev_set]['counts'].append(dev_sets[dev_set]['distribution'][distance])
-        print dev_sets[dev_set]['counts']
+        print '%s_%s =' % (embedding_name, dev_set), dev_sets[dev_set]['counts']
+        # print 'glove_%s =' % dev_set, dev_sets[dev_set]['counts']
+        # print 'kg_%s =' % dev_set, dev_sets[dev_set]['counts']
 
-    for p,q in itertools.combinations(dev_sets.keys(), 2):
-        print p, q
-        print stats.entropy(pk=dev_sets[p]['counts'], qk=dev_sets[q]['counts'])
+    # compute KL divergence (relative entropy)
+    # for p,q in itertools.combinations(dev_sets.keys(), 2):
+    #     print p, q
+    #     print stats.entropy(pk=dev_sets[p]['counts'], qk=dev_sets[q]['counts'])
 
 
 def compare_word_distance_distributions(sample='291848'):
     '''
     compare word distance distributions in dialogues
     '''
-    embeddings = np.load(PATH + 'GloVe%s.npy' % sample)
-    compare_distance_distributions(embeddings, sample, 'words')
+    path = './%s/words/' % sample
+    embeddings = ['GloVe', 'word2vec']
+    for embedding in embeddings:
+        matrix = np.load(path+'embeddings/%s.npy' % embedding)
+        compare_distance_distributions(matrix, path, embedding)
+        print '\n'
 
 
 def compare_entity_distance_distributions(sample='291848'):
@@ -124,4 +132,4 @@ def compare_entity_distance_distributions(sample='291848'):
 
 
 if __name__ == '__main__':
-    compare_entity_distance_distributions()
+    compare_word_distance_distributions()
