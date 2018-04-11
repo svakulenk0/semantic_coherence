@@ -25,9 +25,9 @@ def load_random_embeddings(sample=LATEST_SAMPLE):
     # dataset params
     entity_vocabulary = load_vocabulary('./%s/entities/vocab.pkl' % sample)
 
-    embeddings_name = "random"
+    embeddings_name = "random_vectors"
     config = {'dims' : 200, 'path': ''}
-    label = 'RandomVectors_' + embeddings_name
+    label = 'GlobalVectors_' + embeddings_name
     try:
         print label
         create_embeddings_random(config, label, entity_vocabulary)
