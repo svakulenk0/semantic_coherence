@@ -1,8 +1,6 @@
 # Semantic Coherence
 
-of a conversation or a natural language text in general. Mapping the sequence of entities occuring in the text on the knowledge graph and examining the relations.
-
-# Requirements
+## Requirements
 
 Python 2
 
@@ -20,11 +18,12 @@ pip install -r requirements.txt
 
 
 
-# Run
+## Run
 
-1. prepare_dataset.py: create vocabulary and encode development and training data.
-2. load_embeddings.py
-3. train_model.py
+* prepare_dataset.py: create vocabulary and encode development and training data.
+* adversaries.py: generate adversaries
+* load_embeddings.py
+* train_model.py
 
 
 
@@ -62,13 +61,6 @@ train_model.py
 
 
 
-# Experiments
-
-
-# Approach
-
-
-
 ## Annotation
 
 ### Entity linking
@@ -93,37 +85,9 @@ Front-end: http://svhdt.ai.wu.ac.at/control-panel.tpl
 
 ## Embeddings
 
-* Pre-trained RDF2vec embeddings:
+* Pre-trained RDF2vec and KGlove embeddings:
 
 data.dws.informatik.uni-mannheim.de/rdf2vec/models
 
 trained on the English version of DBpedia 2016-04
 http://downloads.dbpedia.org/2016-04/
-
-* Training
-
-Download the english DBpedia dumps
-./download_dbpedia.sh 3.9 en
-
-
-## Results
-
-Positive example: subgraph matrix of the shortest path between entities
-
-# unique entities mentioned in the dialogue 3
-[u'Ubuntu_(philosophy)', u'Intel_80386', u'Web_server']
-# paths 3
-Graph size: 7 entities 7 edges
-{u'Web_server': 5, u'VMware_ESX': 2, u'Ubuntu_(philosophy)': 0, u'Intel_80386': 3, u'Ubuntu_(operating_system)': 1, u'Debian': 4, u'Embedded_system': 6}
-[[ 0.  1.  0.  2.  1.  0.  0.]
- [ 0.  0.  1.  0.  0.  0.  0.]
- [ 0.  0.  0.  1.  0.  0.  0.]
- [ 0.  0.  0.  0.  0.  2.  1.]
- [ 0.  0.  0.  0.  0.  1.  0.]
- [ 0.  0.  0.  0.  0.  0.  0.]
- [ 0.  0.  0.  0.  0.  1.  0.]]
-
-
-# Acknowledgments
-
-* https://github.com/botcs/text_cnn
