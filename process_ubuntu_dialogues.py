@@ -22,14 +22,15 @@ from keras.preprocessing.sequence import pad_sequences
 from sample172098 import entity_distribution, word_distribution
 
 PATH = './ubuntu/dialogs'
+LATEST_SAMPLE = '291848'
 # DIALOGUES_PATH = './ubuntu/annotated_dialogues'
 DIALOGUES_PATH = './ubuntu/annotated_dialogues_sample2'  # 172,098
 # DIALOGUES_PATH = './ubuntu/annotated_dialogues_only_URIs'
 PATH1 = './ubuntu/dialogs/555'
 SAMPLE_DIALOG = './ubuntu/dialogs/135/9.tsv'
 # VOCAB_ENTITIES_PATH = './ubuntu/vocab_entities.pkl'
-VOCAB_ENTITIES_PATH = './%s/vocab_entities.pkl'
-VOCAB_WORDS_PATH = './%s/vocab_words.pkl'
+VOCAB_ENTITIES_PATH = './%s/entities/vocab.pkl'
+VOCAB_WORDS_PATH = './%s/words/vocab.pkl'
 
 dialog_end_symbol = "__dialog_end__"
 

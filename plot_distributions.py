@@ -168,6 +168,16 @@ def plot_subplots():
     # ax = plt.subplot(2, 2, 1)
     plot_cosine_subplot(word2vec_distrs, axes[0])
     axes[0].set_title("Word2Vec embeddings")
+    
+    # colors legend
+    NA = mpatches.Patch(color='blue', label='True positive')
+    EU = mpatches.Patch(color='green', label='Sequence disorder')
+    AP = mpatches.Patch(color='red', label='Vocabulary distribution')
+    SA = mpatches.Patch(color='y', label='Vertical split')
+    SA2 = mpatches.Patch(color='c', label='Horizontal split')
+    SA3 = mpatches.Patch(color='m', label='Random uniform')
+    axes[0].legend(handles=[NA, EU, AP, SA, SA2, SA3], loc=2)
+    
     # RDF2Vec
     # ax = plt.subplot(2, 2, 2)
     plot_cosine_subplot(kg_distrs, axes[1])
@@ -176,12 +186,15 @@ def plot_subplots():
     # ax = plt.subplot(2, 2, 3)
     plot_cosine_subplot(GloVe_distrs, axes[2])
     axes[2].set_title("GloVe embeddings")
+    # axes[2].legend(handles=[NA, EU, AP, SA, SA2, SA3], loc=2)
+
     # KG shortest path
     # ax = plt.subplot(2, 2, 4)
     plot_path_subplot(axes[3])
     axes[3].set_title("DBpedia+Wikidata shortest paths")
     # spacing vertical
     plt.subplots_adjust(hspace=0.15)
+
     # plt.show()
     plt.savefig('all_distrs.pdf')
 

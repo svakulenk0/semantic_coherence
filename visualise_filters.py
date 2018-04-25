@@ -23,26 +23,26 @@ K.set_learning_phase(0)
 SAMPLE = '291848'
 
 # load data sample 4610
-i = 4605
+i = 4610
 
 
 def visualise_activations():
     positives = SAMPLE + '/words/positive_X.npy'
     positive = np.load(positives)[i]
+    n_words = len(positive)
 
     vocabulary = load_vocabulary(SAMPLE + '/words/vocab.pkl')
     inv_vocabulary = {v: k for k, v in vocabulary.iteritems()}
 
 
-    labels = [[], []]
-    labels[0] = [inv_vocabulary[_id].encode('utf-8') for _id in positive]
-    print labels[0]
+    labels = []
+    labels.append([inv_vocabulary[_id].encode('utf-8') for _id in positive])
 
 
     # specify which trained models to visualise
     # for model_name in ['random', 'distribution', 'disorder', 'horizontal', 'vertical']:
     for model_name in ['distribution']:
-        os.mkdir('figs/291848/%s' % model_name)
+        # os.mkdir('figs/291848/%s' % model_name)
 
         model_weights = SAMPLE + '/words/models/291848_%s_GloVe.h5' % model_name
         model_architecture = SAMPLE + '/words/models/291848_%s_GloVe_model.json' % model_name
@@ -58,6 +58,8 @@ def visualise_activations():
         model.load_weights(model_weights)
         print('Model loaded.')
 
+        data = [positive]
+
         # for negative_type in ['random', 'distribution', 'disorder', 'horizontal', 'vertical']:
         for negative_type in ['random', 'horizontal']:
         # for negative_type in ['horizontal']:
@@ -65,47 +67,53 @@ def visualise_activations():
 
             negatives = SAMPLE + '/words/%s_X.npy' % negative_type
             negative = np.load(negatives)[i]
-
-            n_words = len(positive)
+            data.append(negative)
             # assert n_words == len(negative)
 
-            labels[1] = [inv_vocabulary[_id].encode('utf-8') for _id in negative]
-            print labels[1]
+            labels.append([inv_vocabulary[_id].encode('utf-8') for _id in negative])
+        
+        print labels
 
-            data = [positive, negative]
-            print data
-            data = pad_sequences(data, padding='post', maxlen=input_length)
-            print model.predict(data)
+        # data = [positive, negative]
+        print data
+        data = pad_sequences(data, padding='post', maxlen=input_length)
+        
+        print model.predict(data)
 
-            # from https://github.com/jacobgil/keras-cam/blob/master/cam.py
-            # print model.layers
-            class_weights = model.layers[-2].get_weights()[0]
-            get_output = K.function([model.layers[0].input], [model.layers[2].output, model.layers[-2].output])
-            [conv_outputs, predictions] = get_output([data])
+        # from https://github.com/jacobgil/keras-cam/blob/master/cam.py
+        # print model.layers
+        class_weights = model.layers[-2].get_weights()[0]
+        get_output = K.function([model.layers[0].input], [model.layers[2].output, model.layers[-2].output])
+        [conv_outputs, predictions] = get_output([data])
 
-            # from https://stackoverflow.com/questions/13784201/matplotlib-2-subplots-1-colorbar
-            # fig, axes = pl.subplots(nrows=2, ncols=1)
-            # from https://stackoverflow.com/questions/24535393/matplotlib-getting-subplots-to-fill-figure
-            fig, axes = pl.subplots(2, 1, figsize=(10, 8))
+        # from https://stackoverflow.com/questions/13784201/matplotlib-2-subplots-1-colorbar
+        # fig, axes = pl.subplots(nrows=2, ncols=1)
+        # from https://stackoverflow.com/questions/24535393/matplotlib-getting-subplots-to-fill-figure
+        
+        fig, axes = pl.subplots(3, 1, figsize=(10, 8))
 
-            for j, ax in enumerate(axes.flatten()):  # flatten in case you have a second row at some point
-                sample = conv_outputs[j, :, :][:n_words]
-                img = ax.imshow(np.squeeze(sample[:]), vmin=0, vmax=6, interpolation='nearest', cmap='RdBu')
-                ax.set_aspect('auto')
-                ax.set_yticks(np.arange(0, n_words, 1))
-                ax.set_yticklabels(labels[j])
+        titles = ['True positive', 'Random uniform', 'Horizontal split']
 
-            pl.title(negative_type)
+        for j, ax in enumerate(axes.flatten()):  # flatten in case you have a second row at some point
+            sample = conv_outputs[j, :, :][:n_words]
+            img = ax.imshow(np.squeeze(sample[:]), vmin=0, vmax=6, interpolation='nearest', cmap='Blues')
+            ax.set_aspect('auto')
+            ax.set_yticks(np.arange(0, n_words, 1))
+            ax.set_yticklabels(labels[j])
+            ax.set_title(titles[j])
 
-            fig.subplots_adjust(right=0.9)
-            # left, bottom, width, height
-            cbar_ax = fig.add_axes([0.92, 0.1, 0.05, 0.8])
-            fig.colorbar(img, cax=cbar_ax)
-            
-            # pl.show()
-            # return
+        fig.subplots_adjust(right=0.9)
+        # left, bottom, width, height
+        cbar_ax = fig.add_axes([0.92, 0.1, 0.05, 0.8])
+        fig.colorbar(img, cax=cbar_ax)
 
-            pl.savefig('figs/291848/%s/heatmap_%s_%d.pdf' % (model_name, negative_type, i))
+        pl.subplots_adjust(hspace=0.5)
+
+        # pl.show()
+        # return
+
+        # pl.savefig('figs/291848/%s/heatmap_%s_%d.pdf' % (model_name, negative_type, i))
+        pl.savefig('figs/291848/%s/heatmap_final_%d.pdf' % (model_name, i))
 
 
 if __name__ == '__main__':

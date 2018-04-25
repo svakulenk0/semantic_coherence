@@ -50,36 +50,61 @@ import os
 from collections import Counter
 import json
 import numpy as np
+
 from annotate_shortest_paths import PATH_SHORTEST_PATHS
 
+# distribution of the shortest paths across the data splits
+# positive 2,906 dialogues
+path_positive = Counter({2: 11060, 1: 7982, 3: 5863, float('inf'): 5509, 4: 1240, 5: 12})
+# random 289 dialogues
+path_random = Counter({3: 1235, float('inf'): 985, 2: 557, 4: 394, 1: 21, 5: 3})
+# vertical 413 dialogues
+path_vertical = Counter({2: 3005, 1: 2351, float('inf'): 1489, 3: 985, 4: 194, 5: 1})
+# distribution 207
+path_distribution = Counter({2: 945, float('inf'): 522, 3: 350, 1: 294, 4: 67})
+# disorder 247
+path_disorder = Counter({2: 889, float('inf'): 698, 1: 628, 3: 385, 4: 64})
+# horizontal 224
+path_horizontal = Counter({2: 978, float('inf'): 624, 1: 506, 3: 354, 4: 77, 5: 1})
 
-def parse_paths_folder(endpoint='widipedia', nfiles=10):
+path_counts = [ path_positive, path_disorder, path_distribution, path_vertical, path_horizontal, path_random ]
+
+
+def get_shortest_path_distribution():
+    path_distrs = []
+    
+    for counter in path_counts:
+        sum_counts = sum(counter.values())
+        # print sum_counts
+        path_distr = []
+        for i in [1, 2, 3, 4, 5, float('inf')]:
+            path_distr.append(counter[i]/float(sum_counts))
+        path_distrs.append(path_distr)
+    return path_distrs
+
+
+def parse_paths_folder(nfiles=10):
     '''
     Show most common relations and external entities
-
-    endpoint: dbpedia, widipedia
     nfiles <int> limit the number of files to parse
     '''
-    # sample: '' - positive, '_random', '_disorder', '_distribution', '_vertical', '_horizontal'
-    # for sample in ['', '_random', '_disorder', '_distribution', '_vertical', '_horizontal']:
-    for sample in ['_random']:
+    folder = './results/top5_shortest_paths_widipedia/%s/'
+    for sample in ['positive', 'random', 'disorder', 'distribution', 'vertical', 'horizontal']:
         print sample
         
-        folder='top5%s_%s/' % (sample, endpoint)
-
         mentions = Counter()
         nodes = Counter()
         edges = Counter()
         min_distances = Counter()
 
-        files = os.listdir(folder)
+        files = os.listdir(folder%sample)
         print len(files), 'files'
 
         n_most_common = 20
 
         for file_name in files[:nfiles]:
             print file_name
-            with open(folder + file_name, 'r') as paths_file:
+            with open(folder % sample + file_name, 'r') as paths_file:
                 lines = paths_file.readlines()
                 print len(lines), 'lines'
 
@@ -196,3 +221,4 @@ def parse_paths(path=PATH_SHORTEST_PATHS, nlines=20000000):
 
 if __name__ == '__main__':
      parse_paths_folder()
+     # get_shortest_path_distribution()
