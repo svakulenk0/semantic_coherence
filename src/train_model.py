@@ -26,8 +26,8 @@ negative_sampling_strategies = ['random', 'disorder', 'distribution', 'vertical'
 for strategy in negative_sampling_strategies:
 
     print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@STRATEGY:" + strategy
-    X_path_entities = './%s/entities_%s_X.npy' % (sample, strategy)
-    y_path = './%s/y.npy' % sample
+    X_path_entities = '../%s/entities_%s_X.npy' % (sample, strategy)
+    y_path = '../%s/y.npy' % sample
 
     x_train, y_train, x_val, y_val, x_test, y_test, input_length = load_dataset_splits(X_path_entities, y_path, test_split=0.2, validation_split=0.2)
 
