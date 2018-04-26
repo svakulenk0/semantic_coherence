@@ -14,6 +14,8 @@ entity_embeddings = {
                         'rdf2vec': { '9_pageRank': {'dims' : 200, 'path': './embeddings/biasedRDF2Vec/PageRank/db2vec_sg_200_5_25_5'},
                         },
 
+                        'random_vectors': {'dims' : 200}
+
                      }
 
 
@@ -21,6 +23,8 @@ entity_embeddings = {
 word_embeddings = {
                     'GloVe': {'dims' : 300, 'path': './embeddings/glove.840B.300d.txt'},
 
-                    'word2vec': {'dims' : 300, 'path': './embeddings/GoogleNews-vectors-negative300.bin'}
+                    'word2vec': {'dims' : 300, 'path': './embeddings/GoogleNews-vectors-negative300.bin'},
+                    
+                    'random_vectors': {'dims' : 300}
 
                  }
