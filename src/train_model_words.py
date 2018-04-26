@@ -28,8 +28,8 @@ epochs = 10
 validation_split = 0.2
 # specify negative sampling strategies used e.g. 'random', 'disorder', 'distribution', 'vertical', 'horizontal' (5)
 negative_sampling_strategies = ['random', 'disorder', 'distribution', 'vertical', 'horizontal']
-# specify embeddings, e.g. GloVe, word2vec
-embedding_names = ['word2vec']
+# specify embeddings, e.g. GloVe, word2vec, random_vectors
+embedding_names = ['random_vectors']
 
 # dataset params
 LATEST_SAMPLE = '291848'
