@@ -77,14 +77,6 @@ Documentation: http://www.dbpedia-spotlight.org/api
 http://downloads.dbpedia.org/2016-10/
 
 
-### Entity relations
-
-Topk shortest path HDT web service: http://svhdt.ai.wu.ac.at/dbpedia/query
-
-Front-end: http://svhdt.ai.wu.ac.at/control-panel.tpl
-
-
-
 ## Embeddings
 
 * Pre-trained RDF2vec and KGlove embeddings:
