@@ -1,5 +1,9 @@
 # Semantic Coherence
 
+
+Vakulenko, S.; de Rijke, M.; Cochez, M.; Savenkov, V.; Polleres, A. (2018). Measuring Semantic Coherence of a Conversation. In: International Semantic Web Conference 2018, Monterey, CA, USA https://arxiv.org/pdf/1806.06411.pdf
+
+
 ## Requirements
 
 * Python 2
@@ -89,3 +93,7 @@ data.dws.informatik.uni-mannheim.de/rdf2vec/models
 
 trained on the English version of DBpedia 2016-04
 http://downloads.dbpedia.org/2016-04/
+
+## Acknowledgment
+
+This work is supported by the project 855407 “Open Data for Local Communities” (CommuniData) of the Austrian Federal Ministry of Transport, Innovation and Technology (BMVIT) under the program “ICT of the Future.” Svitlana Vakulenko was supported by the EU H2020 programme under the MSCA-RISE agreement 645751 (RISE BPM).
