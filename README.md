@@ -2,7 +2,10 @@
 
 ## Requirements
 
-Python 2
+* Python 2
+* unicodecsv
+* spotlight (pip install pyspotlight)
+* ...
 
 ```
 virtualenv myvenv
@@ -11,11 +14,6 @@ source myvenv/bin/activate
 
 pip install -r requirements.txt
 ```
-
-* unicodecsv
-* spotlight (pip install pyspotlight)
-* ...
-
 
 
 ## Run
