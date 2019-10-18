@@ -39,4 +39,4 @@ tensorflow==1.6.0
 termcolor==1.1.0
 unicodecsv==0.14.1
 urllib3==1.22
-Werkzeug==0.14.1
+Werkzeug==0.15.3
