@@ -22,7 +22,7 @@ jmespath==0.9.3
 Keras==2.1.5
 Markdown==2.6.11
 mock==2.0.0
-numpy==1.14.2
+numpy==1.22.0
 pbr==3.1.1
 pkg-resources==0.0.0
 protobuf==3.5.2.post1
